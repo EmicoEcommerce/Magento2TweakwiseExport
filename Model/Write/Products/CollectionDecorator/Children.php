@@ -21,7 +21,7 @@ use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\GroupedProduct\Model\ResourceModel\Product\Link;
 use Tweakwise\Magento2TweakwiseExport\Model\ChildOptions;
 use Magento\Store\Model\Store;
-use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwsieConfig;
+use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
 
 /**
  * Class Children
