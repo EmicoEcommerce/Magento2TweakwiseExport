@@ -1,4 +1,7 @@
 ## Installation
+
+If you have the package emico/tweakwise installed, uninstall this first. This package replaces that one
+
 Install package using composer
 ```sh
 composer require tweakwise/magento2-tweakwise-export
