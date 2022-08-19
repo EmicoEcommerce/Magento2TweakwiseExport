@@ -4,8 +4,12 @@ Install package using composer
 composer require tweakwise/magento2-tweakwise-export
 ```
 
+Enable module
+
+
 Run installers
 ```sh
+php bin/magento module:enable Tweakwise_Magento2TweakwiseExport
 php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
 ```
@@ -28,9 +32,9 @@ Usage:
 
 Arguments:
  file                  Export to specific file (default: "var/feeds/tweakwise.xml")
+ store                 Export a specific storeId, only possible of Store Level Export is enabled.
 
 Options:
- --store storeId       Only possible if Store Level Export is enabled.
  --validate (-c)       Validate feed and rollback if fails.
  --help (-h)           Display this help message
  --quiet (-q)          Do not output any message
@@ -41,9 +45,9 @@ Options:
  --no-interaction (-n) Do not ask any interactive question
 ```
 
-## Feed structure (multistore feed)
+## Feed structure
 The feed contains some header information followed by categories and then products. Tweakwise does not natively support multiple stores, in order to circumvent this all categories and products are prefixed with 1000{store_id}.
-If a product (with id 1178) is active and visible in multiple stores (say 1, 5 and 8) then it will appear three times in the feed with ids: 100011178, 100051178 and 100081178.
+If a product (with id 1178) is active and visible in multiple stores (say 1, 5 and 8) then it will appear three times in the feed (Or if Store Level Export is enabled the products is exported in 3 diffrent feeds) with ids: 100011178, 100051178 and 100081178.
 The data on that product depends on the attribute values of the specific store. In short an entity is available in the feed as ``1000{store_id}{entity_id}``
 
 The feed only contains products that are visible under your catalog configuration. If a product has children (say it is configurable) then the feed will also contain all the data from those children.
