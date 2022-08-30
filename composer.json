@@ -11,7 +11,7 @@
         "fzaninotto/faker": "^1.7"
     },
     "replace": {
-        "emico/tweakwise-export": "v4.2.3"
+        "emico/tweakwise-export": "v4.2.4"
     },
     "type": "magento2-module",
     "autoload": {
