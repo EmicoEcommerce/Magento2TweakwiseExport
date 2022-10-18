@@ -118,6 +118,7 @@ class Export
      */
     public function generateFeed($targetHandle, $store): void
     {
+        header('Content-type: text/xml');
         $this->executeLocked(function () use ($targetHandle, $store) {
             $this->writer->write($targetHandle);
             $this->touchFeedGenerateDate($store);
@@ -146,6 +147,8 @@ class Export
             if (!$sourceHandle) {
                 $this->log->throwException(new FeedException(sprintf('Could not open feed path "%s" for reading', $feedFile)));
             }
+
+            header('Content-type: text/xml');
 
             while (!feof($sourceHandle)) {
                 fwrite($targetHandle, fread($sourceHandle, self::FEED_COPY_BUFFER_SIZE));
