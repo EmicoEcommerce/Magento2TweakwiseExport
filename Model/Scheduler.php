@@ -79,8 +79,8 @@ class Scheduler
         $schedule = $this->scheduleCollection->getNewEmptyItem();
         $schedule->setJobCode(Export::JOB_CODE)
             ->setStatus(Schedule::STATUS_PENDING)
-            ->setCreatedAt(strftime('%Y-%m-%d %H:%M:%S', $createdAtTime))
-            ->setScheduledAt(strftime('%Y-%m-%d %H:%M', $scheduledAtTime));
+            ->setCreatedAt(date('Y-m-d H:i:s', $createdAtTime))
+            ->setScheduledAt(date('Y-m-d H:i', $scheduledAtTime));
 
         $schedule->save();
 
