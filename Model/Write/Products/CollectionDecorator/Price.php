@@ -53,7 +53,11 @@ class Price implements DecoratorInterface
 
         $priceQuery = $priceSelect->getSelect()->query();
         $currency = $collection->getStore()->getCurrentCurrency();
-        $exchangeRate = $currency->getRate($currency->getCurrencyCode());
+        $exchangeRate = 1;
+
+        if ($collection->getStore()->getCurrentCurrencyRate() > 0.00001){
+            $exchangeRate = $collection->getStore()->getCurrentCurrencyRate();
+        }
 
         while ($row = $priceQuery->fetch()) {
             $entityId = $row['entity_id'];
