@@ -52,10 +52,13 @@ class Price implements DecoratorInterface
         $priceSelect = $this->createPriceSelect($collection->getIds(), $websiteId);
 
         $priceQuery = $priceSelect->getSelect()->query();
+        $currency = $collection->getStore()->getCurrentCurrency();
+        $exchangeRate = $currency->getRate($currency->getCurrencyCode());
 
         while ($row = $priceQuery->fetch()) {
             $entityId = $row['entity_id'];
-            $row['price'] = $this->getPriceValue($collection->getStore()->getId(), $row);
+            $row['currency'] = $currency->getCurrencyCode();
+            $row['price'] = (float)($this->getPriceValue($collection->getStore()->getId(), $row, $currency) * $exchangeRate);
             $collection->get($entityId)->setFromArray($row);
         }
     }
