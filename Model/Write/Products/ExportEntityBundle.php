@@ -48,11 +48,11 @@ class ExportEntityBundle extends CompositeExportEntity
                 continue;
             }
 
+            $optionGroups[$optionId]['is_in_stock'] = $child->getStockItem()->getIsInStock();
+
             if (!$childOptions->isRequired()) {
                 $optionGroups[$optionId]['is_in_stock'] = 1;
             }
-
-            $optionGroups[$optionId]['is_in_stock'] = $child->getStockItem()->getIsInStock();
         }
 
         if (empty($optionGroups)) {
@@ -61,7 +61,7 @@ class ExportEntityBundle extends CompositeExportEntity
         }
 
         $qty = min(array_column($optionGroups, 'qty'));
-        $isInStock = max(array_map(fn ($child) => $child['is_in_stock'], $optionGroups));
+        $isInStock = min(array_map(fn ($child) => $child['is_in_stock'], $optionGroups));
         $stockItem = new StockItem();
         $stockItem->setQty($qty);
         $stockItem->setIsInStock($isInStock);
