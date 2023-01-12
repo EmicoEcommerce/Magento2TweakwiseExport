@@ -36,7 +36,7 @@ class XMLWriter extends BaseXMLWriter
         if ($value) {
             $value = $this->xmlPrepare($value);
         }
-        $this->text($value);
+        $this->text((string) $value);
 
         if (!is_numeric($value) && !empty($value)) {
             $this->endCdata();
