@@ -207,7 +207,7 @@ class Products implements WriterInterface
         $values = array_unique($values);
 
         foreach ($values as $value) {
-            if (empty($value)) {
+            if (empty($value) && $value !== "0") {
                 continue;
             }
 
