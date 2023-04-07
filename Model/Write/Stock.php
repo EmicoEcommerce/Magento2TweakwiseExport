@@ -11,7 +11,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
-use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\StockIterator as Iterator;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
@@ -21,6 +20,7 @@ use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Iterator;
 
 class Stock implements WriterInterface
 {

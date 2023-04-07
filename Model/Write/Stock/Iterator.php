@@ -6,7 +6,7 @@
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
+namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Stock;
 
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
@@ -22,7 +22,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
  * Class Iterator
  * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products
  */
-class StockIterator extends EavIterator
+class Iterator extends EavIterator
 {
     /**
      * @var ExportEntityFactory
@@ -132,6 +132,7 @@ class StockIterator extends EavIterator
                 'name' => $entity->getName(),
                 'price' => $entity->getPrice(),
                 'stock' => (int) round($entity->getStockQty()),
+                'categories' => $entity->getCategories(),
                 'attributes' => $entity->getAttributes(),
             ];
         }
