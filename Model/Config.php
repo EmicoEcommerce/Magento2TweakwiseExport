@@ -190,7 +190,7 @@ class Config
     /**
      * @return string
      */
-    public function getDefaultFeedFile(StoreInterface $store = null): string
+    public function getDefaultFeedFile(StoreInterface $store = null, $type = null): string
     {
         $dir = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . 'feeds';
         if (!is_dir($dir) && !mkdir($dir) && !is_dir($dir)) {
@@ -198,6 +198,9 @@ class Config
         }
         $storeCode = $store && $this->isStoreLevelExportEnabled() ? '-'.$store->getCode() : '';
         $filename = sprintf(self::FEED_FILE_NAME , $storeCode);
+        if (!empty($type)) {
+            $filename = sprintf(self::FEED_FILE_NAME , ($storeCode . '_' . $type));
+        }
         return $dir . DIRECTORY_SEPARATOR . $filename;
     }
 

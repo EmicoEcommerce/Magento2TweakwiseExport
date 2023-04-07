@@ -118,13 +118,20 @@ class Writer
      * @param resource $resource
      * @param null|StoreInterface $store
      */
-    public function write($resource, $store = null): void
+    public function write($resource, $store = null, $type = null): void
     {
         try {
             Profiler::start('write');
             $this->resource = $resource;
             $this->startDocument();
             $xml = $this->getXml();
+
+            if ($type === 'stock') {
+                $this->setStockWriters();
+            } else {
+                unset ($this->writers['stock']);
+            }
+
             foreach ($this->writers as $writer) {
                 $writer->write($this, $xml, $store);
             }
@@ -223,5 +230,13 @@ class Writer
         $xml->endElement(); // </tweakwise>
         $xml->endDocument();
         $this->flush();
+    }
+
+    protected function setStockWriters(): void
+    {
+        $writers = $this->writers;
+        unset($writers['categories']);
+        unset($writers['products']);
+        $this->setWriters($writers);
     }
 }

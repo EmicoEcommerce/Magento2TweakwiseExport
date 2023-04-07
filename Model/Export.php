@@ -166,9 +166,9 @@ class Export
      * @param null|StoreInterface $store
      * @throws Exception
      */
-    public function generateToFile($feedFile, $validate, $store = null): void
+    public function generateToFile($feedFile, $validate, $store = null, $type = null): void
     {
-        $this->executeLocked(function () use ($feedFile, $validate, $store) {
+        $this->executeLocked(function () use ($feedFile, $validate, $store, $type) {
             $tmpFeedFile = $this->config->getFeedTmpFile($feedFile, $store);
             $sourceHandle = @fopen($tmpFeedFile, 'wb');
 
@@ -179,7 +179,7 @@ class Export
             try {
                 // Write
                 try {
-                    $this->writer->write($sourceHandle, $store);
+                    $this->writer->write($sourceHandle, $store, $type);
                     $this->log->debug('Feed exported to ' . $tmpFeedFile);
                 } finally {
                     fclose($sourceHandle);

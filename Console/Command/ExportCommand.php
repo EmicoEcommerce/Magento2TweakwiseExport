@@ -44,6 +44,7 @@ class ExportCommand extends Command
      * @var StoreManagerInterface
      */
     protected $storeManager;
+
     /**
      * ExportCommand constructor.
      *
@@ -68,6 +69,7 @@ class ExportCommand extends Command
         $this->setName('tweakwise:export')
             ->addOption('file', 'f', InputArgument::OPTIONAL, 'Export to specific file')
             ->addOption('store', 's', InputArgument::OPTIONAL, 'Export specific store')
+            ->addOption('type', 't', InputArgument::OPTIONAL, 'Export type [stock] for stock only export')
             ->addOption(
                 'validate',
                 'c',
@@ -83,7 +85,7 @@ class ExportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->state->emulateAreaCode(Area::AREA_CRONTAB, function() use ($input, $output) {
+        return $this->state->emulateAreaCode(Area::AREA_CRONTAB, function() use ($input, $output) {
             if ($input->getOption('debug')) {
                 Profiler::enable();
                 Profiler::add(new ConsoleDriver($output));
@@ -92,6 +94,15 @@ class ExportCommand extends Command
             $isStoreLevelExportEnabled = $this->config->isStoreLevelExportEnabled();
             $storeCode = (string) $input->getOption('store');
             $store = null;
+
+            $type = (string)$input->getOption('type');
+            if ($type !== "stock" && $type !== "") {
+                $output->writeln('Type option should be stock (for stock only export) or not set');
+
+                return -1;
+            } elseif(empty($type)) {
+                $type = null;
+            }
 
             $validate = (string)$input->getOption('validate');
             if ($validate !== 'y' && $validate !== 'n' && $validate !== "") {
@@ -126,11 +137,11 @@ class ExportCommand extends Command
                 }
 
                 if (!$feedFile) {
-                    $feedFile = $this->config->getDefaultFeedFile($store);
+                    $feedFile = $this->config->getDefaultFeedFile($store, $type);
                 }
 
                 $output->writeln("<info>generatig feed for {$store->getCode()}</info>");
-                $this->export->generateToFile($feedFile, $validate, $store);
+                $this->export->generateToFile($feedFile, $validate, $store, $type);
                 $output->writeln("<info>feed file: {$feedFile}</info>");
             } else {
                 if ($storeCode) {
@@ -139,11 +150,11 @@ class ExportCommand extends Command
                 }
 
                 if (!$feedFile) {
-                    $feedFile = $this->config->getDefaultFeedFile();
+                    $feedFile = $this->config->getDefaultFeedFile(null, $type);
                 }
 
                 $output->writeln("<info>generating single feed for export enabled stores</info>");
-                $this->export->generateToFile($feedFile, $validate);
+                $this->export->generateToFile($feedFile, $validate, null, $type);
                 $output->writeln("<info>feed file: {$feedFile}</info>");
             }
 
@@ -152,6 +163,8 @@ class ExportCommand extends Command
                 2);
             $output->writeln(sprintf('Feed written to %s in %ss using %sMb memory',
                 $feedFile, $generateTime, $memoryUsage));
+
+            return 0;
         });
     }
 }
