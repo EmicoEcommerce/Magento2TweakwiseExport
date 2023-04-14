@@ -209,10 +209,10 @@ class Config
      * @param StoreInterface|null $store
      * @return string
      */
-    public function getFeedLockFile($file = null, $store = null): string
+    public function getFeedLockFile($file = null, $store = null, $type = null): string
     {
         if (!$file) {
-            $file = $this->getDefaultFeedFile($store);
+            $file = $this->getDefaultFeedFile($store, $type);
         }
 
         return $file . '.lock';

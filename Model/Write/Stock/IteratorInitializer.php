@@ -38,14 +38,5 @@ class IteratorInitializer
         $iterator->selectAttribute('status');
         $iterator->selectAttribute('visibility');
         $iterator->selectAttribute('type_id');
-
-        $i = 0;
-
-        foreach ($this->productAttributes->getAttributesToExport() as $attribute) {
-            if ($i < 2) continue;
-            //$iterator->selectAttribute($attribute->getAttributeCode());
-            $i++;
-
-        }
     }
 }

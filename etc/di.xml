@@ -50,8 +50,8 @@
             <argument name="storeManager" xsi:type="object">Magento\Store\Model\StoreManager\Proxy</argument>
             <argument name="appState" xsi:type="object">Magento\Framework\App\State\Proxy</argument>
             <argument name="writers" xsi:type="array">
-
-
+                <item name="categories" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Categories</item>
+                <item name="products" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products</item>
                 <item name="stock" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Stock</item>
             </argument>
         </arguments>

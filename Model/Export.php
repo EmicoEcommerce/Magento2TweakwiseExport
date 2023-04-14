@@ -80,10 +80,10 @@ class Export
      * @param StoreInterface $store
      * @throws Exception
      */
-    protected function executeLocked(callable $action, StoreInterface $store = null): void
+    protected function executeLocked(callable $action, StoreInterface $store = null, $type = null): void
     {
         Profiler::start('tweakwise::export');
-        $lockFile = $this->config->getFeedLockFile(null, $store);
+        $lockFile = $this->config->getFeedLockFile(null, $store, $type);
 
         try {
             $lockHandle = @fopen($lockFile, 'wb');
@@ -220,9 +220,9 @@ class Export
                 }
             }
 
-            $this->touchFeedGenerateDate($store);
+            $this->touchFeedGenerateDate($store, $type);
             $this->triggerTweakwiseImport();
-        }, $store);
+        }, $store, $type);
     }
 
     /**
@@ -250,8 +250,8 @@ class Export
      *
      * Update last modified time from feed file
      */
-    protected function touchFeedGenerateDate($store = null): void
+    protected function touchFeedGenerateDate($store = null, $type = null): void
     {
-        touch($this->config->getDefaultFeedFile($store));
+        touch($this->config->getDefaultFeedFile($store, $type));
     }
 }

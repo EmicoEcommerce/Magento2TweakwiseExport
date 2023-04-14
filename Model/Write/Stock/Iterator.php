@@ -130,10 +130,7 @@ class Iterator extends EavIterator
         foreach ($collection->getExported() as $entity) {
             yield [
                 'entity_id' => $entity->getId(),
-                'price' => $entity->getPrice(),
                 'stock' => (int) round($entity->getStockQty()),
-                'categories' => $entity->getCategories(),
-                'attributes' => $entity->getAttributes(),
             ];
         }
     }
