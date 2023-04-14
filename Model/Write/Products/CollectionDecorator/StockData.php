@@ -10,6 +10,8 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 use Magento\Framework\App\ProductMetadataInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItemFactory as TweakwiseStockItemFactory;
 use Magento\Framework\Module\Manager;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\ExportEntity as StockExportEntity;
 
 class StockData implements DecoratorInterface
 {
@@ -64,9 +66,9 @@ class StockData implements DecoratorInterface
     /**
      * Decorate items with extra data or remove items completely
      *
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      */
-    public function decorate(Collection $collection): void
+    public function decorate(Collection|StockCollection $collection): void
     {
         // This has to be called before setting the stock items.
         // This way the composite products are not filtered since they mostly have 0 stock.
@@ -84,9 +86,9 @@ class StockData implements DecoratorInterface
      *
      *
      * @param int $storeId
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      */
-    protected function addStockItems(int $storeId, Collection $collection): void
+    protected function addStockItems(int $storeId, Collection|StockCollection $collection): void
     {
         if ($collection->count() === 0) {
             return;
@@ -108,9 +110,9 @@ class StockData implements DecoratorInterface
 
     /**
      * @param array $stockItemMap
-     * @param ExportEntity $entity
+     * @param ExportEntity|StockExportEntity $entity
      */
-    protected function assignStockItem(array $stockItemMap, ExportEntity $entity): void
+    protected function assignStockItem(array $stockItemMap, ExportEntity|StockExportEntity $entity): void
     {
         $entityId = $entity->getId();
         if (isset($stockItemMap[$entityId])) {
@@ -123,18 +125,18 @@ class StockData implements DecoratorInterface
     }
 
     /**
-     * @param ExportEntity $entity
+     * @param ExportEntity|StockExportEntity $entity
      */
-    protected function addStockPercentage(ExportEntity $entity): void
+    protected function addStockPercentage(ExportEntity|StockExportEntity $entity): void
     {
         $entity->addAttribute('stock_percentage', $this->calculateStockPercentage($entity));
     }
 
     /**
-     * @param ExportEntity $entity
+     * @param ExportEntity|StockExportEntity $entity
      * @return float
      */
-    protected function calculateStockPercentage(ExportEntity $entity): float
+    protected function calculateStockPercentage(ExportEntity|StockExportEntity $entity): float
     {
         if (!$entity instanceof CompositeExportEntityInterface) {
             return (int) $this->isInStock($entity) * 100;
@@ -152,10 +154,10 @@ class StockData implements DecoratorInterface
     }
 
     /**
-     * @param ExportEntity $entity
+     * @param ExportEntity|StockExportEntity $entity
      * @return bool
      */
-    protected function isInStock(ExportEntity $entity): bool
+    protected function isInStock(ExportEntity|StockExportEntity $entity): bool
     {
         $stockItem = $entity->getStockItem();
         return (int)(!$stockItem || $stockItem->getIsInStock());

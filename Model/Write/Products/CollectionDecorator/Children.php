@@ -22,6 +22,7 @@ use Magento\GroupedProduct\Model\ResourceModel\Product\Link;
 use Tweakwise\Magento2TweakwiseExport\Model\ChildOptions;
 use Magento\Store\Model\Store;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
 
 /**
  * Class Children
@@ -110,9 +111,9 @@ class Children implements DecoratorInterface
     /**
      * Decorate items with extra data or remove items completely
      *
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      */
-    public function decorate(Collection $collection): void
+    public function decorate(Collection|StockCollection $collection): void
     {
         $this->childEntities = $this->collectionFactory->create(['store' => $collection->getStore()]);
         $this->createChildEntities($collection);
@@ -120,9 +121,9 @@ class Children implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      */
-    protected function createChildEntities(Collection $collection): void
+    protected function createChildEntities(Collection|StockCollection $collection): void
     {
         foreach ($this->getCompositeEntities($collection) as $typeId => $group) {
             // Create fake product type to trick type factory to use getTypeId
@@ -148,10 +149,10 @@ class Children implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @return CompositeExportEntityInterface[][]
      */
-    protected function getCompositeEntities(Collection $collection): array
+    protected function getCompositeEntities(Collection|StockCollection $collection): array
     {
         $compositeEntities = [];
         foreach ($collection as $entity) {
@@ -166,10 +167,10 @@ class Children implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @param int[] $parentIds
      */
-    protected function addBundleChildren(Collection $collection, array $parentIds): void
+    protected function addBundleChildren(Collection|StockCollection $collection, array $parentIds): void
     {
         $connection = $this->dbResource->getConnection();
         $select = $connection->select();
@@ -214,11 +215,11 @@ class Children implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @param int[] $parentIds
      * @param int $typeId
      */
-    protected function addLinkChildren(Collection $collection, array $parentIds, $typeId): void
+    protected function addLinkChildren(Collection|StockCollection $collection, array $parentIds, $typeId): void
     {
         $connection = $this->dbResource->getConnection();
         $select = $connection->select();
@@ -250,10 +251,10 @@ class Children implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @param int[] $parentIds
      */
-    protected function addConfigurableChildren(Collection $collection, array $parentIds): void
+    protected function addConfigurableChildren(Collection|StockCollection $collection, array $parentIds): void
     {
         $connection = $this->dbResource->getConnection();
         $select = $connection->select();
@@ -285,13 +286,13 @@ class Children implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @param int $parentId
      * @param int $childId
      * @param ChildOptions|null $childOptions
      */
     protected function addChild(
-        Collection $collection,
+        Collection|StockCollection $collection,
         int $parentId,
         int $childId,
         ChildOptions $childOptions = null

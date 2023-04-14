@@ -8,6 +8,7 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItemFactory as TweakwiseStockItemFactory;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
 
 class StockItemMapProvider implements StockMapProviderInterface
 {
@@ -44,10 +45,10 @@ class StockItemMapProvider implements StockMapProviderInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @return StockItemInterface[]
      */
-    public function getStockItemMap(Collection $collection): array
+    public function getStockItemMap(Collection|StockCollection $collection): array
     {
         if ($collection->count() === 0) {
             return [];

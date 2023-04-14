@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Stock;
 
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\DecoratorInterface;
@@ -129,7 +130,6 @@ class Iterator extends EavIterator
         foreach ($collection->getExported() as $entity) {
             yield [
                 'entity_id' => $entity->getId(),
-                'name' => $entity->getName(),
                 'price' => $entity->getPrice(),
                 'stock' => (int) round($entity->getStockQty()),
                 'categories' => $entity->getCategories(),

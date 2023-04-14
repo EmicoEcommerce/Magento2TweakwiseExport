@@ -158,21 +158,11 @@ class Stock implements WriterInterface
         // Write product base data
         $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id']);
         $xml->writeElement('id', $tweakwiseId);
-        $xml->writeElement('name', $this->scalarValue($data['name']));
-        $xml->writeElement('price', $this->scalarValue($data['price']));
         $xml->writeElement('stock', $this->scalarValue($data['stock']));
-
-        // Write product attributes
-        $xml->startElement('attributes');
-        foreach ($data['attributes'] as $attributeKeyValue) {
-            $this->writeAttribute($xml, $storeId, $attributeKeyValue['attribute'], $attributeKeyValue['value']);
-        }
-
-        $xml->endElement(); // attributes
 
         $xml->endElement(); // </item>
 
-        $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
+        $this->log->debug(sprintf('Export product stock [%s] %s', $tweakwiseId, $data['stock']));
     }
 
 

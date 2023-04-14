@@ -5,6 +5,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecor
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntityInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
 
 class ChildrenAttributes implements DecoratorInterface
 {
@@ -26,9 +27,9 @@ class ChildrenAttributes implements DecoratorInterface
     /**
      * Decorate items with extra data or remove items completely
      *
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      */
-    public function decorate(Collection $collection): void
+    public function decorate(Collection|StockCollection $collection): void
     {
         foreach ($collection as $exportEntity) {
             if (!$exportEntity instanceof CompositeExportEntityInterface) {
