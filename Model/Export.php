@@ -116,13 +116,13 @@ class Export
      * @param StoreInterface $store
      * @throws Exception
      */
-    public function generateFeed($targetHandle, $store): void
+    public function generateFeed($targetHandle, $store, $type): void
     {
         header('Content-type: text/xml');
-        $this->executeLocked(function () use ($targetHandle, $store) {
-            $this->writer->write($targetHandle);
-            $this->touchFeedGenerateDate($store);
-        }, $store);
+        $this->executeLocked(function () use ($targetHandle, $store, $type) {
+            $this->writer->write($targetHandle, $store, $type);
+            $this->touchFeedGenerateDate($store, $type);
+        }, $store, $type);
     }
 
     /**
@@ -131,17 +131,17 @@ class Export
      * @param resource $targetHandle
      * @throws Exception
      */
-    public function getFeed($targetHandle): void
+    public function getFeed($targetHandle, StoreInterface $store = null, $type = null): void
     {
-        $store = null;
-        if ($this->config->isStoreLevelExportEnabled()){
+        if ($this->config->isStoreLevelExportEnabled() && $store === null){
             $store = $this->storeManager->getStore();
         }
+
         if ($this->config->isRealTime()) {
-            $this->generateFeed($targetHandle, $store);
+            $this->generateFeed($targetHandle, $store, $type);
         }
 
-        $feedFile = $this->config->getDefaultFeedFile($store);
+        $feedFile = $this->config->getDefaultFeedFile($store, $type);
         if (file_exists($feedFile)) {
             $sourceHandle = @fopen($feedFile, 'rb');
             if (!$sourceHandle) {
@@ -155,8 +155,8 @@ class Export
             }
             fclose($sourceHandle);
         } else {
-            $this->generateToFile($feedFile, $this->config->isValidate(), $store);
-            $this->getFeed($targetHandle);
+            $this->generateToFile($feedFile, $this->config->isValidate(), $store, $type);
+            $this->getFeed($targetHandle, $store, $type);
         }
     }
 

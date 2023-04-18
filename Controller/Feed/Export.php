@@ -81,11 +81,15 @@ class Export implements ActionInterface
      */
     public function execute(): Response
     {
-        if (!$this->requestValidator->validateRequestKey($this->context->getRequest())) {
+        $request = $this->context->getRequest();
+        $storeId = $request->getParam('store');
+
+
+        if (!$this->requestValidator->validateRequestKey($request)) {
             throw new NotFoundException(__('Page not found.'));
         }
 
-        (new FeedContent($this->export, $this->log))->__toString();
+        (new FeedContent($this->export, $this->log, $request->getParam('store'), $request->getParam('type')))->__toString();
 
         return $this->responseFactory->create()
             ->setHeader('Cache-Control', 'no-cache');
