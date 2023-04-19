@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Controller\Feed;
 
+use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\App\Response\FeedContent;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportModel;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -46,6 +47,11 @@ class Export implements ActionInterface
     protected $requestValidator;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * Export constructor.
      *
      * @param Context $context
@@ -59,13 +65,15 @@ class Export implements ActionInterface
         ExportModel $export,
         Logger $log,
         RequestValidator $requestValidator,
-        ResponseFactory $responseFactory
+        ResponseFactory $responseFactory,
+        StoreManagerInterface $storeManager
     ) {
         $this->context = $context;
         $this->export = $export;
         $this->log = $log;
         $this->requestValidator = $requestValidator;
         $this->responseFactory = $responseFactory;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -82,14 +90,15 @@ class Export implements ActionInterface
     public function execute(): Response
     {
         $request = $this->context->getRequest();
-        $storeId = $request->getParam('store');
 
-
-        if (!$this->requestValidator->validateRequestKey($request)) {
+        if (!$this->requestValidator->validateRequestKey($request) || (!$this->requestValidator->validateStoreKey($request))) {
             throw new NotFoundException(__('Page not found.'));
         }
 
-        (new FeedContent($this->export, $this->log, $request->getParam('store'), $request->getParam('type')))->__toString();
+        $storeId = $request->getParam('store');
+        $store = $this->storeManager->getStore($storeId);
+
+        (new FeedContent($this->export, $this->log, $store, $request->getParam('type')))->__toString();
 
         return $this->responseFactory->create()
             ->setHeader('Cache-Control', 'no-cache');

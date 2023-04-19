@@ -118,12 +118,12 @@ class Writer
      * @param resource $resource
      * @param null|StoreInterface $store
      */
-    public function write($resource, $store = null, $type = null): void
+    public function write($resource, StoreInterface $store = null, $type = null): void
     {
         try {
             Profiler::start('write');
             $this->resource = $resource;
-            $this->startDocument();
+            $this->startDocument($store);
             $xml = $this->getXml();
 
             if ($type === 'stock') {
@@ -194,12 +194,16 @@ class Writer
     /**
      * Write document start
      */
-    protected function startDocument(): void
+    protected function startDocument(StoreInterface $store = null): void
     {
+        if ($store === null) {
+            $store = $this->storeManager->getDefaultStoreView();
+        }
+
         $xml = $this->getXml();
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('tweakwise'); // Start root
-        $xml->writeElement('shop', $this->storeManager->getDefaultStoreView()->getName());
+        $xml->writeElement('shop', $store->getName());
         $xml->writeElement('timestamp', $this->getNow()->format('Y-m-d\TH:i:s.uP'));
         $xml->writeElement('generatedby', $this->getModuleVersion());
         $this->flush();
