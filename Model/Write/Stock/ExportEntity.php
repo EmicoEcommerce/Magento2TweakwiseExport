@@ -190,6 +190,14 @@ class ExportEntity
     }
 
     /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * @param float $price
      */
     public function setPrice(float $price): void
