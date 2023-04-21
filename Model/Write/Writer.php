@@ -123,7 +123,12 @@ class Writer
         try {
             Profiler::start('write');
             $this->resource = $resource;
-            $this->startDocument($store);
+
+            if ($type === 'stock') {
+                $this->startStockDocument();
+            } else {
+                $this->startDocument($store);
+            }
             $xml = $this->getXml();
 
             if ($type === 'stock') {
@@ -206,6 +211,16 @@ class Writer
         $xml->writeElement('shop', $store->getName());
         $xml->writeElement('timestamp', $this->getNow()->format('Y-m-d\TH:i:s.uP'));
         $xml->writeElement('generatedby', $this->getModuleVersion());
+        $this->flush();
+    }
+
+    /**
+     * Write document start
+     */
+    protected function startStockDocument(): void
+    {
+        $xml = $this->getXml();
+        $xml->startDocument('1.0', 'UTF-8');
         $this->flush();
     }
 

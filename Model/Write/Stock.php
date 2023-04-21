@@ -158,7 +158,7 @@ class Stock implements WriterInterface
         // Write product base data
         $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id']);
         $xml->writeElement('id', $tweakwiseId);
-        $xml->writeElement('stock', $this->scalarValue($data['stock']));
+        $xml->writeElement('value', $this->scalarValue($data['stock']));
 
         $xml->endElement(); // </item>
 
