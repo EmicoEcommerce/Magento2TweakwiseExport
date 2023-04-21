@@ -124,18 +124,10 @@ class Writer
             Profiler::start('write');
             $this->resource = $resource;
 
-            if ($type === 'stock') {
-                $this->startStockDocument();
-            } else {
-                $this->startDocument($store);
-            }
+            $this->startDocumentType($store, $type);
             $xml = $this->getXml();
 
-            if ($type === 'stock') {
-                $this->setStockWriters();
-            } else {
-                unset ($this->writers['stock']);
-            }
+            $this->determineWriters($type);
 
             foreach ($this->writers as $writer) {
                 $writer->write($this, $xml, $store);
@@ -196,6 +188,17 @@ class Writer
         }
     }
 
+    protected function startDocumentType(StoreInterface $store = null, $type = null)
+    {
+        if ($type === null) {
+            $this->startStockDocument($store);
+        }
+
+        if ($type === 'stock') {
+            $this->startStockDocument();
+        }
+    }
+
     /**
      * Write document start
      */
@@ -249,6 +252,17 @@ class Writer
         $xml->endElement(); // </tweakwise>
         $xml->endDocument();
         $this->flush();
+    }
+
+    protected function determineWriters($type = null) : void
+    {
+        if ($type === 'stock') {
+            $this->setStockWriters();
+        }
+
+        if ($type === null) {
+            unset ($this->writers['stock']);
+        }
     }
 
     protected function setStockWriters(): void

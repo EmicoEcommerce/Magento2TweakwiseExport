@@ -221,16 +221,16 @@ class Export
             }
 
             $this->touchFeedGenerateDate($store, $type);
-            $this->triggerTweakwiseImport();
+            $this->triggerTweakwiseImport($store, $type);
         }, $store, $type);
     }
 
     /**
      * Trigger TW import call if configured
      */
-    protected function triggerTweakwiseImport(): void
+    protected function triggerTweakwiseImport($store = null, $type = null): void
     {
-        $apiImportUrl = $this->config->getApiImportUrl();
+        $apiImportUrl = $this->config->getApiImportUrl($store, $type);
         if (empty($apiImportUrl)) {
             $this->log->debug('TW import not triggered, no api import url defined.');
             return;
