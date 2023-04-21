@@ -91,7 +91,7 @@ class Export implements ActionInterface
     {
         $request = $this->context->getRequest();
 
-        if (!$this->requestValidator->validateRequestKey($request) || (!$this->requestValidator->validateStoreKey($request))) {
+        if (!$this->requestValidator->validateRequestKey($request) || (!$this->requestValidator->validateStoreKey($request)) || (!$this->requestValidator->validateType($request))) {
             throw new NotFoundException(__('Page not found.'));
         }
 
