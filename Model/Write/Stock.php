@@ -158,65 +158,13 @@ class Stock implements WriterInterface
         // Write product base data
         $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id']);
         $xml->writeElement('id', $tweakwiseId);
+        $xml->startElement('values');
         $xml->writeElement('value', $this->scalarValue($data['stock']));
+        $xml->endElement(); // </values>
 
         $xml->endElement(); // </item>
 
         $this->log->debug(sprintf('Export product stock [%s] %s', $tweakwiseId, $data['stock']));
-    }
-
-
-    /**
-     * @param XMLWriter $xml
-     * @param int $storeId
-     * @param string $name
-     * @param string|string[]|int|int[]|float|float[] $attributeValue
-     */
-    public function writeAttribute(
-        XMLWriter $xml,
-                  $storeId,
-                  $name,
-                  $attributeValue
-    ): void
-    {
-        $values = $this->normalizeAttributeValue($storeId, $name, $attributeValue);
-        $values = array_unique($values);
-
-        foreach ($values as $value) {
-            if (empty($value) && $value !== "0") {
-                continue;
-            }
-
-            $xml->startElement('attribute');
-            $xml->writeAttribute('datatype', is_numeric($value) ? 'numeric' : 'text');
-            $xml->writeElement('name', $name);
-            $xml->writeElement('value', $value);
-            $xml->endElement(); // </attribute>
-        }
-    }
-
-    /**
-     * @param int $storeId
-     * @param AbstractAttribute $attribute
-     * @return string[]
-     */
-    protected function getAttributeOptionMap($storeId, AbstractAttribute $attribute): array
-    {
-        $attributeKey = $storeId . '-' . $attribute->getId();
-        if (!isset($this->attributeOptionMap[$attributeKey])) {
-            $map = [];
-
-            // Set store id to trick in fetching correct options
-            $attribute->setData('store_id', $storeId);
-
-            foreach ($attribute->getSource()->getAllOptions() as $option) {
-                $map[$option['value']] = (string)$option['label'];
-            }
-
-            $this->attributeOptionMap[$attributeKey] = $map;
-        }
-
-        return $this->attributeOptionMap[$attributeKey];
     }
 
     /**
@@ -276,84 +224,5 @@ class Stock implements WriterInterface
         }
 
         return $value;
-    }
-
-    /**
-     * @param mixed $data
-     * @return array
-     */
-    protected function ensureArray($data): array
-    {
-        return is_array($data) ? $data : [$data];
-    }
-
-    /**
-     * @param string[] $data
-     * @param string $delimiter
-     * @return string[]
-     */
-    protected function explodeValues(array $data, string $delimiter = ','): array
-    {
-        $result = [];
-        foreach ($data as $value) {
-            $result[] = explode($delimiter, $value) ?: [];
-        }
-        return !empty($result) ? array_merge([], ...$result) : [];
-    }
-
-    /**
-     * Convert attribute value to array of scalar values.
-     *
-     * @param int $storeId
-     * @param string $attributeCode
-     * @param mixed $value
-     * @return array
-     */
-    protected function normalizeAttributeValue(int $storeId, string $attributeCode, $value): array
-    {
-        $values = $this->ensureArray($value);
-        $values = array_map(
-            function ($value) {
-                return $this->scalarValue($value);
-            },
-            $values
-        );
-
-        try {
-            $attribute = $this->eavConfig->getAttribute(Product::ENTITY, $attributeCode);
-        } catch (LocalizedException $e) {
-            $this->log->error($e->getMessage());
-            return $values;
-        }
-        // Attribute does not exists so just return value
-        if (!$attribute || !$attribute->getId()) {
-            return $values;
-        }
-
-        // Apparently Magento adds a default source model to the attribute even if it does not use a source
-        if (!$attribute->usesSource()) {
-            return $values;
-        }
-
-        // Explode values if source is used (multi select)
-        $values = $this->explodeValues($values);
-        try {
-            $attributeSource = $attribute->getSource();
-        } catch (LocalizedException $e) {
-            $this->log->error($e->getMessage());
-            return $values;
-        }
-        if (!$attributeSource instanceof SourceInterface) {
-            return $values;
-        }
-
-        $result = [];
-        /** @var string $attributeValue */
-        foreach ($values as $attributeValue) {
-            $map = $this->getAttributeOptionMap($storeId, $attribute);
-            $result[] = $map[$attributeValue] ?? null;
-        }
-
-        return $result;
     }
 }
