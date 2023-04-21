@@ -5,6 +5,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecor
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Db_Select;
@@ -43,10 +44,10 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|PriceCollection $collection
      * @throws \Zend_Db_Statement_Exception
      */
-    public function decorate(Collection $collection): void
+    public function decorate(Collection|PriceCollection $collection): void
     {
         $websiteId = $collection->getStore()->getWebsiteId();
         $priceSelect = $this->createPriceSelect($collection->getIds(), $websiteId);

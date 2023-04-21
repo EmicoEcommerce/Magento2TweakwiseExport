@@ -69,7 +69,7 @@ class ExportCommand extends Command
         $this->setName('tweakwise:export')
             ->addOption('file', 'f', InputArgument::OPTIONAL, 'Export to specific file')
             ->addOption('store', 's', InputArgument::OPTIONAL, 'Export specific store')
-            ->addOption('type', 't', InputArgument::OPTIONAL, 'Export type [stock] for stock only export')
+            ->addOption('type', 't', InputArgument::OPTIONAL, 'Export type [stock] for stock only export, [price] for price export only')
             ->addOption(
                 'validate',
                 'c',
@@ -96,8 +96,8 @@ class ExportCommand extends Command
             $store = null;
 
             $type = (string)$input->getOption('type');
-            if ($type !== "stock" && $type !== "") {
-                $output->writeln('Type option should be stock (for stock only export) or not set');
+            if ($type !== "stock" && $type !== "" && $type !== "price") {
+                $output->writeln('Type option should be stock, price or not set');
 
                 return -1;
             } elseif(empty($type)) {

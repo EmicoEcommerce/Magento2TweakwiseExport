@@ -190,12 +190,10 @@ class Writer
 
     protected function startDocumentType(StoreInterface $store = null, $type = null)
     {
-        if ($type === null) {
-            $this->startStockDocument($store);
-        }
-
-        if ($type === 'stock') {
-            $this->startStockDocument();
+        if ($type === 'stock' || $type === 'price') {
+            $this->startExternalDocument();
+        } else {
+            $this->startDocument();
         }
     }
 
@@ -220,7 +218,7 @@ class Writer
     /**
      * Write document start
      */
-    protected function startStockDocument(): void
+    protected function startExternalDocument(): void
     {
         $xml = $this->getXml();
         $xml->startDocument('1.0', 'UTF-8');
@@ -256,20 +254,15 @@ class Writer
 
     protected function determineWriters($type = null) : void
     {
-        if ($type === 'stock') {
-            $this->setStockWriters();
-        }
-
         if ($type === null) {
             unset ($this->writers['stock']);
+            unset($this->writers['price']);
+        } else {
+            foreach ($this->writers as $key => $value) {
+                if($type !== $key) {
+                    unset($this->writers[$key]);
+                }
+            }
         }
-    }
-
-    protected function setStockWriters(): void
-    {
-        $writers = $this->writers;
-        unset($writers['categories']);
-        unset($writers['products']);
-        $this->setWriters($writers);
     }
 }
