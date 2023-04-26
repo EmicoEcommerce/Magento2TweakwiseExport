@@ -118,13 +118,17 @@ class Writer
      * @param resource $resource
      * @param null|StoreInterface $store
      */
-    public function write($resource, $store = null): void
+    public function write($resource, StoreInterface $store = null, $type = null): void
     {
         try {
             Profiler::start('write');
             $this->resource = $resource;
-            $this->startDocument();
+
+            $this->startDocumentType($store, $type);
             $xml = $this->getXml();
+
+            $this->determineWriters($type);
+
             foreach ($this->writers as $writer) {
                 $writer->write($this, $xml, $store);
             }
@@ -184,17 +188,40 @@ class Writer
         }
     }
 
+    protected function startDocumentType(StoreInterface $store = null, $type = null)
+    {
+        if ($type === 'stock' || $type === 'price') {
+            $this->startExternalDocument();
+        } else {
+            $this->startDocument();
+        }
+    }
+
     /**
      * Write document start
      */
-    protected function startDocument(): void
+    protected function startDocument(StoreInterface $store = null): void
     {
+        if ($store === null) {
+            $store = $this->storeManager->getDefaultStoreView();
+        }
+
         $xml = $this->getXml();
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('tweakwise'); // Start root
-        $xml->writeElement('shop', $this->storeManager->getDefaultStoreView()->getName());
+        $xml->writeElement('shop', $store->getName());
         $xml->writeElement('timestamp', $this->getNow()->format('Y-m-d\TH:i:s.uP'));
         $xml->writeElement('generatedby', $this->getModuleVersion());
+        $this->flush();
+    }
+
+    /**
+     * Write document start
+     */
+    protected function startExternalDocument(): void
+    {
+        $xml = $this->getXml();
+        $xml->startDocument('1.0', 'UTF-8');
         $this->flush();
     }
 
@@ -223,5 +250,19 @@ class Writer
         $xml->endElement(); // </tweakwise>
         $xml->endDocument();
         $this->flush();
+    }
+
+    protected function determineWriters($type = null) : void
+    {
+        if ($type === null) {
+            unset ($this->writers['stock']);
+            unset($this->writers['price']);
+        } else {
+            foreach ($this->writers as $key => $value) {
+                if($type !== $key) {
+                    unset($this->writers[$key]);
+                }
+            }
+        }
     }
 }

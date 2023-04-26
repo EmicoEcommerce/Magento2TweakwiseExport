@@ -4,6 +4,8 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecor
 
 use Tweakwise\Magento2TweakwiseExport\Model\DbResourceHelper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceCollection;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Db_Statement_Exception;
 
@@ -36,10 +38,10 @@ class WebsiteLink implements DecoratorInterface
     /**
      * Decorate items with extra data or remove items completely
      *
-     * @param Collection $collection
+     * @param Collection|StockCollection|PriceCollection $collection
      * @throws Zend_Db_Statement_Exception
      */
-    public function decorate(Collection $collection): void
+    public function decorate(Collection|StockCollection|PriceCollection $collection): void
     {
         if ($this->storeManager->isSingleStoreMode()) {
             return;
@@ -57,10 +59,10 @@ class WebsiteLink implements DecoratorInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection|PriceCollection $collection
      * @throws Zend_Db_Statement_Exception
      */
-    protected function addLinkedWebsiteIds(Collection $collection): void
+    protected function addLinkedWebsiteIds(Collection|StockCollection|PriceCollection $collection): void
     {
         $select = $this->dbResource->getConnection()->select()
             ->from($this->getProductWebsiteTable(), ['product_id', 'website_id'])

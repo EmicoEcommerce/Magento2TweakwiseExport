@@ -52,6 +52,8 @@
             <argument name="writers" xsi:type="array">
                 <item name="categories" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Categories</item>
                 <item name="products" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products</item>
+                <item name="stock" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Stock</item>
+                <item name="price" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\price</item>
             </argument>
         </arguments>
     </type>
@@ -81,6 +83,28 @@
                 <item name="price" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Price</item>
                 <item name="website_link" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\WebsiteLink</item>
                 <item name="review" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Review</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Iterator">
+        <arguments>
+            <!-- update batchSize if memory is less important then speed -->
+            <argument name="collectionDecorators" xsi:type="array">
+                <item name="children" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Children</item>
+                <item name="stock_data" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData</item>
+                <item name="website_link" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\WebsiteLink</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Iterator">
+        <arguments>
+            <!-- update batchSize if memory is less important then speed -->
+            <argument name="collectionDecorators" xsi:type="array">
+                <item name="children" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Children</item>
+                <item name="price" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Price</item>
+                <item name="website_link" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\WebsiteLink</item>
             </argument>
         </arguments>
     </type>

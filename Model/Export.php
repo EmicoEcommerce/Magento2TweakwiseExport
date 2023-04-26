@@ -80,10 +80,10 @@ class Export
      * @param StoreInterface $store
      * @throws Exception
      */
-    protected function executeLocked(callable $action, StoreInterface $store = null): void
+    protected function executeLocked(callable $action, StoreInterface $store = null, $type = null): void
     {
         Profiler::start('tweakwise::export');
-        $lockFile = $this->config->getFeedLockFile(null, $store);
+        $lockFile = $this->config->getFeedLockFile(null, $store, $type);
 
         try {
             $lockHandle = @fopen($lockFile, 'wb');
@@ -116,13 +116,13 @@ class Export
      * @param StoreInterface $store
      * @throws Exception
      */
-    public function generateFeed($targetHandle, $store): void
+    public function generateFeed($targetHandle, $store, $type): void
     {
         header('Content-type: text/xml');
-        $this->executeLocked(function () use ($targetHandle, $store) {
-            $this->writer->write($targetHandle);
-            $this->touchFeedGenerateDate($store);
-        }, $store);
+        $this->executeLocked(function () use ($targetHandle, $store, $type) {
+            $this->writer->write($targetHandle, $store, $type);
+            $this->touchFeedGenerateDate($store, $type);
+        }, $store, $type);
     }
 
     /**
@@ -131,17 +131,17 @@ class Export
      * @param resource $targetHandle
      * @throws Exception
      */
-    public function getFeed($targetHandle): void
+    public function getFeed($targetHandle, StoreInterface $store = null, $type = null): void
     {
-        $store = null;
-        if ($this->config->isStoreLevelExportEnabled()){
+        if ((!$this->config->isStoreLevelExportEnabled()) || $store === null){
             $store = $this->storeManager->getStore();
         }
+
         if ($this->config->isRealTime()) {
-            $this->generateFeed($targetHandle, $store);
+            $this->generateFeed($targetHandle, $store, $type);
         }
 
-        $feedFile = $this->config->getDefaultFeedFile($store);
+        $feedFile = $this->config->getDefaultFeedFile($store, $type);
         if (file_exists($feedFile)) {
             $sourceHandle = @fopen($feedFile, 'rb');
             if (!$sourceHandle) {
@@ -155,8 +155,8 @@ class Export
             }
             fclose($sourceHandle);
         } else {
-            $this->generateToFile($feedFile, $this->config->isValidate(), $store);
-            $this->getFeed($targetHandle);
+            $this->generateToFile($feedFile, $this->config->isValidate(), $store, $type);
+            $this->getFeed($targetHandle, $store, $type);
         }
     }
 
@@ -166,9 +166,9 @@ class Export
      * @param null|StoreInterface $store
      * @throws Exception
      */
-    public function generateToFile($feedFile, $validate, $store = null): void
+    public function generateToFile($feedFile, $validate, $store = null, $type = null): void
     {
-        $this->executeLocked(function () use ($feedFile, $validate, $store) {
+        $this->executeLocked(function () use ($feedFile, $validate, $store, $type) {
             $tmpFeedFile = $this->config->getFeedTmpFile($feedFile, $store);
             $sourceHandle = @fopen($tmpFeedFile, 'wb');
 
@@ -179,7 +179,7 @@ class Export
             try {
                 // Write
                 try {
-                    $this->writer->write($sourceHandle, $store);
+                    $this->writer->write($sourceHandle, $store, $type);
                     $this->log->debug('Feed exported to ' . $tmpFeedFile);
                 } finally {
                     fclose($sourceHandle);
@@ -220,17 +220,17 @@ class Export
                 }
             }
 
-            $this->touchFeedGenerateDate($store);
-            $this->triggerTweakwiseImport();
-        }, $store);
+            $this->touchFeedGenerateDate($store, $type);
+            $this->triggerTweakwiseImport($store, $type);
+        }, $store, $type);
     }
 
     /**
      * Trigger TW import call if configured
      */
-    protected function triggerTweakwiseImport(): void
+    protected function triggerTweakwiseImport($store = null, $type = null): void
     {
-        $apiImportUrl = $this->config->getApiImportUrl();
+        $apiImportUrl = $this->config->getApiImportUrl($store, $type);
         if (empty($apiImportUrl)) {
             $this->log->debug('TW import not triggered, no api import url defined.');
             return;
@@ -250,8 +250,8 @@ class Export
      *
      * Update last modified time from feed file
      */
-    protected function touchFeedGenerateDate($store = null): void
+    protected function touchFeedGenerateDate($store = null, $type = null): void
     {
-        touch($this->config->getDefaultFeedFile($store));
+        touch($this->config->getDefaultFeedFile($store, $type));
     }
 }

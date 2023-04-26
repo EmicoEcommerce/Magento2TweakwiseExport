@@ -87,9 +87,28 @@
                         <field id="validate">0</field>
                     </depends>
                 </field>
-                <field id="api_import_url" translate="label,comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="api_import_url" translate="label,comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Tweakwise Import API Url</label>
-                    <comment>API protection parameter see Tweakwise import task tab API. Starts with the API url like: https://navigator-api.tweakwise.com/task/trigger/</comment>
+                    <comment>API trigger url to trigger an import in tweakwise. See Tweakwise import task tab API. Starts with the API url like: https://navigator-api.tweakwise.com/task/trigger/.
+                        Only change this on an store level if store level export is enabled</comment>
+                    <validate>validate-url</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="real_time">0</field>
+                    </depends>
+                </field>
+                <field id="api_import_url_stock" translate="label,comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tweakwise Import API Url for stock feed (external property)</label>
+                    <comment>API trigger url to trigger an stock import. Import the stock feed as en external property.</comment>
+                    <validate>validate-url</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="real_time">0</field>
+                    </depends>
+                </field>
+                <field id="api_import_url_price" translate="label,comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tweakwise Import API Url for price feed (external property)</label>
+                    <comment>API trigger url to trigger an price import. Import the price feed as en external property.</comment>
                     <validate>validate-url</validate>
                     <depends>
                         <field id="enabled">1</field>

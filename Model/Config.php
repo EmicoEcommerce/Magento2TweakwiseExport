@@ -27,6 +27,7 @@ class Config
     public const PATH_VALIDATE = 'tweakwise/export/validate';
     public const PATH_ARCHIVE = 'tweakwise/export/archive';
     public const PATH_API_IMPORT_URL = 'tweakwise/export/api_import_url';
+    public const PATH_API_IMPORT_URL_STOCK = 'tweakwise/export/api_import_url_stock';
     public const PATH_OUT_OF_STOCK_CHILDREN = 'tweakwise/export/out_of_stock_children';
     public const PATH_FEED_KEY = 'tweakwise/export/feed_key';
     public const PATH_ALLOW_CACHE_FLUSH = 'tweakwise/export/allow_cache_flush';
@@ -127,9 +128,12 @@ class Config
     /**
      * @return string
      */
-    public function getApiImportUrl(): string
+    public function getApiImportUrl($store = null, $type = null): string
     {
-        return (string) $this->config->getValue(self::PATH_API_IMPORT_URL);
+        if ($type === 'stock') {
+            return (string) $this->config->getValue(self::PATH_API_IMPORT_URL_STOCK, ScopeInterface::SCOPE_STORE, $store);
+        }
+        return (string) $this->config->getValue(self::PATH_API_IMPORT_URL, ScopeInterface::SCOPE_STORE, $store);
     }
 
     /**
@@ -190,7 +194,7 @@ class Config
     /**
      * @return string
      */
-    public function getDefaultFeedFile(StoreInterface $store = null): string
+    public function getDefaultFeedFile(StoreInterface $store = null, $type = null): string
     {
         $dir = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . 'feeds';
         if (!is_dir($dir) && !mkdir($dir) && !is_dir($dir)) {
@@ -198,6 +202,9 @@ class Config
         }
         $storeCode = $store && $this->isStoreLevelExportEnabled() ? '-'.$store->getCode() : '';
         $filename = sprintf(self::FEED_FILE_NAME , $storeCode);
+        if (!empty($type)) {
+            $filename = sprintf(self::FEED_FILE_NAME , ($storeCode . '_' . $type));
+        }
         return $dir . DIRECTORY_SEPARATOR . $filename;
     }
 
@@ -206,10 +213,10 @@ class Config
      * @param StoreInterface|null $store
      * @return string
      */
-    public function getFeedLockFile($file = null, $store = null): string
+    public function getFeedLockFile($file = null, $store = null, $type = null): string
     {
         if (!$file) {
-            $file = $this->getDefaultFeedFile($store);
+            $file = $this->getDefaultFeedFile($store, $type);
         }
 
         return $file . '.lock';

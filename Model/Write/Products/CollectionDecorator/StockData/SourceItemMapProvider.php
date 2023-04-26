@@ -17,6 +17,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
 use Magento\InventoryCatalogApi\Api\DefaultStockProviderInterface;
 use Zend_Db_Expr;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
 
 /**
  * Class DefaultImplementation
@@ -99,12 +100,12 @@ class SourceItemMapProvider implements StockMapProviderInterface
     }
 
     /**
-     * @param Collection $collection
+     * @param Collection|StockCollection $collection
      * @return StockItem[]
      * @throws LocalizedException
      * @throws \Zend_Db_Statement_Exception
      */
-    public function getStockItemMap(Collection $collection): array
+    public function getStockItemMap(Collection|StockCollection $collection): array
     {
         if ($collection->count() === 0) {
             return [];
