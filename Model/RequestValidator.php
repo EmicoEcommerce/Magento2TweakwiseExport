@@ -47,7 +47,7 @@ class RequestValidator
     public function validateType(RequestInterface $request): bool
     {
         $type = $request->getParam('type');
-        if ($type === 'stock' || $type === 'price'){
+        if ($type === 'stock' || $type === 'price' || empty($type)){
             return true;
         }
 

@@ -28,6 +28,9 @@ All export settings can be found under Stores -> Configuration -> Catalog -> Twe
 Generating feeds can be done using the command line.
 ```sh
 php bin/magento tweakwise:export
+php bin/magento tweakwise:export -t stock //stock export
+php bin/magento tweakwise:export -t price //price export
+php bin/magento tweakwise:export -s storecode //store level export, only works is store level export is enabled
 ```
 
 ## Debugging
@@ -71,16 +74,21 @@ Magento's native interfaces and handlers for data retrieval were deemed to slow 
 Since performance is essential we decided on our own queries for data retrieval. The consequence is that we need to keep track of the inner workings of magento and are subject to its changes.
 If you find an issue with data retrieval please create an issue on github.
 
+## Feed urls
+https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}
+https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/type/stock //stock export
+https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/type/price //price export
+https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/store/storecode //store level export, only available if store level export is enabled
 
 ## Export Settings
-- Store Level Export: Enables generating seperate feed for each store
+- Store Level Export: Enables generating seperate feed for each store. If store level export is enabled 
 - Enabled: If products of that store should be exported to tweakwise, note that if this is false for some store then navigation and search should also be disabled for that store.
 - Schedule: Cron schedule for generating the feed. We strongly encourage you to register the export task on the server crontab instead of using the Magento cron.
-- Schedule export: Generate the feed on the next cron run.
+- Schedule export: Generate the feed on the next cron run. (default feed)
 - Key: This will be validated by the export module when the ExportController is asked for feed content or when the CacheFlush controller is asked to flush cache. If the request does not have a key parameter that matches the feed will not be served (or in case of the cache controller the cache will not be flushed).
 - Allow cache flush: Allow automated flushing of cache, you can configure a task in the navigator to run after it is done publishing to flush Magento caches. You must specify an url in the task configuration: use https://yoursite.com/tweakwise/cache/flush/key/{{feed_key}} as its url, here feed_key is equal to the key configured in the Key setting (see above). If this setting is set to no tweakwise-export will ignore these requests. 
 - Export realtime: When the ExportController is asked for a feed it will generate a new one on the fly. Note that this is not recommended!
-- Tweakwise import API url: Tasks in the navigator can be executed via API. Use the import task API url here to automatically tell tweakwise to import the feed after it has been generated.
+- Tweakwise import API url: Tasks in the navigator can be executed via API. Use the import task API url here to automatically tell tweakwise to import the feed after it has been generated. An seperate trigger for stock/price export can be used.
 - Export out of stock Combined product children: Tweakwise export aggregates child data on parent products, this setting determines if data from out of child products should be included in this aggregation.
 - Exclude child attributes: These values of these attributes will be excluded from product data when aggregating onto the parent product.
 - Which price value will be exported as "price" to tweakwise.
