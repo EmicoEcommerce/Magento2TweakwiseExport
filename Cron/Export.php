@@ -8,6 +8,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Cron;
 
+use Tweakwise\Magento2TweakwiseExport\Console\Command\ExportCommand;
 use Tweakwise\Magento2TweakwiseExport\Exception\FeedException;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportService;
@@ -60,11 +61,21 @@ class Export
         $this->storeManager = $storeManager;
     }
 
+    public function execute(): void
+    {
+        $this->generateFeed();
+    }
+
+    public function executeStock(): void
+    {
+        $this->generateFeed('stock');
+    }
+
     /**
      * Export feed
      * @throws \Exception
      */
-    public function execute(): void
+    public function generateFeed($type = null): void
     {
         if ($this->config->isRealTime()) {
             $this->log->debug('Export set to real time, skipping cron export.');
@@ -79,13 +90,13 @@ class Export
         if ($this->config->isStoreLevelExportEnabled()){
             foreach ($this->storeManager->getStores() as $store) {
                 if ($this->config->isEnabled($store)) {
-                    $feedFile = $this->config->getDefaultFeedFile($store);
-                    $this->export->generateToFile($feedFile, $validate, $store);
+                    $feedFile = $this->config->getDefaultFeedFile($store, $type);
+                    $this->export->generateToFile($feedFile, $validate, $store, $type);
                 }
             }
             return;
         }
-        $feedFile = $this->config->getDefaultFeedFile();
-        $this->export->generateToFile($feedFile, $validate);
+        $feedFile = $this->config->getDefaultFeedFile($store = null, $type);
+        $this->export->generateToFile($feedFile, $validate, $store = null, $type);
     }
 }

@@ -31,6 +31,7 @@ class ExportStart extends Field
     protected function _getElementHtml(AbstractElement $element): string
     {
         /** @var Button $button  */
+        //$a = $this->getForm()->getForm()->getElement('tweakwise_export_schedule_stock')->_getData('value');
         $button = $this->getForm()->getLayout()->createBlock(Button::class);
         $button->setData([
             'label' => __('Schedule'),
