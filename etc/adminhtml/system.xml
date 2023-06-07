@@ -213,7 +213,7 @@
                 </field>
                 <field id="start_stock" translate="label,comment" type="label" sortOrder="203" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule exports</label>
-                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStart</frontend_model>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStockStart</frontend_model>
                     <comment>Start exports on next cron run</comment>
                     <depends>
                         <field id="enabled">1</field>

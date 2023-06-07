@@ -21,7 +21,7 @@ use Magento\Framework\Exception\LocalizedException;
  *
  * @method Form getForm();
  */
-class ExportStart extends Field
+class ExportStockStart extends Field
 {
     /**
      * @param AbstractElement $element
@@ -31,10 +31,12 @@ class ExportStart extends Field
     protected function _getElementHtml(AbstractElement $element): string
     {
         /** @var Button $button  */
+//        $a = $this->getForm()->getForm()->getElement('tweakwise_export_stock_schedule')->_getData('value');
+//        $b = $this->getForm()->getForm()->getElement('tweakwise_export_schedule')->_getData('value');
         $button = $this->getForm()->getLayout()->createBlock(Button::class);
         $button->setData([
             'label' => __('Schedule'),
-            'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger')}')",
+            'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger/stock')}')",
         ]);
 
         return $button->toHtml();
