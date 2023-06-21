@@ -43,7 +43,8 @@ class Trigger extends Action
     public function execute()
     {
         try {
-            $this->scheduler->schedule();
+            $type = $this->getRequest()->getParam('type');
+            $this->scheduler->schedule($type);
             $this->messageManager->addSuccessMessage('Scheduled new TweakwiseExport');
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage('Failed creating Tweakwise job');

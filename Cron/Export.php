@@ -71,6 +71,11 @@ class Export
         $this->generateFeed('stock');
     }
 
+    public function executePrice(): void
+    {
+        $this->generateFeed('price');
+    }
+
     /**
      * Export feed
      * @throws \Exception

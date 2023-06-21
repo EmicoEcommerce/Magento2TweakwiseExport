@@ -21,7 +21,7 @@ use Magento\Framework\Exception\LocalizedException;
  *
  * @method Form getForm();
  */
-class ExportStockStart extends Field
+class ExportPriceStart extends Field
 {
     /**
      * @param AbstractElement $element
@@ -34,7 +34,7 @@ class ExportStockStart extends Field
         $button = $this->getForm()->getLayout()->createBlock(Button::class);
         $button->setData([
             'label' => __('Schedule'),
-            'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger/type/stock')}')",
+            'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger/type/price')}')",
         ]);
 
         return $button->toHtml();

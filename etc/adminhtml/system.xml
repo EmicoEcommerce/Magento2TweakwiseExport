@@ -212,8 +212,34 @@
                     </depends>
                 </field>
                 <field id="start_stock" translate="label,comment" type="label" sortOrder="203" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Schedule exports</label>
+                    <label>Schedule stock export</label>
                     <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStockStart</frontend_model>
+                    <comment>Start exports on next cron run</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <group id="export_price" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="schedule" translate="label" type="text" sortOrder="201" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schedule price export</label>
+                    <comment>Leave empty to disable export by cron.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="real_time">0</field>
+                    </depends>
+                </field>
+                <field id="price_export_state" translate="label,comment" type="label" sortOrder="202" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>State</label>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportState</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="start_price" translate="label,comment" type="label" sortOrder="203" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schedule price export</label>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportPriceStart</frontend_model>
                     <comment>Start exports on next cron run</comment>
                     <depends>
                         <field id="enabled">1</field>

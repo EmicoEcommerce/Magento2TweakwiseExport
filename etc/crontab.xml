@@ -15,5 +15,8 @@
         <job name="tweakwise_magento2_tweakwise_export_stock" instance="Tweakwise\Magento2TweakwiseExport\Cron\Export" method="executeStock">
             <config_path>tweakwise/export_stock/schedule</config_path>
         </job>
+        <job name="tweakwise_magento2_tweakwise_export_price" instance="Tweakwise\Magento2TweakwiseExport\Cron\Export" method="executePrice">
+            <config_path>tweakwise/export_price/schedule</config_path>
+        </job>
     </group>
 </config>
