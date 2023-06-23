@@ -25,33 +25,6 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="schedule" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Schedule full export</label>
-                    <comment>Leave empty to disable export by cron.</comment>
-                    <depends>
-                        <field id="enabled">1</field>
-                        <field id="real_time">0</field>
-                    </depends>
-                </field>
-                <field id="export_state" translate="label,comment" type="label" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>State</label>
-                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportState</frontend_model>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
-                <field id="start" translate="label,comment" type="label" sortOrder="15" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Schedule exports</label>
-                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStart</frontend_model>
-                    <comment>Start exports on next cron run</comment>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
-
-
-
-
                 <field id="feed_key" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Key</label>
                     <comment>Export url will be: www.example.com/tweakwise/feed/export/key/XXXX</comment>
@@ -102,24 +75,7 @@
                         <field id="real_time">0</field>
                     </depends>
                 </field>
-                <field id="api_import_url_stock" translate="label,comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Tweakwise Import API Url for stock feed (external property)</label>
-                    <comment>API trigger url to trigger an stock import. Import the stock feed as en external property.</comment>
-                    <validate>validate-url</validate>
-                    <depends>
-                        <field id="enabled">1</field>
-                        <field id="real_time">0</field>
-                    </depends>
-                </field>
-                <field id="api_import_url_price" translate="label,comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Tweakwise Import API Url for price feed (external property)</label>
-                    <comment>API trigger url to trigger an price import. Import the price feed as en external property.</comment>
-                    <validate>validate-url</validate>
-                    <depends>
-                        <field id="enabled">1</field>
-                        <field id="real_time">0</field>
-                    </depends>
-                </field>
+
                 <field id="out_of_stock_children" translate="label,comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export out of stock combined product children</label>
                     <comment>Would you like to export out of stock children attributes in parent products?</comment>
@@ -193,9 +149,34 @@
                         If note, increase the batch size.
                     </comment>
                 </field>
+
+                <field id="schedule" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schedule full export</label>
+                    <comment>Leave empty to disable export by cron.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="real_time">0</field>
+                    </depends>
+                </field>
+                <field id="export_state" translate="label,comment" type="label" sortOrder="150" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>State</label>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportState</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="start" translate="label,comment" type="label" sortOrder="160" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schedule exports</label>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStart</frontend_model>
+                    <comment>Start exports on next cron run</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <group id="export_stock" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Export stock</label>
                 <field id="schedule" translate="label" type="text" sortOrder="201" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule stock export</label>
                     <comment>Leave empty to disable export by cron.</comment>
@@ -219,9 +200,19 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="api_import_url_stock" translate="label,comment" type="text" sortOrder="204" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tweakwise Import API Url for stock feed (external property)</label>
+                    <comment>API trigger url to trigger an stock import. Import the stock feed as en external property.</comment>
+                    <validate>validate-url</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="real_time">0</field>
+                    </depends>
+                </field>
             </group>
 
             <group id="export_price" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Export price</label>
                 <field id="schedule" translate="label" type="text" sortOrder="201" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule price export</label>
                     <comment>Leave empty to disable export by cron.</comment>
@@ -243,6 +234,15 @@
                     <comment>Start exports on next cron run</comment>
                     <depends>
                         <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="api_import_url_price" translate="label,comment" type="text" sortOrder="204" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tweakwise Import API Url for price feed (external property)</label>
+                    <comment>API trigger url to trigger an price import. Import the price feed as en external property.</comment>
+                    <validate>validate-url</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="real_time">0</field>
                     </depends>
                 </field>
             </group>
