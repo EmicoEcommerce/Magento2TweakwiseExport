@@ -28,7 +28,7 @@
             </export>
             <export_stock>
                 <enabled>0</enabled>
-                <schedule>*/5 * * * *</schedule>
+                <schedule/>
                 <archive/>
                 <validate>0</validate>
                 <real_time>0</real_time>
@@ -44,7 +44,7 @@
             </export_stock>
             <export_price>
                 <enabled>0</enabled>
-                <schedule>*/5 * * * *</schedule>
+                <schedule/>
                 <archive/>
                 <validate>0</validate>
                 <real_time>0</real_time>
