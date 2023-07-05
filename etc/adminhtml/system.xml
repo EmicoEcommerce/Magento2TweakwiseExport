@@ -187,7 +187,7 @@
                 </field>
                 <field id="stock_export_state" translate="label,comment" type="label" sortOrder="202" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>State</label>
-                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportState</frontend_model>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStateStock</frontend_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -223,7 +223,7 @@
                 </field>
                 <field id="price_export_state" translate="label,comment" type="label" sortOrder="202" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>State</label>
-                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportState</frontend_model>
+                    <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStatePrice</frontend_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

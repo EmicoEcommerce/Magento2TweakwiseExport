@@ -100,11 +100,13 @@ class Helper
     /**
      * Get date of last finished feed export
      *
+     * @param $type string stock or price
+     *
      * @return DateTime|null
      */
-    public function getLastFeedExportDate(): ?DateTime
+    public function getLastFeedExportDate($type = null): ?DateTime
     {
-        $file = new SplFileInfo($this->config->getDefaultFeedFile());
+        $file = new SplFileInfo($this->config->getDefaultFeedFile(null, $type));
         if (!$file->isFile()) {
             return null;
         }
@@ -113,9 +115,11 @@ class Helper
     }
 
     /**
+     * @param $type string stock or price
+     *
      * @return \Magento\Framework\Phrase|string
      */
-    public function getExportStateText()
+    public function getExportStateText($type = null)
     {
         $startDate = $this->getFeedExportStartDate();
         if (!$this->config->isRealTime() && $startDate) {
@@ -129,7 +133,7 @@ class Helper
             );
         }
 
-        $finishedDate = $this->getLastFeedExportDate();
+        $finishedDate = $this->getLastFeedExportDate($type);
         if ($finishedDate) {
             return sprintf(
                 __('Finished on %s.'),
