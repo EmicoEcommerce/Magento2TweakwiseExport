@@ -66,18 +66,31 @@ class Scheduler
     /**
      * Schedule new export
      *
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @param string|null $type
+     *
      * @return Schedule
+     * @throws Exception
      */
-    public function schedule(): Schedule
+    public function schedule(string $type = null): Schedule
     {
+        $job = 'tweakwise_magento2_tweakwise_export';
+
+        if (!empty($type)) {
+            if ($type == 'stock') {
+                $job = 'tweakwise_magento2_tweakwise_export_stock';
+            }
+
+            if ($type == 'price') {
+                $job = 'tweakwise_magento2_tweakwise_export_price';
+            }
+        }
+
         $createdAtTime = $this->getCronTimestamp();
         $scheduledAtTime = $createdAtTime;
 
         /* @var $schedule Schedule */
         $schedule = $this->scheduleCollection->getNewEmptyItem();
-        $schedule->setJobCode(Export::JOB_CODE)
+        $schedule->setJobCode($job)
             ->setStatus(Schedule::STATUS_PENDING)
             ->setCreatedAt(date('Y-m-d H:i:s', $createdAtTime))
             ->setScheduledAt(date('Y-m-d H:i', $scheduledAtTime));

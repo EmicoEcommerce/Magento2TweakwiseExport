@@ -10,6 +10,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Console\Command;
 
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
+use Tweakwise\Magento2TweakwiseExport\Model\Logger;
 use Tweakwise\Magento2TweakwiseExport\Profiler\Driver\ConsoleDriver;
 use Exception;
 use Magento\Framework\App\Area;
@@ -46,18 +47,26 @@ class ExportCommand extends Command
     protected $storeManager;
 
     /**
+     * @var Logger
+     */
+    protected $log;
+
+    protected $type;
+
+    /**
      * ExportCommand constructor.
      *
      * @param Config $config
      * @param Export $export
      * @param State $state
      */
-    public function __construct(Config $config, Export $export, State $state, StoreManagerInterface $storeManager)
+    public function __construct(Config $config, Export $export, State $state, StoreManagerInterface $storeManager, Logger $log)
     {
         $this->config = $config;
         $this->export = $export;
         $this->state = $state;
         $this->storeManager = $storeManager;
+        $this->log   = $log;
         parent::__construct();
     }
 
@@ -96,6 +105,11 @@ class ExportCommand extends Command
             $store = null;
 
             $type = (string)$input->getOption('type');
+
+            if (!empty($this->type)) {
+                $type = $this->type;
+            }
+
             if ($type !== "stock" && $type !== "" && $type !== "price") {
                 $output->writeln('Type option should be stock, price or not set');
 
@@ -166,5 +180,14 @@ class ExportCommand extends Command
 
             return 0;
         });
+    }
+
+    public function executeStock(InputInterface $input, OutputInterface $output)
+    {
+        $this->type = 'stock';
+
+        $this->execute($input, $output);
+
+        $output->getVerbosity();
     }
 }
