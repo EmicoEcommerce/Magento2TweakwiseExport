@@ -16,4 +16,17 @@ class ExportEntityConfigurable extends CompositeExportEntity
      * @var bool
      */
     protected $isStockCombined;
+
+
+    /**
+     * @param array $data
+     */
+    public function setFromArray(array $data): void
+    {
+        if (key_exists('price', $data) && (float)$data['price'] === 0.00) {
+            unset($data['price']);
+        }
+
+        parent::setFromArray($data);
+    }
 }
