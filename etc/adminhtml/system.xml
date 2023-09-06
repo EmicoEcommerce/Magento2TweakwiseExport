@@ -173,6 +173,18 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="export_path" translate="label,comment" type="label" sortOrder="170" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Path</label>
+                    <comment>
+                        <![CDATA[
+                        Export url will be: www.example.com/tweakwise/feed/export/key/XXXX <br />
+                        If Store Level Export enabled, add /store/{store_name} to the store url
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <group id="export_stock" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -209,6 +221,18 @@
                         <field id="real_time">0</field>
                     </depends>
                 </field>
+                <field id="stock_export_path" translate="label,comment" type="label" sortOrder="205" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Path</label>
+                    <comment>
+                        <![CDATA[
+                        Export url will be: www.example.com/tweakwise/feed/export/key/XXXX/type/stock <br />
+                        If Store Level Export enabled, add /store/{store_name} to the store url
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <group id="export_price" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -243,6 +267,18 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="real_time">0</field>
+                    </depends>
+                </field>
+                <field id="price_export_path" translate="label,comment" type="label" sortOrder="205" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Path</label>
+                    <comment>
+                        <![CDATA[
+                        Export url will be: www.example.com/tweakwise/feed/export/key/XXXX/type/price <br />
+                        If Store Level Export enabled, add /store/{store_name} to the store url
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="enabled">1</field>
                     </depends>
                 </field>
             </group>
