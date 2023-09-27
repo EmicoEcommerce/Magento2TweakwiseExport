@@ -27,7 +27,7 @@
 
                 <field id="feed_key" translate="label,comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Key</label>
-                    <comment>Export url will be: www.example.com/tweakwise/feed/export/key/XXXX</comment>
+                    <comment>Export url will be: www.example.com/tweakwise/feed/export/key/XXXX. If Store Level Export enabled, add /store/{store_code} to the store url/</comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -177,6 +177,12 @@
 
             <group id="export_stock" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Export stock</label>
+                <comment>
+                    <![CDATA[
+                        Export url will be: www.example.com/tweakwise/feed/export/key/XXXX/type/stock.
+                        If Store Level Export enabled, add /store/{store_code} to the store url.
+                        ]]>
+                </comment>
                 <field id="schedule" translate="label" type="text" sortOrder="201" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule stock export</label>
                     <comment>Leave empty to disable export by cron.</comment>
@@ -213,6 +219,12 @@
 
             <group id="export_price" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Export price</label>
+                <comment>
+                    <![CDATA[
+                        Export url will be: www.example.com/tweakwise/feed/export/key/XXXX/type/price.
+                        If Store Level Export enabled, add /store/{store_code} to the store url.
+                        ]]>
+                </comment>
                 <field id="schedule" translate="label" type="text" sortOrder="201" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule price export</label>
                     <comment>Leave empty to disable export by cron.</comment>
