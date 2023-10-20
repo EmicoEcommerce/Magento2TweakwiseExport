@@ -19,6 +19,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
  *
  * @magentoDataFixtureBeforeTransaction createMultiStoreFixture
  * @magentoDbIsolation enabled
+ * @magentoAppIsolation enabled
  */
 class BasicTest extends MultiStoreTest
 {
