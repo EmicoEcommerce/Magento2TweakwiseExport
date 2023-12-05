@@ -15,6 +15,7 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 
 /**
  * @magentoDbIsolation enabled
+ * @magentoAppIsolation enabled
  */
 class StockTest extends ExportTest
 {

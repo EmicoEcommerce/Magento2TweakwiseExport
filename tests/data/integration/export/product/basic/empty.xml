@@ -2,6 +2,7 @@
 <tweakwise>
     <shop><![CDATA[Default Store View]]></shop>
     <timestamp><![CDATA[2017-01-01T00:00:00.000000+00:00]]></timestamp>
+    <generatedby><![CDATA[Magento2TweakwiseExport GENERATED_BY]]></generatedby>
     <categories>
         <category>
             <categoryid>1</categoryid>

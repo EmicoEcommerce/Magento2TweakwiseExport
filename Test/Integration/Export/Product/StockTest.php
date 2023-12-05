@@ -13,6 +13,7 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 
 /**
  * @magentoDbIsolation enabled
+ * @magentoAppIsolation enabled
  */
 class StockTest extends ExportTest
 {
@@ -51,9 +52,10 @@ class StockTest extends ExportTest
      */
     public function testDisableStockManagement()
     {
-        $product = $this->productData->create(['qty' => 0]);
-        $this->setConfig(StockConfiguration::XML_PATH_MANAGE_STOCK, false);
-        $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false);
+        $this->setConfig(StockConfiguration::XML_PATH_MANAGE_STOCK, false, 0);
+        $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false, 0);
+
+        $product = $this->productData->create(['qty' => 0, 'is_in_stock' => 1]);
 
         $feed = $this->exportFeed();
         $feed->getProduct($product->getId());
@@ -65,12 +67,12 @@ class StockTest extends ExportTest
      */
     public function testInStockWithQtyThreshold()
     {
-        $productInStock = $this->productData->create(['qty' => 6]);
-        $productOutStock = $this->productData->create(['qty' => 4]);
-
         $this->setConfig(StockConfiguration::XML_PATH_MANAGE_STOCK, true);
         $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false);
         $this->setConfig(StockConfiguration::XML_PATH_MIN_QTY, 5);
+
+        $productInStock = $this->productData->create(['qty' => 6]);
+        $productOutStock = $this->productData->create(['qty' => 4, 'is_in_stock' => 0]);
 
         $feed = $this->exportFeed();
         $feed->getProduct($productInStock->getId());

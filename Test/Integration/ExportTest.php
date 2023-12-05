@@ -9,6 +9,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Test\Integration;
 
 use DateTime;
+use Magento\Framework\Composer\ComposerInformation;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Writer;
@@ -41,6 +42,11 @@ abstract class ExportTest extends TestCase
     protected $feedDataFactory;
 
     /**
+     * @var ComposerInformation
+     */
+    protected $composerInformation;
+
+    /**
      * Make sure export is enabled and set some much used objects
      */
     protected function setUp() : void
@@ -52,6 +58,7 @@ abstract class ExportTest extends TestCase
         $this->productData = $this->getObject(ProductProvider::class);
         $this->categoryData = $this->getObject(CategoryProvider::class);
         $this->feedDataFactory = $this->getObject(FeedDataFactory::class);
+        $this->composerInformation = $this->getObject(ComposerInformation::class);
 
         $this->writer = $this->getObject(Writer::class);
         $this->writer->setNow(DateTime::createFromFormat('Y-d-m H:i:s', '2017-01-01 00:00:00'));

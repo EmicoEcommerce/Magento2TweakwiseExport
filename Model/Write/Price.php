@@ -111,9 +111,9 @@ class Price implements WriterInterface
                     Profiler::stop($profileKey);
                 }
 
-                $this->log->debug(sprintf('Export stock for store %s', $store->getName()));
+                $this->log->debug(sprintf('Export price for store %s', $store->getName()));
             } else {
-                $this->log->debug(sprintf('Skip stock for store %s (disabled)', $store->getName()));
+                $this->log->debug(sprintf('Skip price for store %s (disabled)', $store->getName()));
             }
         }
 
@@ -164,7 +164,7 @@ class Price implements WriterInterface
 
         $xml->endElement(); // </item>
 
-        $this->log->debug(sprintf('Export product stock [%s] %s', $tweakwiseId, $data['price']));
+        $this->log->debug(sprintf('Export product price [%s] %s', $tweakwiseId, $data['price']));
     }
 
     /**

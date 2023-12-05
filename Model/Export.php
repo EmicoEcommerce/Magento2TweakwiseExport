@@ -113,10 +113,11 @@ class Export
      * Generate and write feed content to handle
      *
      * @param resource $targetHandle
-     * @param StoreInterface $store
+     * @param null|StoreInterface $store
+     * @param null|String $type
      * @throws Exception
      */
-    public function generateFeed($targetHandle, $store, $type): void
+    public function generateFeed($targetHandle, $store = null, $type = null): void
     {
         header('Content-type: text/xml');
         $this->executeLocked(function () use ($targetHandle, $store, $type) {
@@ -129,6 +130,8 @@ class Export
      * Get latest generated feed and write to resource or create new if real time is enabled.
      *
      * @param resource $targetHandle
+     * @param null|StoreInterface $store
+     * @param null|string $type
      * @throws Exception
      */
     public function getFeed($targetHandle, StoreInterface $store = null, $type = null): void

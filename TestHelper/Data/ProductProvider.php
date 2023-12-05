@@ -171,6 +171,9 @@ class ProductProvider
 
         // Ensure product qty
         $data['qty'] = $data['qty'] ?? self::DEFAULT_STOCK_QTY;
+        if ($data['qty'] > 0 && !isset($data['is_in_stock'])) {
+            $data['is_in_stock'] = 1;
+        }
         $this->updateStockItem($product, $data);
 
         // Assign product to categories
