@@ -100,7 +100,6 @@ class Export implements ActionInterface
 
         (new FeedContent($this->export, $this->log, $store, $request->getParam('type')))->__toString();
 
-        return $this->responseFactory->create()
-            ->setHeader('Cache-Control', 'no-cache');
+        exit();
     }
 }
