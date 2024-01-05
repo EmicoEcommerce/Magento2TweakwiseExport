@@ -236,6 +236,13 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $stockId = $this->getStockIdForStoreId($store);
         $sourceModels = $this->getStockSourceProvider()->execute($stockId);
 
+        //don't get stock for disabled stock sources
+        foreach($sourceModels as $key => $sourceModel) {
+            if (!$sourceModel->isEnabled()) {
+                unset($sourceModels[$key]);
+            }
+        }
+
         $sourceCodeMapper = static function (SourceInterface $source) {
             return $source->getSourceCode();
         };
