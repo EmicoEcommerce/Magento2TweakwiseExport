@@ -152,6 +152,7 @@ class Export
             }
 
             header('Content-type: text/xml');
+            header('Cache-Control: no-cache');
 
             while (!feof($sourceHandle)) {
                 fwrite($targetHandle, fread($sourceHandle, self::FEED_COPY_BUFFER_SIZE));
