@@ -95,8 +95,11 @@ class Export implements ActionInterface
             throw new NotFoundException(__('Page not found.'));
         }
 
+        $store = null;
         $storeId = $request->getParam('store');
-        $store = $this->storeManager->getStore($storeId);
+        if(!empty($storeId)) {
+            $store = $this->storeManager->getStore($storeId);
+        }
 
         (new FeedContent($this->export, $this->log, $store, $request->getParam('type')))->__toString();
 
