@@ -301,7 +301,6 @@ class EavIterator implements IteratorAggregate
             $result = $select->query()->fetchAll();
             $entityIds = array_column($result, 'entity_id');
             $this->entitySet[$storeId] = new \ArrayIterator(array_chunk($entityIds, $this->batchSize));
-            array_flip($entityIds);
             $this->entityData = array_combine($entityIds, $result);
         }
 
