@@ -136,10 +136,6 @@ class Export
      */
     public function getFeed($targetHandle, StoreInterface $store = null, $type = null): void
     {
-        if ((!$this->config->isStoreLevelExportEnabled()) || $store === null){
-            $store = $this->storeManager->getStore();
-        }
-
         if ($this->config->isRealTime()) {
             $this->generateFeed($targetHandle, $store, $type);
         }
