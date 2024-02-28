@@ -111,9 +111,13 @@ class Stock implements WriterInterface
                     Profiler::stop($profileKey);
                 }
 
-                $this->log->debug(sprintf('Export stock for store %s', $store->getName()));
+                if ($this->helper->enableLog) {
+                    $this->log->debug(sprintf('Export stock for store %s', $store->getName()));
+                }
             } else {
-                $this->log->debug(sprintf('Skip stock for store %s (disabled)', $store->getName()));
+                if ($this->helper->enableLog) {
+                    $this->log->debug(sprintf('Skip stock for store %s (disabled)', $store->getName()));
+                }
             }
         }
 
@@ -164,7 +168,9 @@ class Stock implements WriterInterface
 
         $xml->endElement(); // </item>
 
-        $this->log->debug(sprintf('Export product stock [%s] %s', $tweakwiseId, $data['stock']));
+        if ($this->helper->enableLog) {
+            $this->log->debug(sprintf('Export product stock [%s] %s', $tweakwiseId, $data['stock']));
+        }
     }
 
     /**

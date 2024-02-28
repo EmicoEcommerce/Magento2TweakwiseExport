@@ -14,6 +14,7 @@ use SplFileInfo;
 use Magento\Framework\App\ProductMetadata as CommunityProductMetadata;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\App\State;
 
 class Helper
 {
@@ -33,6 +34,11 @@ class Helper
     protected $localDate;
 
     /**
+     * @var bool
+     */
+    public $enableLog;
+
+    /**
      * Helper constructor.
      *
      * @param ProductMetadataInterface $productMetadata
@@ -42,11 +48,17 @@ class Helper
     public function __construct(
         ProductMetadataInterface $productMetadata,
         Config $config,
-        TimezoneInterface $localDate
+        TimezoneInterface $localDate,
+        State $state
     ) {
         $this->productMetadata = $productMetadata;
         $this->config = $config;
         $this->localDate = $localDate;
+
+        $this->enableLog = true;
+        if ($state->getMode() === State::MODE_PRODUCTION) {
+            $this->enableLog = false;
+        }
     }
 
     /**
