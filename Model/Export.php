@@ -16,7 +16,7 @@ use Exception;
 use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use \Magento\Framework\HTTP\LaminasClient as HttpClient;
+use Laminas\Http\Client as HttpClient;
 
 /**
  * Class Export
