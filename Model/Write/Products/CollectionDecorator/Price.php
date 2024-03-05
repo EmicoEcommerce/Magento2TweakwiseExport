@@ -65,7 +65,7 @@ class Price implements DecoratorInterface
         while ($row = $priceQuery->fetch()) {
             $entityId = $row['entity_id'];
             $row['currency'] = $currency->getCurrencyCode();
-            $row['price'] = $this->getPriceValue($collection->getStore()->getId(), $row, $priceFields);
+            $row['price'] = $this->getPriceValue($row, $priceFields);
 
             //do all prices * exchange rate
             foreach($priceFields as $priceField) {
@@ -103,11 +103,11 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $storeId
      * @param array $priceData
+     * @param array $priceFields
      * @return float
      */
-    protected function getPriceValue(int $storeId, array $priceData, array $priceFields): float
+    protected function getPriceValue(array $priceData, array $priceFields): float
     {
         foreach ($priceFields as $field) {
             $value = isset($priceData[$field]) ? (float)$priceData[$field] : 0;
