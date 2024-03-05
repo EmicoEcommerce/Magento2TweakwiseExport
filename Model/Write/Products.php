@@ -21,7 +21,6 @@ use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
-use Magento\Framework\App\State;
 
 class Products implements WriterInterface
 {
@@ -56,11 +55,6 @@ class Products implements WriterInterface
     protected $eavConfig;
 
     /**
-     * @var boolean
-     */
-    protected $enableLog;
-
-    /**
      * @var array
      */
     protected $attributeOptionMap = [];
@@ -81,7 +75,7 @@ class Products implements WriterInterface
         StoreManager $storeManager,
         Helper $helper,
         Logger $log,
-        EavConfig $eavConfig,
+        EavConfig $eavConfig
     ) {
         $this->config = $config;
         $this->iterator = $iterator;
@@ -117,13 +111,9 @@ class Products implements WriterInterface
                     Profiler::stop($profileKey);
                 }
 
-                if ($this->helper->enableLog) {
-                    $this->log->debug(sprintf('Export products for store %s', $store->getName()));
-                }
+                $this->log->debug(sprintf('Export products for store %s', $store->getName()));
             } else {
-                if ($this->helper->enableLog) {
-                    $this->log->debug(sprintf('Skip products for store %s (disabled)', $store->getName()));
-                }
+                $this->log->debug(sprintf('Skip products for store %s (disabled)', $store->getName()));
             }
         }
 
@@ -179,11 +169,9 @@ class Products implements WriterInterface
             if ($xml->hasCategoryExport($categoryTweakwiseId)) {
                 $xml->writeElement('categoryid', $categoryTweakwiseId);
             } else {
-                if ($this->enableLog) {
-                    $this->log->debug(
-                        sprintf('Skip product (%s) category (%s) relation', $tweakwiseId, $categoryTweakwiseId)
-                    );
-                }
+                $this->log->debug(
+                    sprintf('Skip product (%s) category (%s) relation', $tweakwiseId, $categoryTweakwiseId)
+                );
             }
         }
         $xml->endElement(); // categories
@@ -198,9 +186,7 @@ class Products implements WriterInterface
 
         $xml->endElement(); // </item>
 
-        if ($this->helper->enableLog) {
-            $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
-        }
+        $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
     }
 
 

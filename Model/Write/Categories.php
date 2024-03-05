@@ -96,13 +96,9 @@ class Categories implements WriterInterface
                     Profiler::stop($profileKey);
                 }
 
-                if ($this->helper->enableLog) {
-                    $this->log->debug(sprintf('Export categories for store %s', $store->getName()));
-                }
+                $this->log->debug(sprintf('Export categories for store %s', $store->getName()));
             } else {
-                if ($this->helper->enableLog) {
-                    $this->log->debug(sprintf('Skip categories for store %s (disabled)', $store->getName()));
-                }
+                $this->log->debug(sprintf('Skip categories for store %s (disabled)', $store->getName()));
             }
         }
 
@@ -191,13 +187,9 @@ class Categories implements WriterInterface
             $xml->writeElement('categoryid', $parentId);
             $xml->endElement(); // </parents>
 
-            if ($this->helper->enableLog) {
-                $this->log->debug(sprintf('Export category [%s] %s (parent: %s)', $tweakwiseId, $data['name'], $parentId));
-            }
+            $this->log->debug(sprintf('Export category [%s] %s (parent: %s)', $tweakwiseId, $data['name'], $parentId));
         } else {
-            if ($this->helper->enableLog) {
-                $this->log->debug(sprintf('Export category [%s] %s (root)', $tweakwiseId, $data['name']));
-            }
+            $this->log->debug(sprintf('Export category [%s] %s (root)', $tweakwiseId, $data['name']));
         }
 
         $xml->endElement(); // </category>
