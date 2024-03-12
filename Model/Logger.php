@@ -34,10 +34,7 @@ class Logger implements LoggerInterface
     {
         $this->log = $log;
 
-        $this->enableDebugLog = true;
-        if ($state->getMode() === State::MODE_PRODUCTION) {
-            $this->enableDebugLog = false;
-        }
+        $this->enableDebugLog = ($state->getMode() !== State::MODE_PRODUCTION);
     }
 
     /**
