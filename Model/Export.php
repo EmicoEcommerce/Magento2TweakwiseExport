@@ -16,7 +16,7 @@ use Exception;
 use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Zend\Http\Client as HttpClient;
+use Laminas\Http\Client as HttpClient;
 
 /**
  * Class Export
@@ -240,7 +240,7 @@ class Export
             $client = new HttpClient($apiImportUrl);
             $client->send();
             $this->log->debug('TW import triggered');
-        } catch (HttpClient\Exception\ExceptionInterface $e) {
+        } catch (Exception $e) {
             $this->log->error(sprintf('Trigger TW import failed due to %s', $e->getMessage()));
         }
     }
