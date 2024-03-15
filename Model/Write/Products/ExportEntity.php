@@ -10,6 +10,9 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ExportEntity
 {
     /**
@@ -248,7 +251,7 @@ class ExportEntity
 
     /**
      * @param string $attribute
-     * @param $value
+     * @param mixed $value
      */
     public function addAttribute(string $attribute, $value): void
     {

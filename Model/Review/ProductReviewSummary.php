@@ -5,7 +5,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Review;
 /**
  * Class ProductSummary
  * There is no Magento native review interface or summary interface, hence this class
- * @package Tweakwise\Magento2TweakwiseExport\Model\Review
  */
 class ProductReviewSummary
 {

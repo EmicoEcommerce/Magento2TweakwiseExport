@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -80,11 +81,12 @@ class Categories implements WriterInterface
         $this->writeCategory($xml, 0, ['entity_id' => 1, 'name' => 'Root', 'position' => 0]);
 
         $stores = [];
-        if ($store){
+        if ($store) {
             $stores[] = $store;
         } else {
             $stores = $this->storeManager->getStores();
         }
+
         /** @var Store $store */
         foreach ($stores as $store) {
             if ($this->config->isEnabled($store)) {
@@ -111,6 +113,7 @@ class Categories implements WriterInterface
      * @param XMLWriter $xml
      * @param Store $store
      * @param int[] $entityIds
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function exportStore(Writer $writer, XMLWriter $xml, Store $store, array $entityIds = []): void
     {
@@ -158,6 +161,7 @@ class Categories implements WriterInterface
                 $writer->flush();
             }
         }
+
         // Flush any remaining categories
         $writer->flush();
     }
@@ -184,6 +188,7 @@ class Categories implements WriterInterface
             if ($parentId !== 1) {
                 $parentId = $this->helper->getTweakwiseId($storeId, $parentId);
             }
+
             $xml->writeElement('categoryid', $parentId);
             $xml->endElement(); // </parents>
 

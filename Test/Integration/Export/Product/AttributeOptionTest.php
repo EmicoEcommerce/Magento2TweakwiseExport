@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -12,6 +13,9 @@ use Tweakwise\Magento2TweakwiseExport\Test\Integration\ExportTest;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\AttributeProvider;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\ConfigurableProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ */
 class AttributeOptionTest extends ExportTest
 {
     /**
@@ -27,7 +31,7 @@ class AttributeOptionTest extends ExportTest
     /**
      * Make sure export is enabled and set some much used objects
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -41,10 +45,12 @@ class AttributeOptionTest extends ExportTest
      */
     public function testProductWithRemovedOption()
     {
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'Black'],
             ['color' => 'Blue'],
-        ]);
+            ]
+        );
 
         // Remove one attribute
         $this->attributeProvider->deleteOption('color', 'Blue');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -82,8 +83,7 @@ class StoreProvider
         CategoryProvider $categoryProvider,
         StoreManagerInterface $storeManager,
         IndexerInterfaceFactory $indexerFactory
-    )
-    {
+    ) {
         $this->faker = Factory::create();
         $this->hydrator = $hydrator;
         $this->websiteFactory = $websiteFactory;
@@ -138,6 +138,8 @@ class StoreProvider
      *
      * @param string $code
      * @return bool
+     * @throws \Exception
+     * @throws BadMethodCallException
      */
     public function removeWebsite(string $code): bool
     {
@@ -211,6 +213,8 @@ class StoreProvider
      *
      * @param string $code
      * @return bool
+     * @throws \Exception
+     * @throws BadMethodCallException
      */
     public function removeStoreGroup(string $code): bool
     {
@@ -279,6 +283,8 @@ class StoreProvider
      *
      * @param string $code
      * @return bool
+     * @throws \Exception
+     * @throws BadMethodCallException
      */
     public function removeStoreView(string $code): bool
     {

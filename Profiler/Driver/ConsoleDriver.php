@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -85,15 +86,15 @@ class ConsoleDriver implements DriverInterface
         if ($data['start']) {
             $this->output->writeln(sprintf('[CodeProfiler][start] %s', $timerId));
         } else {
-            $this->output->writeln(sprintf(
-                '[CodeProfiler][stop] %s %s (Memory usage: real - %s, emalloc - %s)',
-                $timerId,
-                number_format($data[Stat::TIME], 6),
-                $data[Stat::REALMEM],
-                $data[Stat::EMALLOC]
-            ));
+            $this->output->writeln(
+                sprintf(
+                    '[CodeProfiler][stop] %s %s (Memory usage: real - %s, emalloc - %s)',
+                    $timerId,
+                    number_format($data[Stat::TIME], 6),
+                    $data[Stat::REALMEM],
+                    $data[Stat::EMALLOC]
+                )
+            );
         }
-
-
     }
 }

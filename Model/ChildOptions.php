@@ -6,7 +6,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Model;
  * Used solely for stock calculation for bundle products
  *
  * Class ChildOptions
- * @package Tweakwise\Magento2TweakwiseExport\Model
  */
 class ChildOptions
 {

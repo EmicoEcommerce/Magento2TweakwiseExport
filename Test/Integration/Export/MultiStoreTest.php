@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,14 +15,18 @@ use Tweakwise\Magento2TweakwiseExport\Test\Integration\ExportTest;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\StoreProvider;
 use Magento\TestFramework\Helper\Bootstrap;
 
+/**
+ * Class MultiStoreTest
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ */
 abstract class MultiStoreTest extends ExportTest
 {
     /**
      * Store codes for second store
      */
-    const STORE_WEBSITE_CODE = 'website_2';
-    const STORE_GROUP_CODE = 'group_2';
-    const STORE_STORE_CODE = 'store_2';
+    protected const STORE_WEBSITE_CODE = 'website_2';
+    protected const STORE_GROUP_CODE = 'group_2';
+    protected const STORE_STORE_CODE = 'store_2';
 
     /**
      * @var Helper
@@ -36,7 +41,7 @@ abstract class MultiStoreTest extends ExportTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->storeProvider = $this->getObject(StoreProvider::class);

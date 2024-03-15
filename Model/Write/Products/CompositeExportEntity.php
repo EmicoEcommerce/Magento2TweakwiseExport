@@ -2,10 +2,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
-/**
- * Class CompositeExportEntity
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products
- */
 class CompositeExportEntity extends ExportEntity implements CompositeExportEntityInterface
 {
     /**

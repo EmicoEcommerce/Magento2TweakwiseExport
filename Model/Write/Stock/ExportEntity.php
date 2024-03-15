@@ -223,7 +223,7 @@ class ExportEntity
 
     /**
      * @param string $attribute
-     * @param $value
+     * @param mixed $value
      */
     public function addAttribute(string $attribute, $value): void
     {

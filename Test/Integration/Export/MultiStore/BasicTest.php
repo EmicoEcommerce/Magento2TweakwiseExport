@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -13,13 +14,10 @@ use Tweakwise\Magento2TweakwiseExport\Test\Integration\Export\MultiStoreTest;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
- * Class BasicTest
- *
- * @package Tweakwise\Magento2TweakwiseExport\Test\Integration\Export\Product
- *
  * @magentoDataFixtureBeforeTransaction createMultiStoreFixture
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class BasicTest extends MultiStoreTest
 {

@@ -21,7 +21,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockColle
 
 /**
  * Class DefaultImplementation
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData
  */
 class SourceItemMapProvider implements StockMapProviderInterface
 {
@@ -104,6 +103,8 @@ class SourceItemMapProvider implements StockMapProviderInterface
      * @return StockItem[]
      * @throws LocalizedException
      * @throws \Zend_Db_Statement_Exception
+     * phpcs:disable Squiz.Arrays.ArrayDeclaration.KeySpecified
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getStockItemMap(Collection|StockCollection $collection): array
     {
@@ -237,7 +238,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $sourceModels = $this->getStockSourceProvider()->execute($stockId);
 
         //don't get stock for disabled stock sources
-        foreach($sourceModels as $key => $sourceModel) {
+        foreach ($sourceModels as $key => $sourceModel) {
             if (!$sourceModel->isEnabled()) {
                 unset($sourceModels[$key]);
             }

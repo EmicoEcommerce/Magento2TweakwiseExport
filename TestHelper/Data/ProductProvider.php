@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -33,7 +34,7 @@ class ProductProvider
     /**
      * Product default stock qty
      */
-    const DEFAULT_STOCK_QTY = 100;
+    private const DEFAULT_STOCK_QTY = 100;
 
     /**
      * @var Generator
@@ -69,6 +70,7 @@ class ProductProvider
      * @var CategoryProvider
      */
     protected $categoryProvider;
+
     /**
      * @var AttributeProvider
      */
@@ -88,6 +90,7 @@ class ProductProvider
      * @var StoreManagerInterface
      */
     protected $storeManager;
+
     /**
      * @var EavConfig
      */
@@ -127,8 +130,7 @@ class ProductProvider
         StoreManagerInterface $storeManager,
         EavConfig $eavConfig,
         WebsiteLink $websiteLink
-    )
-    {
+    ) {
         $this->faker = Factory::create();
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -174,6 +176,7 @@ class ProductProvider
         if ($data['qty'] > 0 && !isset($data['is_in_stock'])) {
             $data['is_in_stock'] = 1;
         }
+
         $this->updateStockItem($product, $data);
 
         // Assign product to categories
@@ -201,7 +204,7 @@ class ProductProvider
     /**
      * @param ProductInterface $product
      * @param string $attribute
-     * @param $value
+     * @param mixed $value
      * @param string|null $store
      */
     public function saveAttribute(ProductInterface $product, string $attribute, $value, string $store = null)

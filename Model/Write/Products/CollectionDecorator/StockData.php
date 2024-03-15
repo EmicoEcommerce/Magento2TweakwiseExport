@@ -177,8 +177,12 @@ class StockData implements DecoratorInterface
         if (version_compare($version, '2.3.0', '<')) {
             return $this->stockMapProviders['stockItemMapProvider'];
         }
+
         // If 2.3.X but MSI is disabled also use stock items
-        if (!$this->moduleManager->isEnabled('Magento_Inventory') || !$this->moduleManager->isEnabled('Magento_InventoryApi')) {
+        if (
+            !$this->moduleManager->isEnabled('Magento_Inventory') ||
+            !$this->moduleManager->isEnabled('Magento_InventoryApi')
+        ) {
             return $this->stockMapProviders['stockItemMapProvider'];
         }
 

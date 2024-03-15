@@ -2,7 +2,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model;
 
-
 class StockItem
 {
     /**
@@ -24,7 +23,7 @@ class StockItem
     }
 
     /**
-     * @param int
+     * @param int $qty
      */
     public function setQty(int $qty): void
     {

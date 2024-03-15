@@ -4,10 +4,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
 use Tweakwise\Magento2TweakwiseExport\Traits\Stock\HasStockThroughChildren;
 
-/**
- * Class ExportEntityConfigurable
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products
- */
 class ExportEntityConfigurable extends CompositeExportEntity
 {
     use HasStockThroughChildren;
@@ -16,7 +12,6 @@ class ExportEntityConfigurable extends CompositeExportEntity
      * @var bool
      */
     protected $isStockCombined;
-
 
     /**
      * @param array $data

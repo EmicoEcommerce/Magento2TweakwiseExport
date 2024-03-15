@@ -49,6 +49,7 @@ class EntityHydrator
                 $object->$method($value);
             }
         }
+
         return $object;
     }
 
@@ -64,6 +65,7 @@ class EntityHydrator
 
             $this->fieldToMethodFilter = $filter;
         }
+
         return $this->fieldToMethodFilter;
     }
 
@@ -77,6 +79,7 @@ class EntityHydrator
         if (!isset($this->reflectionCache[$class])) {
             $this->reflectionCache[$class] = new ReflectionClass($class);
         }
+
         return $this->reflectionCache[$class];
     }
 
@@ -97,6 +100,7 @@ class EntityHydrator
 
             $this->methodCache[$key] = $reflection->hasMethod($method) ? $method : false;
         }
+
         return $this->methodCache[$key];
     }
 }

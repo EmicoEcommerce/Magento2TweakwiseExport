@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -92,15 +93,17 @@ class Export
         }
 
         $validate = $this->config->isValidate();
-        if ($this->config->isStoreLevelExportEnabled()){
+        if ($this->config->isStoreLevelExportEnabled()) {
             foreach ($this->storeManager->getStores() as $store) {
                 if ($this->config->isEnabled($store)) {
                     $feedFile = $this->config->getDefaultFeedFile($store, $type);
                     $this->export->generateToFile($feedFile, $validate, $store, $type);
                 }
             }
+
             return;
         }
+
         $feedFile = $this->config->getDefaultFeedFile($store = null, $type);
         $this->export->generateToFile($feedFile, $validate, $store = null, $type);
     }

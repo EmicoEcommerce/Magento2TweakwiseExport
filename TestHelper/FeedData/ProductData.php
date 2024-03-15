@@ -103,6 +103,7 @@ class ProductData
             if (\is_array($this->attributes[$key])) {
                 asort($this->attributes[$key]);
             }
+
             $this->test->assertEquals($value, $this->attributes[$key]);
         }
     }
@@ -118,7 +119,6 @@ class ProductData
             $this->parseCategories();
         }
 
-
         $this->test->safeAssertArraySubset($categories, $this->categories);
     }
 
@@ -130,6 +130,7 @@ class ProductData
         if ($this->price !== null) {
             return;
         }
+
         $this->price = (float) $this->element->price;
     }
 

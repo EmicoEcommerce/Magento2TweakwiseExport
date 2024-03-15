@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
+// phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
@@ -56,7 +57,7 @@ class Price implements DecoratorInterface
         $currency = $collection->getStore()->getCurrentCurrency();
         $exchangeRate = 1;
 
-        if ($collection->getStore()->getCurrentCurrencyRate() > 0.00001){
+        if ($collection->getStore()->getCurrentCurrencyRate() > 0.00001) {
             $exchangeRate = (float)$collection->getStore()->getCurrentCurrencyRate();
         }
 
@@ -68,7 +69,7 @@ class Price implements DecoratorInterface
             $row['price'] = $this->getPriceValue($row, $priceFields);
 
             //do all prices * exchange rate
-            foreach($priceFields as $priceField) {
+            foreach ($priceFields as $priceField) {
                 $row[$priceField] = (float) ($row[$priceField] * $exchangeRate);
             }
 
@@ -80,6 +81,7 @@ class Price implements DecoratorInterface
      * @param array $ids
      * @param int $websiteId
      * @return ProductCollection
+     * phpcs:disable Squiz.Arrays.ArrayDeclaration.KeySpecified
      */
     protected function createPriceSelect(array $ids, int $websiteId): ProductCollection
     {

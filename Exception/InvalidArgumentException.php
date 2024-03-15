@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,7 +9,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ExportException
+class InvalidArgumentException extends \InvalidArgumentException implements ExportExceptionInterface
 {
-
 }

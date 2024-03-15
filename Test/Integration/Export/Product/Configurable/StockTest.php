@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -16,6 +17,7 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class StockTest extends ExportTest
 {
@@ -27,7 +29,7 @@ class StockTest extends ExportTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurableProvider = $this->getObject(ConfigurableProvider::class);
@@ -42,11 +44,13 @@ class StockTest extends ExportTest
         $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false);
         $this->setConfig(Config::PATH_OUT_OF_STOCK_CHILDREN, true);
 
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'qty' => 0],
             ['color' => 'blue', 'qty' => 10],
             ['color' => 'white', 'qty' => 2],
-        ]);
+            ]
+        );
 
         $this->exportFeed()->getProduct($product->getId())->assertAttributes(['color' => ['black', 'blue', 'white']]);
     }
@@ -60,11 +64,13 @@ class StockTest extends ExportTest
         $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false);
         $this->setConfig(Config::PATH_OUT_OF_STOCK_CHILDREN, false);
 
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'qty' => 0],
             ['color' => 'blue', 'qty' => 10],
             ['color' => 'white', 'qty' => 2],
-        ]);
+            ]
+        );
 
         $this->exportFeed()->getProduct($product->getId())->assertAttributes(['color' => ['blue', 'white']]);
     }
@@ -78,11 +84,13 @@ class StockTest extends ExportTest
         $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false);
         $this->setConfig(Config::PATH_OUT_OF_STOCK_CHILDREN, false);
 
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'qty' => 0],
             ['color' => 'blue', 'qty' => 10],
             ['color' => 'white', 'qty' => 2, 'use_config_min_qty' => false, 'min_qty' => 5],
-        ]);
+            ]
+        );
 
         $this->exportFeed()->getProduct($product->getId())->assertAttributes(['color' => 'blue']);
     }
@@ -96,10 +104,12 @@ class StockTest extends ExportTest
         $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false);
         $this->setConfig(Config::PATH_OUT_OF_STOCK_CHILDREN, false);
 
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'qty' => 0],
             ['color' => 'white', 'qty' => 2, 'use_config_min_qty' => false, 'min_qty' => 5],
-        ]);
+            ]
+        );
 
         $this->exportFeed()->assertProductMissing($product->getId());
     }

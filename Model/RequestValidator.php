@@ -37,7 +37,7 @@ class RequestValidator
     public function validateStoreKey(RequestInterface $request): bool
     {
         $store = $request->getParam('store');
-        if (!$this->config->isStoreLevelExportEnabled() && ($store !== null)){
+        if (!$this->config->isStoreLevelExportEnabled() && ($store !== null)) {
             return false;
         }
 
@@ -47,7 +47,7 @@ class RequestValidator
     public function validateType(RequestInterface $request): bool
     {
         $type = $request->getParam('type');
-        if ($type === 'stock' || $type === 'price' || empty($type)){
+        if ($type === 'stock' || $type === 'price' || empty($type)) {
             return true;
         }
 

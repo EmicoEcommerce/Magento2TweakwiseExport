@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -21,7 +22,6 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
  * Most of this class came from https://github.com/netz98/n98-magerun2/:
  * - N98/Magento/Command/System/Cron/AbstractCronCommand.php
  * - N98/Magento/Command/System/Cron/ScheduleCommand.php
- *
  */
 class Scheduler
 {
@@ -115,6 +115,7 @@ class Scheduler
         if (version_compare($version, '2.2.0') >= 0) {
             return $this->dateTime->gmtTimestamp();
         }
+
         return $this->timezone->scopeTimeStamp();
     }
 }

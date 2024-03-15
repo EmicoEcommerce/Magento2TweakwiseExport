@@ -8,7 +8,6 @@ use Magento\Store\Model\Store;
 
 /**
  * Interface StockMapProviderInterface
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData
  */
 interface StockMapProviderInterface
 {

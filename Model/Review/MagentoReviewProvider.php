@@ -6,10 +6,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Magento\Review\Model\ResourceModel\Review\Summary\CollectionFactory as SummaryCollectionFactory;
 use Magento\Review\Model\Review\Summary;
 
-/**
- * Class MagentoReviewProvider
- * @package Tweakwise\Magento2TweakwiseExport\Model\Review
- */
 class MagentoReviewProvider implements ReviewProviderInterface
 {
     /**
@@ -28,7 +24,7 @@ class MagentoReviewProvider implements ReviewProviderInterface
     }
 
     /**
-     * @param Collection $collection Tweakwise product collection
+     * @param Collection $collection
      * @return ProductReviewSummary[]
      */
     public function getProductReviews(Collection $collection): array

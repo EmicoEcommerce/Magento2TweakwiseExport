@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -59,6 +60,7 @@ class Helper
         if (!$storeId) {
             return $entityId;
         }
+
         // Prefix 1 is to make sure it stays the same length when casting to int
         return '1' . str_pad($storeId, 4, '0', STR_PAD_LEFT) . $entityId;
     }
@@ -100,7 +102,7 @@ class Helper
     /**
      * Get date of last finished feed export
      *
-     * @param $type string stock or price
+     * @param string $type
      *
      * @return DateTime|null
      */
@@ -115,7 +117,7 @@ class Helper
     }
 
     /**
-     * @param $type string stock or price
+     * @param string $type
      *
      * @return \Magento\Framework\Phrase|string
      */

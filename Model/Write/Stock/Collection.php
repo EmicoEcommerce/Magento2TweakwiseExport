@@ -50,7 +50,7 @@ class Collection implements IteratorAggregate, Countable
     /**
      * @return ExportEntity[]|ArrayIterator
      */
-    public function getIterator() : \Traversable
+    public function getIterator(): \Traversable
     {
         return new ArrayIterator($this->entities);
     }
@@ -82,6 +82,7 @@ class Collection implements IteratorAggregate, Countable
     /**
      * @param int $id
      * @return ExportEntity
+     * @throws InvalidArgumentException
      */
     public function get(int $id): ExportEntity
     {
@@ -114,6 +115,7 @@ class Collection implements IteratorAggregate, Countable
 
             $result[$entity->getId()] = $entity;
         }
+
         return $result;
     }
 
@@ -143,6 +145,7 @@ class Collection implements IteratorAggregate, Countable
                 }
             }
         }
+
         // Make unique
         $this->ids = array_flip($ids);
         $this->skus = array_flip($skus);
@@ -178,6 +181,8 @@ class Collection implements IteratorAggregate, Countable
      * Allow for removal of export entities
      *
      * @param int $id
+     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
      */
     public function remove(int $id): void
     {
@@ -187,6 +192,7 @@ class Collection implements IteratorAggregate, Countable
         if (!$entity) {
             return;
         }
+
         try {
             /** @var string|array $sku */
             $sku = $entity->getAttribute('sku', false);
@@ -198,6 +204,7 @@ class Collection implements IteratorAggregate, Countable
                 */
                 $sku = reset($sku);
             }
+
             /** @var string $sku */
             unset($this->skus[$sku]);
         } catch (InvalidArgumentException $e) {

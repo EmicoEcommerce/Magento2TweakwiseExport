@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -12,10 +13,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\ProductAttributes as ProductAttribut
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Data\OptionSourceInterface;
 
-/**
- * Class ProductAttributes
- * @package Tweakwise\Magento2TweakwiseExport\Model\Config\Source
- */
 class ProductAttributes implements OptionSourceInterface
 {
     /**
@@ -49,7 +46,6 @@ class ProductAttributes implements OptionSourceInterface
     {
         $result = [];
         foreach ($this->productAttributesHelper->getAttributesToExport() as $attribute) {
-
             $attributeCode = $attribute->getAttributeCode();
             $result[] = [
                 'value' => $attributeCode,

@@ -5,10 +5,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Price;
 use Tweakwise\Magento2TweakwiseExport\Model\ProductAttributes;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
 
-/**
- * Class IteratorInitializer
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products
- */
 class IteratorInitializer
 {
     /**

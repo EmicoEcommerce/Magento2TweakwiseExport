@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -17,10 +18,6 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
 
-/**
- * Class Iterator
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Categories
- */
 class Iterator extends EavIterator
 {
     /**
@@ -32,7 +29,7 @@ class Iterator extends EavIterator
     ];
 
     /**
-     * {@inheritDoc}
+     * @var string[]
      */
     protected $eavSelectOrder = [
         'path',
@@ -43,11 +40,11 @@ class Iterator extends EavIterator
     /**
      * Iterator constructor.
      *
-     * @param int $batchSize
      * @param Helper $helper
      * @param EavConfig $eavConfig
      * @param DbContext $dbContext
-     * @param array|string[] $attributes
+     * @param Manager $eventManager
+     * @param array $attributes
      * @param TweakwiseConfig $config
      */
     public function __construct(
@@ -55,7 +52,7 @@ class Iterator extends EavIterator
         EavConfig $eavConfig,
         DbContext $dbContext,
         Manager $eventManager,
-        $attributes,
+        array $attributes,
         TweakwiseConfig $config
     ) {
         parent::__construct(

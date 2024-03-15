@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,6 +11,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 use DateTime;
 use Magento\Framework\App\State as AppState;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManager;
@@ -55,6 +57,11 @@ class Writer
     protected $composerInformation;
 
     /**
+     * @var DriverInterface
+     */
+    private DriverInterface $driver;
+
+    /**
      * Writer constructor.
      *
      * @param StoreManager $storeManager
@@ -66,12 +73,14 @@ class Writer
         StoreManager $storeManager,
         AppState $appState,
         ComposerInformation $composerInformation,
-        $writers
+        $writers,
+        DriverInterface $driver
     ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
         $this->writers = $writers;
         $this->composerInformation = $composerInformation;
+        $this->driver = $driver;
     }
 
     /**
@@ -82,6 +91,7 @@ class Writer
         if (!$this->now) {
             $this->now = new DateTime();
         }
+
         return $this->now;
     }
 
@@ -132,6 +142,7 @@ class Writer
             foreach ($this->writers as $writer) {
                 $writer->write($this, $xml, $store);
             }
+
             $this->endDocument();
         } finally {
             $this->close();
@@ -184,7 +195,7 @@ class Writer
     {
         $output = $this->getXml()->flush();
         if ($output) {
-            fwrite($this->resource, $output);
+            $this->driver->fileWrite($this->resource, $output);
         }
     }
 
@@ -236,6 +247,7 @@ class Writer
             // This should never be the case
             return '';
         }
+
         $version = $installedPackages['tweakwise/magento2-tweakwise-export']['version'];
 
         return sprintf('Magento2TweakwiseExport %s', $version);
@@ -252,14 +264,14 @@ class Writer
         $this->flush();
     }
 
-    protected function determineWriters($type = null) : void
+    protected function determineWriters($type = null): void
     {
         if ($type === null) {
-            unset ($this->writers['stock']);
+            unset($this->writers['stock']);
             unset($this->writers['price']);
         } else {
             foreach ($this->writers as $key => $value) {
-                if($type !== $key) {
+                if ($type !== $key) {
                     unset($this->writers[$key]);
                 }
             }

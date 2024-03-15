@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -76,8 +77,7 @@ class FeedData
         CategoryDataFactory $categoryDataFactory,
         TestCase $test,
         string $feed
-    )
-    {
+    ) {
         $this->helper = $helper;
         $this->storeManager = $storeManager;
         $this->feed = $feed;
@@ -139,11 +139,13 @@ class FeedData
             return;
         }
 
-        $this->test->fail(sprintf(
-            'Product for store %s with id %s was not supposed to be in de the feed.',
-            $store->getCode(),
-            $entityId
-        ));
+        $this->test->fail(
+            sprintf(
+                'Product for store %s with id %s was not supposed to be in de the feed.',
+                $store->getCode(),
+                $entityId
+            )
+        );
     }
 
     /**
@@ -206,6 +208,7 @@ class FeedData
         if (!$store) {
             $this->test->fail('Default store not set and no store id provided.');
         }
+
         return $store;
     }
 }
