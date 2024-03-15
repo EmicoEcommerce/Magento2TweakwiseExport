@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,6 +15,7 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class StockTest extends ExportTest
 {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,6 +15,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
  * @magentoDbIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class StatusTest extends ExportTest
 {
@@ -25,7 +27,7 @@ class StatusTest extends ExportTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurableProvider = $this->getObject(ConfigurableProvider::class);
@@ -36,11 +38,13 @@ class StatusTest extends ExportTest
      */
     public function testAttributesWhenDisabled()
     {
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'status' => Status::STATUS_ENABLED],
             ['color' => 'blue', 'status' => Status::STATUS_ENABLED],
             ['color' => 'white', 'status' => Status::STATUS_DISABLED],
-        ]);
+            ]
+        );
 
         $this->exportFeed()->getProduct($product->getId())->assertAttributes(['color' => ['black', 'blue']]);
     }
@@ -50,11 +54,13 @@ class StatusTest extends ExportTest
      */
     public function testWhenAllSimpleDisabled()
     {
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'status' => Status::STATUS_DISABLED],
             ['color' => 'blue', 'status' => Status::STATUS_DISABLED],
             ['color' => 'white', 'status' => Status::STATUS_DISABLED],
-        ]);
+            ]
+        );
 
         $this->exportFeed()->assertProductMissing($product->getId());
     }

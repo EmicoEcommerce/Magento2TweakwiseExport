@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product;
 
+use Magento\Framework\Exception\LocalizedException;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\ProductProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
@@ -22,7 +24,7 @@ class ConfigurableProvider
     /**
      * Generated child product names
      */
-    const GENERATED_CHILD_PRODUCTS = '_generated_child_products';
+    public const GENERATED_CHILD_PRODUCTS = '_generated_child_products';
 
     /**
      * @var ProductProvider
@@ -38,6 +40,7 @@ class ConfigurableProvider
      * @var OptionsFactory
      */
     protected $optionsFactory;
+
     /**
      * @var ProductRepository
      */
@@ -56,8 +59,7 @@ class ConfigurableProvider
         AttributeProvider $attributeProvider,
         OptionsFactory $optionsFactory,
         ProductRepository $productRepository
-    )
-    {
+    ) {
         $this->productProvider = $productProvider;
         $this->attributeProvider = $attributeProvider;
         $this->optionsFactory = $optionsFactory;
@@ -74,8 +76,7 @@ class ConfigurableProvider
         array $simpleData,
         array $productData = [],
         array $configurableAttributes = ['color']
-    ): ProductInterface
-    {
+    ): ProductInterface {
         if (!isset($productData['type_id'])) {
             $productData['type_id'] = Configurable::TYPE_CODE;
         }
@@ -87,6 +88,7 @@ class ConfigurableProvider
         foreach ($configurableAttributes as $attribute) {
             $this->attributeProvider->ensureSet($attribute, 'Default');
         }
+
         $product = $this->productProvider->create($productData);
 
         $simpleProducts = $this->createSimpleProducts($simpleData, $configurableAttributes);
@@ -127,17 +129,21 @@ class ConfigurableProvider
      * @param array $data
      * @param array $configurableAttributes
      * @return ProductInterface
+     * @throws LocalizedException
+     * @throws RuntimeException
      */
     protected function createSimpleProduct(array $data, array $configurableAttributes): ProductInterface
     {
         // Rewrite configurable data to option values
         foreach ($configurableAttributes as $attributeCode) {
             if (!isset($data[$attributeCode])) {
-                throw new RuntimeException(sprintf(
-                    'Attribute code %s does not exists in simple data %s',
-                    $attributeCode,
-                    Json::encode($data)
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Attribute code %s does not exists in simple data %s',
+                        $attributeCode,
+                        Json::encode($data)
+                    )
+                );
             }
 
             if (!\is_int($data[$attributeCode])) {

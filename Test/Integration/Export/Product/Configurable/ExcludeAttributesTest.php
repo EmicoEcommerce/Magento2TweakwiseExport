@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -19,6 +20,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 /**
  * @magentoDbIsolation enabled
  * @@magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class ExcludeAttributesTest extends ExportTest
 {
@@ -35,7 +37,7 @@ class ExcludeAttributesTest extends ExportTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurableProvider = $this->getObject(ConfigurableProvider::class);
@@ -48,11 +50,13 @@ class ExcludeAttributesTest extends ExportTest
     public function testAttributesWhenDisabled()
     {
         /** @var Product $product */
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'Black', 'status' => Status::STATUS_ENABLED],
             ['color' => 'Blue', 'status' => Status::STATUS_ENABLED],
             ['color' => 'White', 'status' => Status::STATUS_DISABLED],
-        ]);
+            ]
+        );
 
         $feed = $this->exportFeed();
         $feed->getProduct($product->getId())->assertAttributes(['color' => ['Black', 'Blue']]);
@@ -98,6 +102,10 @@ class ExcludeAttributesTest extends ExportTest
             ['color' => $parentColorId]
         );
 
-        $this->exportFeed()->getProduct($product->getId())->assertAttributes(['color' => ['parent color', 'child color']]);
+        $this->exportFeed()->getProduct($product->getId())->assertAttributes(
+            [
+                'color' => ['parent color', 'child color']
+            ]
+        );
     }
 }

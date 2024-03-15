@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -17,7 +18,6 @@ use Magento\Framework\Exception\LocalizedException;
 /**
  * Class ExportStart
  *
- * @package Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field
  *
  * @method Form getForm();
  */
@@ -32,10 +32,12 @@ class ExportStockStart extends Field
     {
         /** @var Button $button  */
         $button = $this->getForm()->getLayout()->createBlock(Button::class);
-        $button->setData([
+        $button->setData(
+            [
             'label' => __('Schedule'),
             'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger/type/stock')}')",
-        ]);
+            ]
+        );
 
         return $button->toHtml();
     }

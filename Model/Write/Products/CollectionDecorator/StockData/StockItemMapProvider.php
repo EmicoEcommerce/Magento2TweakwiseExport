@@ -70,6 +70,7 @@ class StockItemMapProvider implements StockMapProviderInterface
             $tweakwiseStockItem = $this->getTweakwiseStockItem($item);
             $map[$productId] = $tweakwiseStockItem;
         }
+
         return $map;
     }
 
