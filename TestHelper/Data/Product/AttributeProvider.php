@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -59,8 +60,7 @@ class AttributeProvider
         EavSetup $eavSetup,
         CollectionFactory $attributeOptionCollectionFactory,
         StoreManagerInterface $storeManager
-    )
-    {
+    ) {
         $this->eavConfig = $eavConfig;
         $this->categorySetup = $categorySetup;
         $this->eavSetup = $eavSetup;
@@ -121,10 +121,12 @@ class AttributeProvider
             return $option->getId();
         }
 
-        $this->eavSetup->addAttributeOption([
+        $this->eavSetup->addAttributeOption(
+            [
             'values' => [0 => $label],
             'attribute_id' => $attribute->getAttributeId(),
-        ]);
+            ]
+        );
 
         $attribute->setOptions();
         return $this->getOptionId($code, $label);
@@ -139,11 +141,13 @@ class AttributeProvider
     {
         $attribute = $this->get($code);
         $optionId = $this->getOptionId($code, $label);
-        $this->eavSetup->addAttributeOption([
+        $this->eavSetup->addAttributeOption(
+            [
             'value' => [$optionId => ''],
             'delete' => [$optionId => true],
             'attribute_id' => $attribute->getAttributeId(),
-        ]);
+            ]
+        );
         $attribute->setOptions();
     }
 }

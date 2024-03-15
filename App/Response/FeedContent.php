@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\App\Response;
 
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -18,8 +20,6 @@ use Exception;
  * Class FeedContent
  *
  * To string wrapper so output is not stored in memory but written to output on get content
- *
- * @package Tweakwise\Magento2TweakwiseExport\App\Response
  */
 class FeedContent
 {
@@ -36,18 +36,33 @@ class FeedContent
     protected $type;
 
     protected $store;
+
+    /**
+     * @var DriverInterface
+     */
+    protected DriverInterface $driver;
+
     /**
      * SomeFeedResponse constructor.
      *
      * @param Export $export
      * @param Logger $log
+     * @param DriverInterface $driver
+     * @param StoreInterface|null $store
+     * @param null $type
      */
-    public function __construct(Export $export, Logger $log, StoreInterface $store = null, $type = null)
-    {
+    public function __construct(
+        Export $export,
+        Logger $log,
+        DriverInterface $driver,
+        StoreInterface $store = null,
+        $type = null
+    ) {
         $this->export = $export;
         $this->log = $log;
         $this->type = $type;
         $this->store = $store;
+        $this->driver = $driver;
     }
 
     /**
@@ -57,7 +72,7 @@ class FeedContent
      */
     public function __toString()
     {
-        $resource = fopen('php://output', 'wb');
+        $resource = $this->driver->fileOpen('php://output', 'wb');
         try {
             try {
                 $this->export->getFeed($resource, $this->store, $this->type);
@@ -65,7 +80,7 @@ class FeedContent
                 $this->log->error(sprintf('Failed to get feed due to %s', $e->getMessage()));
             }
         } finally {
-            fclose($resource);
+            $this->driver->fileClose($resource);
         }
 
         return '';

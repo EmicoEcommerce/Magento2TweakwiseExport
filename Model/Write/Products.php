@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -100,6 +101,7 @@ class Products implements WriterInterface
         } else {
             $stores = $this->storeManager->getStores();
         }
+
         /** @var Store $store */
         foreach ($stores as $store) {
             if ($this->config->isEnabled($store)) {
@@ -145,7 +147,6 @@ class Products implements WriterInterface
         $writer->flush();
     }
 
-
     /**
      * @param XMLWriter $xml
      * @param int $storeId
@@ -174,6 +175,7 @@ class Products implements WriterInterface
                 );
             }
         }
+
         $xml->endElement(); // categories
 
         // Write product attributes
@@ -189,7 +191,6 @@ class Products implements WriterInterface
         $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
     }
 
-
     /**
      * @param XMLWriter $xml
      * @param int $storeId
@@ -201,8 +202,7 @@ class Products implements WriterInterface
         $storeId,
         $name,
         $attributeValue
-    ): void
-    {
+    ): void {
         $values = $this->normalizeAttributeValue($storeId, $name, $attributeValue);
         $values = array_unique($values);
 
@@ -249,6 +249,7 @@ class Products implements WriterInterface
      * @param mixed $value
      *
      * @return string|array
+     * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      */
     protected function scalarValue($value)
     {
@@ -264,7 +265,7 @@ class Products implements WriterInterface
         if (is_object($value)) {
             if (method_exists($value, 'toString')) {
                 $value = $value->toString();
-            } else if (method_exists($value, '__toString')) {
+            } elseif (method_exists($value, '__toString')) {
                 $value = (string)$value;
             } else {
                 $value = spl_object_hash($value);
@@ -322,6 +323,7 @@ class Products implements WriterInterface
         foreach ($data as $value) {
             $result[] = explode($delimiter, $value) ?: [];
         }
+
         return !empty($result) ? array_merge([], ...$result) : [];
     }
 
@@ -349,6 +351,7 @@ class Products implements WriterInterface
             $this->log->error($e->getMessage());
             return $values;
         }
+
         // Attribute does not exists so just return value
         if (!$attribute || !$attribute->getId()) {
             return $values;
@@ -367,6 +370,7 @@ class Products implements WriterInterface
             $this->log->error($e->getMessage());
             return $values;
         }
+
         if (!$attributeSource instanceof SourceInterface) {
             return $values;
         }

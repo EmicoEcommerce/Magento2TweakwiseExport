@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -12,6 +13,9 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\App\State;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Logger implements LoggerInterface
 {
     /**

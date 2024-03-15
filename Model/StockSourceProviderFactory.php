@@ -11,7 +11,6 @@ use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface
  * setup:di:compile fails when there is a reference to a non existing Interface or Class in the constructor
  *
  * Class StockSourceProviderFactory
- * @package Tweakwise\Magento2TweakwiseExport\Model
  */
 class StockSourceProviderFactory
 {
@@ -35,6 +34,9 @@ class StockSourceProviderFactory
      */
     public function create($sourceData = null)
     {
-        return $this->_objectManager->create(GetSourcesAssignedToStockOrderedByPriorityInterface::class, ['sourceData' => $sourceData]);
+        return $this->_objectManager->create(
+            GetSourcesAssignedToStockOrderedByPriorityInterface::class,
+            ['sourceData' => $sourceData]
+        );
     }
 }

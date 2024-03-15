@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
+// phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use IteratorAggregate;
@@ -25,6 +27,9 @@ use Magento\Store\Model\Store;
 use Zend_Db_Expr;
 use Zend_Db_Select;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class EavIterator implements IteratorAggregate
 {
     /**
@@ -103,12 +108,13 @@ class EavIterator implements IteratorAggregate
     /**
      * EavIterator constructor.
      *
-     * @param int $batchSize
      * @param Helper $helper
      * @param EavConfig $eavConfig
      * @param DbContext $dbContext
+     * @param Manager $eventManager
      * @param string $entityCode
      * @param string[] $attributes
+     * @param int $batchSize
      */
     public function __construct(
         Helper $helper,
@@ -146,6 +152,7 @@ class EavIterator implements IteratorAggregate
 
     /**
      * @param string $attributeCode
+     * @throws InvalidArgumentException
      */
     public function removeAttribute(string $attributeCode): void
     {
@@ -248,8 +255,10 @@ class EavIterator implements IteratorAggregate
 
     /**
      * @return \Traversable
+     * @throws \Zend_Db_Statement_Exception
+     * phpcs:disable Magento2.Performance.ForeachArrayMerge.ForeachArrayMerge
      */
-    public function getIterator() : \Traversable
+    public function getIterator(): \Traversable
     {
         while ($entityIds = $this->getEntityBatch()) {
             try {
@@ -267,7 +276,10 @@ class EavIterator implements IteratorAggregate
 
                 Profiler::start('loop');
                 try {
-                    $this->eventManager->dispatch('tweakwise_iterator_processbatch', ['batch_size' => count($entityIds), 'entity_code' => $this->entityCode]);
+                    $this->eventManager->dispatch(
+                        'tweakwise_iterator_processbatch',
+                        ['batch_size' => count($entityIds), 'entity_code' => $this->entityCode]
+                    );
                     // Loop over all rows and combine them to one array for entity
                     foreach ($this->loopUnionRows($stmt) as $result) {
                         $result = array_merge($result, $this->entityData[$result['entity_id']]);
@@ -284,6 +296,7 @@ class EavIterator implements IteratorAggregate
 
     /**
      * @return int[]|null
+     * @SuppressWarnings(PHPMD.MissingImport)
      */
     protected function getEntityBatch(): ?array
     {
@@ -365,6 +378,7 @@ class EavIterator implements IteratorAggregate
     /**
      * @param AbstractAttribute[] $attributes
      * @return Select[]
+     * phpcs:disable Squiz.Arrays.ArrayDeclaration.KeySpecified
      */
     protected function getStaticAttributeSelect(array $attributes): array
     {
@@ -407,7 +421,7 @@ class EavIterator implements IteratorAggregate
 
         $storeId = $this->store->getId();
         if ($storeId) {
-            $select->where('store_id = 0 OR store_id = ?',$storeId);
+            $select->where('store_id = 0 OR store_id = ?', $storeId);
         } else {
             $select->where('store_id = 0');
         }
@@ -429,13 +443,19 @@ class EavIterator implements IteratorAggregate
         $connection = $this->getConnection();
         $select = $connection->select()
             ->from(['attribute_table' => $table], [])
-            ->join(['main_table' => $this->getEntityType()->getEntityTable()], 'attribute_table.row_id = main_table.row_id', [])
-            ->columns([
+            ->join(
+                ['main_table' => $this->getEntityType()->getEntityTable()],
+                'attribute_table.row_id = main_table.row_id',
+                []
+            )
+            ->columns(
+                [
                 'entity_id' => 'main_table.entity_id',
                 'store_id' => 'attribute_table.store_id',
                 'attribute_id' => 'attribute_table.attribute_id',
                 'value' => 'attribute_table.value'
-            ])
+                ]
+            )
             ->where('attribute_id IN (?)', array_keys($attributes));
 
         $storeId = $this->store->getId();
@@ -467,8 +487,10 @@ class EavIterator implements IteratorAggregate
             if (!isset($attributeGroups[$table])) {
                 $attributeGroups[$table] = [];
             }
+
             $attributeGroups[$table][$attributeId] = $attribute;
         }
+
         return $attributeGroups;
     }
 

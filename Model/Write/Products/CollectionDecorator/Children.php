@@ -25,10 +25,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceCollection;
 
-/**
- * Class Children
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator
- */
 class Children implements DecoratorInterface
 {
     /**
@@ -86,7 +82,6 @@ class Children implements DecoratorInterface
      * @param CollectionFactory $collectionFactory
      * @param Helper $helper
      * @param DbResourceHelper $dbResource
-     * @param int $batchSize
      * @param TweakwiseConfig $config
      */
     public function __construct(
@@ -193,6 +188,7 @@ class Children implements DecoratorInterface
                 ->columns(['product_id', 'parent_product_id'])
                 ->where('parent_product_id IN (?)', $parentIds);
         }
+
         // Add Required bundle option data
         $select->join(
             ['bundle_option' => $this->dbResource->getTableName('catalog_product_bundle_option')],
@@ -220,8 +216,11 @@ class Children implements DecoratorInterface
      * @param int[] $parentIds
      * @param int $typeId
      */
-    protected function addLinkChildren(Collection|StockCollection|PriceCollection $collection, array $parentIds, $typeId): void
-    {
+    protected function addLinkChildren(
+        Collection|StockCollection|PriceCollection $collection,
+        array $parentIds,
+        $typeId
+    ): void {
         $connection = $this->dbResource->getConnection();
         $select = $connection->select();
 
@@ -244,7 +243,6 @@ class Children implements DecoratorInterface
                 ->where('product_id IN (?)', $parentIds);
         }
 
-
         $query = $select->query();
         while ($row = $query->fetch()) {
             $this->addChild($collection, (int) $row['product_id'], (int) $row['linked_product_id']);
@@ -255,11 +253,12 @@ class Children implements DecoratorInterface
      * @param Collection|StockCollection|PriceCollection $collection
      * @param int[] $parentIds
      */
-    protected function addConfigurableChildren(Collection|StockCollection|PriceCollection $collection, array $parentIds): void
-    {
+    protected function addConfigurableChildren(
+        Collection|StockCollection|PriceCollection $collection,
+        array $parentIds
+    ): void {
         $connection = $this->dbResource->getConnection();
         $select = $connection->select();
-
 
         if ($this->helper->isEnterprise()) {
             $select
@@ -279,7 +278,6 @@ class Children implements DecoratorInterface
                 ->where('parent_id IN (?)', $parentIds);
         }
 
-
         $query = $select->query();
         while ($row = $query->fetch()) {
             $this->addChild($collection, (int) $row['parent_id'], (int) $row['product_id']);
@@ -291,14 +289,15 @@ class Children implements DecoratorInterface
      * @param int $parentId
      * @param int $childId
      * @param ChildOptions|null $childOptions
+     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
      */
     protected function addChild(
         Collection|StockCollection|PriceCollection $collection,
         int $parentId,
         int $childId,
         ChildOptions $childOptions = null
-    ): void
-    {
+    ): void {
         if (!$this->childEntities->has($childId)) {
             $child = $this->entityChildFactory->createChild(
                 [
@@ -310,6 +309,7 @@ class Children implements DecoratorInterface
         } else {
             $child = $this->childEntities->get($childId);
         }
+
         /** @var ExportEntityChild $child */
         if ($childOptions) {
             $child->setChildOptions($childOptions);

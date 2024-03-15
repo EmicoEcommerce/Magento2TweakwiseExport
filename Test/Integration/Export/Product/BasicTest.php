@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -14,6 +15,7 @@ use Tweakwise\Magento2TweakwiseExport\Test\Integration\ExportTest;
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class BasicTest extends ExportTest
 {
@@ -45,11 +47,13 @@ class BasicTest extends ExportTest
         $feedProduct->assertSku($product->getSku());
         $feedProduct->assertName($product->getName());
         $feedProduct->assertPrice($product->getPrice());
-        $feedProduct->assertAttributes([
+        $feedProduct->assertAttributes(
+            [
             'sku' => $product->getSku(),
             'type_id' => 'simple',
             'tax_class_id' => 'Taxable Goods',
-        ]);
+            ]
+        );
         $feedProduct->assertCategories([100012]);
     }
 }

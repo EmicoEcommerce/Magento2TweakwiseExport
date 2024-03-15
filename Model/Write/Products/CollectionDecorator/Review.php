@@ -10,7 +10,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 /**
  * Class Review
  * Add product reviews to feed
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator
  */
 class Review implements DecoratorInterface
 {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -24,7 +25,6 @@ class XMLWriter extends BaseXMLWriter
      * @param mixed $value
      * @return $this
      */
-
     #[\ReturnTypeWillChange]
     public function writeElement($elementName, $value = null)
     {
@@ -36,11 +36,13 @@ class XMLWriter extends BaseXMLWriter
         if ($value) {
             $value = $this->xmlPrepare($value);
         }
+
         $this->text((string) $value);
 
         if (!is_numeric($value) && !empty($value)) {
             $this->endCdata();
         }
+
         parent::endElement();
 
         return $this;

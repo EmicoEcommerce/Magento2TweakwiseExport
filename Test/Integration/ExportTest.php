@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -49,7 +50,7 @@ abstract class ExportTest extends TestCase
     /**
      * Make sure export is enabled and set some much used objects
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
