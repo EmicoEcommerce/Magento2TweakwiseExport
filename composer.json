@@ -5,7 +5,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0 <8.3"
+        "php": ">=8.0 <8.3",
+        "laminas/laminas-http": "^2.15.0"
     },
     "require-dev": {
         "bitexpert/phpstan-magento": "^0.30.1",

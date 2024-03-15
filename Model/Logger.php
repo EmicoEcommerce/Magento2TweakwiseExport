@@ -11,6 +11,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\App\State;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -23,13 +24,21 @@ class Logger implements LoggerInterface
     protected $log;
 
     /**
+     * @var bool
+     */
+    public bool $enableDebugLog;
+
+    /**
      * Log constructor.
      *
      * @param LoggerInterface $log
+     * @param State $state
      */
-    public function __construct(LoggerInterface $log)
+    public function __construct(LoggerInterface $log, State $state)
     {
         $this->log = $log;
+
+        $this->enableDebugLog = ($state->getMode() !== State::MODE_PRODUCTION);
     }
 
     /**
@@ -93,7 +102,9 @@ class Logger implements LoggerInterface
      */
     public function debug($message, array $context = [])
     {
-        $this->log->debug('[TweakWise] ' . $message, $context);
+        if ($this->enableDebugLog) {
+            $this->log->debug('[TweakWise] ' . $message, $context);
+        }
     }
 
     /**
