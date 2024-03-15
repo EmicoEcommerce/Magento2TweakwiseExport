@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,12 +11,17 @@ namespace Tweakwise\Magento2TweakwiseExport\Test;
 
 if (class_exists('PHPUnit\Framework\TestCase')) {
     abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
-    { }
+    {
+    }
 } else {
+    // phpcs:disable Generic.Classes.DuplicateClassName.Found
+    // phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
     abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
-    { }
+    {
+    }
 }
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
 abstract class TestCase extends BaseTestCase
 {
     /**

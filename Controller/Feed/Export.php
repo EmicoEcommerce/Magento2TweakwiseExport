@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -85,19 +86,26 @@ class Export implements ActionInterface
      * @see    \Magento\PageCache\Model\App\Response\HttpPlugin
      * @see    \Magento\MediaStorage\Model\File\Storage\Response
      * @throws NotFoundException
+     * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
      * @return Response
+     * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
+     * @SuppressWarnings(PHPMD.ExitExpression)
      */
     public function execute(): Response
     {
         $request = $this->context->getRequest();
 
-        if (!$this->requestValidator->validateRequestKey($request) || (!$this->requestValidator->validateStoreKey($request)) || (!$this->requestValidator->validateType($request))) {
+        if (
+            !$this->requestValidator->validateRequestKey($request) ||
+            (!$this->requestValidator->validateStoreKey($request)) ||
+            (!$this->requestValidator->validateType($request))
+        ) {
             throw new NotFoundException(__('Page not found.'));
         }
 
         $store = null;
         $storeId = $request->getParam('store');
-        if(!empty($storeId)) {
+        if (!empty($storeId)) {
             $store = $this->storeManager->getStore($storeId);
         }
 

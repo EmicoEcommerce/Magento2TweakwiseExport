@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -18,10 +19,10 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 /**
  * Class BasicTest
  *
- * @package Tweakwise\Magento2TweakwiseExport\Test\Integration\Export\Product
  *
  * @magentoDataFixtureBeforeTransaction createMultiStoreFixture
  * @magentoDbIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class ConfiguragbleTest extends MultiStoreTest
 {
@@ -33,7 +34,7 @@ class ConfiguragbleTest extends MultiStoreTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurableProvider = $this->getObject(ConfigurableProvider::class);
@@ -49,14 +50,21 @@ class ConfiguragbleTest extends MultiStoreTest
         $this->setConfig(Config::PATH_OUT_OF_STOCK_CHILDREN, false);
 
         /** @var Product $product */
-        $product = $this->configurableProvider->create([
+        $product = $this->configurableProvider->create(
+            [
             ['color' => 'black', 'qty' => 10],
             ['color' => 'blue', 'qty' => 10],
-        ]);
+            ]
+        );
 
         /** @var Product $configurableProduct */
         foreach ($product->getData(ConfigurableProvider::GENERATED_CHILD_PRODUCTS) as $configurableProduct) {
-            $this->productData->saveAttribute($configurableProduct, 'status', Status::STATUS_DISABLED, self::STORE_STORE_CODE);
+            $this->productData->saveAttribute(
+                $configurableProduct,
+                'status',
+                Status::STATUS_DISABLED,
+                self::STORE_STORE_CODE
+            );
         }
 
         $feed = $this->exportFeed();

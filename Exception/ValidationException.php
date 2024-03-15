@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -10,7 +11,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Exception;
 
 use Exception;
 
-class ValidationException extends Exception implements ExportException
+class ValidationException extends Exception implements ExportExceptionInterface
 {
-
 }

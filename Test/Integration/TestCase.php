@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -58,8 +59,12 @@ abstract class TestCase extends \Tweakwise\Magento2TweakwiseExport\Test\TestCase
      * @param string $scope
      * @return $this
      */
-    protected function setConfig(string $path, $value, string $store = null, string $scope = ScopeInterface::SCOPE_STORE)
-    {
+    protected function setConfig(
+        string $path,
+        $value,
+        string $store = null,
+        string $scope = ScopeInterface::SCOPE_STORE
+    ) {
         /** @var MutableScopeConfigInterface $config */
         $config = $this->getObject(MutableScopeConfigInterface::class);
         $config->setValue($path, $value, $scope, $store);

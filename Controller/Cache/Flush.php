@@ -14,8 +14,6 @@ use Magento\Framework\App\Response\HttpFactory as ResponseFactory;
 
 /**
  * Class Flush, handle cache flush request from tweakwise platform
- *
- * @package Tweakwise\Magento2TweakwiseExport\Controller\Cache
  */
 class Flush implements ActionInterface
 {
@@ -84,6 +82,7 @@ class Flush implements ActionInterface
         if (!$this->config->isAllowCacheFlush()) {
             return $this->createOkResponse('Cache flush not enabled in settings');
         }
+
         // Clear caches
         $this->cacheHandler->clear();
 
@@ -91,7 +90,7 @@ class Flush implements ActionInterface
     }
 
     /**
-     * @param string $body Message
+     * @param string $body
      * @return Http
      */
     protected function createOkResponse(string $body): Http

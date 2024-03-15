@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,6 +12,9 @@ namespace Tweakwise\Magento2TweakwiseExport\Model;
 use Exception;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Logger implements LoggerInterface
 {
     /**

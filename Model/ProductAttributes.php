@@ -7,10 +7,6 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Exception\LocalizedException;
 
-/**
- * Class ProductAttributes
- * @package Tweakwise\Magento2TweakwiseExport\Model
- */
 class ProductAttributes
 {
     /**

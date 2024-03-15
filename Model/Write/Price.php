@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -100,6 +101,7 @@ class Price implements WriterInterface
         } else {
             $stores = $this->storeManager->getStores();
         }
+
         /** @var Store $store */
         foreach ($stores as $store) {
             if ($this->config->isEnabled($store)) {
@@ -145,7 +147,6 @@ class Price implements WriterInterface
         $writer->flush();
     }
 
-
     /**
      * @param XMLWriter $xml
      * @param int $storeId
@@ -173,6 +174,7 @@ class Price implements WriterInterface
      * @param mixed $value
      *
      * @return string|array
+     * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      */
     protected function scalarValue($value)
     {
@@ -188,7 +190,7 @@ class Price implements WriterInterface
         if (is_object($value)) {
             if (method_exists($value, 'toString')) {
                 $value = $value->toString();
-            } else if (method_exists($value, '__toString')) {
+            } elseif (method_exists($value, '__toString')) {
                 $value = (string)$value;
             } else {
                 $value = spl_object_hash($value);

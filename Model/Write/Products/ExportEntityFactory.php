@@ -55,6 +55,7 @@ class ExportEntityFactory
         if (!$typeId) {
             $this->_objectManager->create(ExportEntity::class, $data);
         }
+
         return $this->_objectManager->create($this->getInstanceType($typeId), $data);
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -18,10 +19,6 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
 
-/**
- * Class Iterator
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products
- */
 class Iterator extends EavIterator
 {
     /**
@@ -42,10 +39,10 @@ class Iterator extends EavIterator
     /**
      * Iterator constructor.
      *
-     * @param int $batchSize
      * @param Helper $helper
      * @param EavConfig $eavConfig
      * @param DbContext $dbContext
+     * @param Manager $eventManager
      * @param ExportEntityFactory $entityFactory
      * @param CollectionFactory $collectionFactory
      * @param IteratorInitializer $iteratorInitializer
@@ -83,7 +80,7 @@ class Iterator extends EavIterator
     /**
      * {@inheritdoc}
      */
-    public function getIterator() : \Traversable
+    public function getIterator(): \Traversable
     {
         $batch = $this->collectionFactory->create(['store' => $this->store]);
         foreach (parent::getIterator() as $entityData) {
@@ -104,6 +101,7 @@ class Iterator extends EavIterator
                 foreach ($this->processBatch($batch) as $processedEntity) {
                     yield $processedEntity;
                 }
+
                 $batch = $this->collectionFactory->create(['store' => $this->store]);
             }
         }

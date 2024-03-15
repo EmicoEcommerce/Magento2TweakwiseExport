@@ -6,8 +6,6 @@ use Magento\Framework\App\Cache\Manager;
 
 /**
  * Class CacheHandler flush caches after tweakwise publish task
- *
- * @package Tweakwise\Magento2TweakwiseExport\Model
  */
 class CacheHandler
 {
@@ -24,8 +22,8 @@ class CacheHandler
     /**
      * CacheHandler constructor.
      *
-     * @param Manager $manager Cache manager
-     * @param array $cacheTypes Cache types to flush
+     * @param Manager $manager
+     * @param array $cacheTypes
      */
     public function __construct(Manager $manager, array $cacheTypes = [])
     {
