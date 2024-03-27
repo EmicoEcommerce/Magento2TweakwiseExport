@@ -257,7 +257,6 @@ class Writer
         if ($type === null) {
             unset ($this->writers['stock']);
             unset($this->writers['price']);
-            unset($this->writers['categories']);
         } else {
             foreach ($this->writers as $key => $value) {
                 if($type !== $key) {

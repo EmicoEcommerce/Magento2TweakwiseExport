@@ -136,9 +136,8 @@ class Products implements WriterInterface
         foreach ($this->iterator as $index => $data) {
             $this->writeProduct($xml, $store->getId(), $data);
             // Flush every so often
-            if ($index % 2 === 0) {
+            if ($index % 100 === 0) {
                 $writer->flush();
-                break;
             }
         }
 
