@@ -111,7 +111,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
             return [];
         }
 
-        $skus = $collection->getAllSkus();
+        $entityIds = $collection->getAllIds();
 
         $store = $collection->getStore();
         $sourceCodes = $this->getSourceCodesForStore($store);
@@ -207,7 +207,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
                 'backorders',
             ]
         )
-        ->where("$productTableName.sku IN (?)", $skus)
+        ->where("$productTableName.entity_id IN (?)", $entityIds)
         ->columns(
             [
                 'product_entity_id' => "$productTableName.entity_id",
