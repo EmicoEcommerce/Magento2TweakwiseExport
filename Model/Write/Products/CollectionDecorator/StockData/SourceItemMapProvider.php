@@ -159,7 +159,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
                 ->select()
                 ->from($stockItemTable)
                 ->reset('columns')
-                ->where("$stockItemTable.product_id IN (?)", $collection->getAllIds())
+                ->where("$stockItemTable.product_id IN (?)", $entityIds)
                 /*
                 $stock_id is in this case the default stock id (i.e. 1) this filter problably doesnt remove anything
                 but it is here just to be sure.
