@@ -9,7 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model;
 
-use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Filesystem\Driver\File;
 use Tweakwise\Magento2TweakwiseExport\Exception\FeedException;
 use Tweakwise\Magento2TweakwiseExport\Exception\LockException;
 use Tweakwise\Magento2TweakwiseExport\Model\Validate\Validator;
@@ -59,9 +59,9 @@ class Export
     protected $storeManager;
 
     /**
-     * @var DriverInterface
+     * @var File
      */
-    private DriverInterface $driver;
+    private File $driver;
 
     /**
      * Export constructor.
@@ -71,6 +71,7 @@ class Export
      * @param Writer $writer
      * @param Logger $log
      * @param StoreManagerInterface $storeManager
+     * @param File $driver
      */
     public function __construct(
         Config $config,
@@ -78,7 +79,7 @@ class Export
         Writer $writer,
         Logger $log,
         StoreManagerInterface $storeManager,
-        DriverInterface $driver
+        File $driver
     ) {
         $this->config = $config;
         $this->validator = $validator;

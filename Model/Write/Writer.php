@@ -11,7 +11,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 use DateTime;
 use Magento\Framework\App\State as AppState;
-use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManager;
@@ -57,9 +57,9 @@ class Writer
     protected $composerInformation;
 
     /**
-     * @var DriverInterface
+     * @var File
      */
-    private DriverInterface $driver;
+    private File $driver;
 
     /**
      * Writer constructor.
@@ -68,13 +68,14 @@ class Writer
      * @param AppState $appState
      * @param ComposerInformation $composerInformation
      * @param WriterInterface[] $writers
+     * @param File $driver
      */
     public function __construct(
         StoreManager $storeManager,
         AppState $appState,
         ComposerInformation $composerInformation,
         $writers,
-        DriverInterface $driver
+        File $driver
     ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;

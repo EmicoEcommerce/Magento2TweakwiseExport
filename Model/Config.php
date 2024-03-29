@@ -13,7 +13,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -66,9 +66,9 @@ class Config
     protected $deployConfig;
 
     /**
-     * @var DriverInterface
+     * @var File
      */
-    private DriverInterface $driver;
+    private File $driver;
 
     /**
      * Export constructor.
@@ -76,13 +76,13 @@ class Config
      * @param ScopeConfigInterface $config
      * @param DirectoryList $directoryList
      * @param DeploymentConfig $deployConfig
-     * @param DriverInterface $driver
+     * @param File $driver
      */
     public function __construct(
         ScopeConfigInterface $config,
         DirectoryList $directoryList,
         DeploymentConfig $deployConfig,
-        DriverInterface $driver
+        File $driver
     ) {
         $this->config = $config;
         $this->directoryList = $directoryList;
