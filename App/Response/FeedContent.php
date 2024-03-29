@@ -9,7 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\App\Response;
 
-use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Store\Api\Data\StoreInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -38,23 +38,23 @@ class FeedContent
     protected $store;
 
     /**
-     * @var DriverInterface
+     * @var File
      */
-    protected DriverInterface $driver;
+    protected File $driver;
 
     /**
      * SomeFeedResponse constructor.
      *
      * @param Export $export
      * @param Logger $log
-     * @param DriverInterface $driver
+     * @param File $driver
      * @param StoreInterface|null $store
      * @param null $type
      */
     public function __construct(
         Export $export,
         Logger $log,
-        DriverInterface $driver,
+        File $driver,
         StoreInterface $store = null,
         $type = null
     ) {
