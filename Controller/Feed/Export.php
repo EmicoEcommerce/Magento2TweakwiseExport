@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Controller\Feed;
 
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\App\Response\FeedContent;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportModel;
@@ -53,6 +54,11 @@ class Export implements ActionInterface
     protected $storeManager;
 
     /**
+     * @var File
+     */
+    protected File $driver;
+
+    /**
      * Export constructor.
      *
      * @param Context $context
@@ -60,6 +66,8 @@ class Export implements ActionInterface
      * @param Logger $log
      * @param RequestValidator $requestValidator
      * @param ResponseFactory $responseFactory
+     * @param StoreManagerInterface $storeManager
+     * @param File $driver
      */
     public function __construct(
         Context $context,
@@ -67,7 +75,8 @@ class Export implements ActionInterface
         Logger $log,
         RequestValidator $requestValidator,
         ResponseFactory $responseFactory,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        File $driver
     ) {
         $this->context = $context;
         $this->export = $export;
@@ -75,6 +84,7 @@ class Export implements ActionInterface
         $this->requestValidator = $requestValidator;
         $this->responseFactory = $responseFactory;
         $this->storeManager = $storeManager;
+        $this->driver = $driver;
     }
 
     /**
@@ -109,7 +119,7 @@ class Export implements ActionInterface
             $store = $this->storeManager->getStore($storeId);
         }
 
-        (new FeedContent($this->export, $this->log, $store, $request->getParam('type')))->__toString();
+        (new FeedContent($this->export, $this->log, $this->driver, $store, $request->getParam('type')))->__toString();
 
         exit();
     }
