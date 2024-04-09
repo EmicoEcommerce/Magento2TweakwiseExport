@@ -9,7 +9,6 @@ composer require tweakwise/magento2-tweakwise-export
 
 Enable module
 
-
 If 'Store Level Export' enabled single store feed  can be generated using the command line.
 ```sh
 php bin/magento tweakwise:export --store '<storecode>'
