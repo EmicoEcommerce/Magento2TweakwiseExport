@@ -21,7 +21,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockColle
 
 /**
  * Class DefaultImplementation
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData
  */
 class SourceItemMapProvider implements StockMapProviderInterface
 {
@@ -104,6 +103,8 @@ class SourceItemMapProvider implements StockMapProviderInterface
      * @return StockItem[]
      * @throws LocalizedException
      * @throws \Zend_Db_Statement_Exception
+     * phpcs:disable Squiz.Arrays.ArrayDeclaration.KeySpecified
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getStockItemMap(Collection|StockCollection $collection): array
     {
@@ -111,7 +112,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
             return [];
         }
 
-        $skus = $collection->getAllSkus();
+        $entityIds = $collection->getAllIds();
 
         $store = $collection->getStore();
         $sourceCodes = $this->getSourceCodesForStore($store);
@@ -159,7 +160,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
                 ->select()
                 ->from($stockItemTable)
                 ->reset('columns')
-                ->where("$stockItemTable.product_id IN (?)", $collection->getAllIds())
+                ->where("$stockItemTable.product_id IN (?)", $entityIds)
                 /*
                 $stock_id is in this case the default stock id (i.e. 1) this filter problably doesnt remove anything
                 but it is here just to be sure.
@@ -207,7 +208,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
                 'backorders',
             ]
         )
-        ->where("$productTableName.sku IN (?)", $skus)
+        ->where("$productTableName.entity_id IN (?)", $entityIds)
         ->columns(
             [
                 'product_entity_id' => "$productTableName.entity_id",
@@ -237,7 +238,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $sourceModels = $this->getStockSourceProvider()->execute($stockId);
 
         //don't get stock for disabled stock sources
-        foreach($sourceModels as $key => $sourceModel) {
+        foreach ($sourceModels as $key => $sourceModel) {
             if (!$sourceModel->isEnabled()) {
                 unset($sourceModels[$key]);
             }

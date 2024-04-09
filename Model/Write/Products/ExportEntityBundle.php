@@ -5,10 +5,6 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItem;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
-/**
- * Class ExportEntityBundle
- * @package Tweakwise\Magento2TweakwiseExport\Model\Write\Products
- */
 class ExportEntityBundle extends CompositeExportEntity
 {
     /**
@@ -18,6 +14,8 @@ class ExportEntityBundle extends CompositeExportEntity
 
     /**
      * @return StockItem
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getStockItem(): ?StockItem
     {
@@ -82,14 +80,17 @@ class ExportEntityBundle extends CompositeExportEntity
             if (!$childOptions) {
                 continue;
             }
+
             $optionId = $childOptions->getOptionId();
             if (!$childOptions->isRequired()) {
                 $optionGroupStatus[$optionId] = 1;
                 continue;
             }
+
             if (isset($optionGroupStatus[$optionId]) && $optionGroupStatus[$optionId]) {
                 continue;
             }
+
             $childStatus = $child->getStatus() === Status::STATUS_ENABLED ? 1 : 0;
             $optionGroupStatus[$optionId] = $childStatus;
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -19,6 +20,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 /**
  * @magentoDbIsolation enabled
  * @@magentoAppIsolation enabled
+ * @SuppressWarnings(PHPMD.DepthOfInheritance)
  */
 class ChildExportedTest extends ExportTest
 {
@@ -35,7 +37,7 @@ class ChildExportedTest extends ExportTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->configurableProvider = $this->getObject(ConfigurableProvider::class);
@@ -48,10 +50,20 @@ class ChildExportedTest extends ExportTest
     public function testVisibleSimples()
     {
         /** @var Product $product */
-        $product = $this->configurableProvider->create([
-            ['color' => 'black', 'status' => Status::STATUS_ENABLED, 'visibility' => Product\Visibility::VISIBILITY_BOTH],
-            ['color' => 'blue', 'status' => Status::STATUS_ENABLED, 'visibility' => Product\Visibility::VISIBILITY_BOTH],
-        ]);
+        $product = $this->configurableProvider->create(
+            [
+            [
+                'color' => 'black',
+                'status' => Status::STATUS_ENABLED,
+                'visibility' => Product\Visibility::VISIBILITY_BOTH
+            ],
+            [
+                'color' => 'blue',
+                'status' => Status::STATUS_ENABLED,
+                'visibility' => Product\Visibility::VISIBILITY_BOTH
+            ],
+            ]
+        );
 
         $feed = $this->exportFeed();
         $feed->getProduct($product->getId());

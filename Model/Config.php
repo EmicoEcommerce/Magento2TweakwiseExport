@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -11,6 +12,8 @@ namespace Tweakwise\Magento2TweakwiseExport\Model;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -38,7 +41,7 @@ class Config
     public const BATCH_SIZE_PRODUCTS_CHILDREN = 'tweakwise/export/batch_size_products_children';
 
     /**
-     * default feed filename
+     * Default feed filename
      */
     public const FEED_FILE_NAME = 'tweakwise%s.xml';
 
@@ -63,20 +66,28 @@ class Config
     protected $deployConfig;
 
     /**
+     * @var File
+     */
+    private File $driver;
+
+    /**
      * Export constructor.
      *
      * @param ScopeConfigInterface $config
      * @param DirectoryList $directoryList
      * @param DeploymentConfig $deployConfig
+     * @param File $driver
      */
     public function __construct(
         ScopeConfigInterface $config,
         DirectoryList $directoryList,
-        DeploymentConfig $deployConfig
+        DeploymentConfig $deployConfig,
+        File $driver
     ) {
         $this->config = $config;
         $this->directoryList = $directoryList;
         $this->deployConfig = $deployConfig;
+        $this->driver = $driver;
     }
 
     /**
@@ -89,7 +100,6 @@ class Config
     }
 
     /**
-     * @param Store|int|string|null $store
      * @return bool
      */
     public function isStoreLevelExportEnabled(): bool
@@ -122,7 +132,7 @@ class Config
      */
     public function getMaxArchiveFiles(): int
     {
-        return (integer) $this->config->getValue(self::PATH_ARCHIVE);
+        return (int) $this->config->getValue(self::PATH_ARCHIVE);
     }
 
     /**
@@ -131,8 +141,13 @@ class Config
     public function getApiImportUrl($store = null, $type = null): string
     {
         if ($type === 'stock') {
-            return (string) $this->config->getValue(self::PATH_API_IMPORT_URL_STOCK, ScopeInterface::SCOPE_STORE, $store);
+            return (string) $this->config->getValue(
+                self::PATH_API_IMPORT_URL_STOCK,
+                ScopeInterface::SCOPE_STORE,
+                $store
+            );
         }
+
         return (string) $this->config->getValue(self::PATH_API_IMPORT_URL, ScopeInterface::SCOPE_STORE, $store);
     }
 
@@ -167,14 +182,17 @@ class Config
      */
     public function getPriceFields($store = null): array
     {
-        $data = (array) explode(',', $this->config->getValue(self::PATH_PRICE_FIELD, ScopeInterface::SCOPE_STORE, $store));
+        $data = (array) explode(
+            ',',
+            $this->config->getValue(self::PATH_PRICE_FIELD, ScopeInterface::SCOPE_STORE, $store)
+        );
         return array_filter($data);
     }
 
     /**
-     * @param Store|int|string|null $store
      * @param string|null $attribute
-     * @return bool|string[]
+     * @param Store|int|string|null $store
+     * @return bool|int[]|string[]
      */
     public function getSkipChildAttribute($attribute = null, $store = null)
     {
@@ -192,19 +210,29 @@ class Config
     }
 
     /**
+     * @param StoreInterface|null $store
+     * @param string|null $type
      * @return string
+     * @throws FileSystemException
+     * @throws RuntimeException
      */
     public function getDefaultFeedFile(StoreInterface $store = null, $type = null): string
     {
         $dir = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . 'feeds';
-        if (!is_dir($dir) && !mkdir($dir) && !is_dir($dir)) {
+        if (
+            !$this->driver->isDirectory($dir) &&
+            !$this->driver->createDirectory($dir) &&
+            !$this->driver->isDirectory($dir)
+        ) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
-        $storeCode = $store && $this->isStoreLevelExportEnabled() ? '-'.$store->getCode() : '';
-        $filename = sprintf(self::FEED_FILE_NAME , $storeCode);
+
+        $storeCode = $store && $this->isStoreLevelExportEnabled() ? '-' . $store->getCode() : '';
+        $filename = sprintf(self::FEED_FILE_NAME, $storeCode);
         if (!empty($type)) {
-            $filename = sprintf(self::FEED_FILE_NAME , ($storeCode . '_' . $type));
+            $filename = sprintf(self::FEED_FILE_NAME, ($storeCode . '_' . $type));
         }
+
         return $dir . DIRECTORY_SEPARATOR . $filename;
     }
 

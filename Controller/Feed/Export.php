@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -8,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Controller\Feed;
 
+use Magento\Framework\Filesystem\Driver\File;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\App\Response\FeedContent;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportModel;
@@ -52,6 +54,11 @@ class Export implements ActionInterface
     protected $storeManager;
 
     /**
+     * @var File
+     */
+    protected File $driver;
+
+    /**
      * Export constructor.
      *
      * @param Context $context
@@ -59,6 +66,8 @@ class Export implements ActionInterface
      * @param Logger $log
      * @param RequestValidator $requestValidator
      * @param ResponseFactory $responseFactory
+     * @param StoreManagerInterface $storeManager
+     * @param File $driver
      */
     public function __construct(
         Context $context,
@@ -66,7 +75,8 @@ class Export implements ActionInterface
         Logger $log,
         RequestValidator $requestValidator,
         ResponseFactory $responseFactory,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        File $driver
     ) {
         $this->context = $context;
         $this->export = $export;
@@ -74,6 +84,7 @@ class Export implements ActionInterface
         $this->requestValidator = $requestValidator;
         $this->responseFactory = $responseFactory;
         $this->storeManager = $storeManager;
+        $this->driver = $driver;
     }
 
     /**
@@ -85,23 +96,30 @@ class Export implements ActionInterface
      * @see    \Magento\PageCache\Model\App\Response\HttpPlugin
      * @see    \Magento\MediaStorage\Model\File\Storage\Response
      * @throws NotFoundException
+     * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
      * @return Response
+     * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
+     * @SuppressWarnings(PHPMD.ExitExpression)
      */
     public function execute(): Response
     {
         $request = $this->context->getRequest();
 
-        if (!$this->requestValidator->validateRequestKey($request) || (!$this->requestValidator->validateStoreKey($request)) || (!$this->requestValidator->validateType($request))) {
+        if (
+            !$this->requestValidator->validateRequestKey($request) ||
+            (!$this->requestValidator->validateStoreKey($request)) ||
+            (!$this->requestValidator->validateType($request))
+        ) {
             throw new NotFoundException(__('Page not found.'));
         }
 
         $store = null;
         $storeId = $request->getParam('store');
-        if(!empty($storeId)) {
+        if (!empty($storeId)) {
             $store = $this->storeManager->getStore($storeId);
         }
 
-        (new FeedContent($this->export, $this->log, $store, $request->getParam('type')))->__toString();
+        (new FeedContent($this->export, $this->log, $this->driver, $store, $request->getParam('type')))->__toString();
 
         exit();
     }

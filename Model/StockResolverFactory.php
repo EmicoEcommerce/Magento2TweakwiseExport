@@ -11,7 +11,6 @@ use Magento\InventorySalesApi\Api\StockResolverInterface;
  * setup:di:compile fails when there is a reference to a non existing Interface or Class in the constructor
  *
  * Class StockResolverFactory
- * @package Tweakwise\Magento2TweakwiseExport\Model
  */
 class StockResolverFactory
 {

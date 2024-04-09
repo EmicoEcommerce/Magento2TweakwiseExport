@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -31,7 +32,7 @@ class PriceField implements ArrayInterface
         $priceFieldPermutations = $this->combineArrayPermutations($priceFields);
 
         return array_map(
-            function($option) {
+            function ($option) {
                 $value = implode(',', array_keys($option));
                 $label = implode(' -> ', array_values($option));
                 return ['value' => $value, 'label' => $label];
@@ -44,11 +45,12 @@ class PriceField implements ArrayInterface
      * @param array $input
      * @param array $processed
      * @return array
+     * phpcs:disable Magento2.Performance.ForeachArrayMerge.ForeachArrayMerge
      */
     protected function combineArrayPermutations(array $input, array $processed = null): array
     {
         $permutations = [];
-        foreach($input as $key => $value) {
+        foreach ($input as $key => $value) {
             $copy = $processed ?? [];
             $copy[$key] = $value;
             $tmp = \array_diff_key($input, $copy);
@@ -59,6 +61,7 @@ class PriceField implements ArrayInterface
                 $permutations = array_merge($permutations, $this->combineArrayPermutations($tmp, $copy));
             }
         }
+
         return $permutations;
     }
 }

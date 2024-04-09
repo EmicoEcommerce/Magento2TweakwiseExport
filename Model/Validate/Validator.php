@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -17,6 +18,8 @@ class Validator
     /**
      * @param string $file
      * @throws ValidationException
+     * phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
+     * @SuppressWarnings(PHPMD.ErrorControlOperator)
      */
     public function validate($file)
     {
@@ -27,11 +30,13 @@ class Validator
             $xml = @simplexml_load_file($file);
             if (!$xml) {
                 $errors = ['Failed loading XML'];
-                foreach(libxml_get_errors() as $error) {
+                foreach (libxml_get_errors() as $error) {
                     $errors[] = $error->message;
                 }
+
                 throw new ValidationException(join(PHP_EOL, $errors));
             }
+
             $this->validateCategoryLinks($xml);
         } finally {
             libxml_use_internal_errors($internalXmlErrors);
@@ -48,10 +53,11 @@ class Validator
     protected function validateCategoryLinks(SimpleXMLElement $xml)
     {
         $categoryIdElements = $xml->xpath('/tweakwise/categories/category/categoryid');
-        $categoryIds = array();
+        $categoryIds = [];
         foreach ($categoryIdElements as $id) {
             $categoryIds[] = (string) $id;
         }
+
         $categoryIds = array_flip($categoryIds);
 
         foreach ($xml->xpath('/tweakwise/categories/category/parents/categoryid') as $categoryIdElement) {
