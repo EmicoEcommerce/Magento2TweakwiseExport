@@ -1,3 +1,10 @@
+# [7.0.0-beta.2](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2024-04-09)
+
+
+### Bug Fixes
+
+* use id instead of SKU [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) ([3576069](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/35760698039cbef9efa9ce5570fa084135089c48))
+
 # [7.0.0-beta.1](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/compare/v6.0.2...v7.0.0-beta.1) (2024-04-09)
 
 
