@@ -7,13 +7,7 @@ Install package using composer
 composer require tweakwise/magento2-tweakwise-export
 ```
 
-
 Enable module
-
-If 'Store Level Export' enabled single store feed  can be generated using the command line.
-```sh
-php bin/magento tweakwise:export --store '<storecode>'
-```
 
 Run installers
 ```sh
@@ -31,6 +25,11 @@ php bin/magento tweakwise:export
 php bin/magento tweakwise:export -t stock //stock export
 php bin/magento tweakwise:export -t price //price export
 php bin/magento tweakwise:export -s storecode //store level export, only works is store level export is enabled
+```
+
+If 'Store Level Export' enabled single store feed  can be generated using the command line.
+```sh
+php bin/magento tweakwise:export --store '<storecode>'
 ```
 
 ## Debugging
