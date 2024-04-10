@@ -97,6 +97,6 @@ Magento has multiple visibility settings, tweakwise only knows visible products 
 The magento visibility setting is exported in the feed so you can add a hidden filter to your tweakwise template to artificially use the correct settings.
 If you do this then exclude the visibility attribute from child products (see "Export Settings").
 
-## Contributors
+## Contributors 
 If you want to create a pull request as a contributor, use the guidelines of semantic-release. semantic-release automates the whole package release workflow including: determining the next version number, generating the release notes, and publishing the package.
 By adhering to the commit message format, a release is automatically created with the commit messages as release notes. Follow the guidelines as described in: https://github.com/semantic-release/semantic-release?tab=readme-ov-file#commit-message-format.
