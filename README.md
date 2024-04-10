@@ -80,7 +80,7 @@ https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/type/price //price e
 https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/store/storecode //store level export, only available if store level export is enabled
 
 ## Export Settings
-- Store Level Export: Enables generating seperate feed for each store. If store level export is enabled 
+- Store Level Export: Enables generating seperate feed for each store. If store level export is enabled.
 - Enabled: If products of that store should be exported to tweakwise, note that if this is false for some store then navigation and search should also be disabled for that store.
 - Schedule: Cron schedule for generating the feed. We strongly encourage you to register the export task on the server crontab instead of using the Magento cron.
 - Schedule export: Generate the feed on the next cron run. (default feed)
