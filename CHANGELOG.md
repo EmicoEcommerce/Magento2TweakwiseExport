@@ -3,6 +3,36 @@
 
 ### Bug Fixes
 
+* Applied phpcs and phpmd rules [#38](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/38) ([e3966fd](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/e3966fd147d3d0816f20a4671facd0180ccd949d))
+* Trigger release ([ed7cc19](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/ed7cc19dfe9be5249495460519b4612720f6f205))
+* use id instead of SKU [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) ([f0070ec](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/f0070ec08f8f7d3dd5d9af47a7fd14cdf1b0a416))
+
+
+* Merge beta into master (#45) ([12701f7](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/12701f78e66cedf7f932ebae56fd973005e8a6c4)), closes [#45](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/45) [#30](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/30) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) [#37](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/37) [#36](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/36)
+
+
+### BREAKING CHANGES
+
+* Code is refactored based on phpcs and phpmd rules.
+* Code is refactored based on phpcs and phpmd rules.
+* Code is refactored based on phpcs and phpmd rules.
+
+* fix: Fixed DriverInterface issue
+
+* chore(release): 7.0.0-beta.1 [skip ci]
+
+# [7.0.0-beta.1](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/compare/v6.0.2...v7.0.0-beta.1) (2024-03-29)
+
+### Bug Fixes
+
+* Fixed DriverInterface issue ([a6d0109](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/a6d01098c246b2a3b3475ed0d3060d4de75f2817))
+* Code is refactored based on phpcs and phpmd rules. #37 #36
+
+# [7.0.0-beta.1](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/compare/v6.0.2...v7.0.0-beta.1) (2024-04-10)
+
+
+### Bug Fixes
+
 * Applied phpcs and phpmd rules [#38](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/38) ([b63a1cc](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/b63a1cca320ffc2b515751f0b224c79ba8ea0e1e))
 * use id instead of SKU [#39](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/issues/39) ([76d45bf](https://github.com/EmicoEcommerce/Magento2TweakwiseExport/commit/76d45bf529aa91dc0284d6472af4bd7a524be06c))
 
