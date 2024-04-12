@@ -1,11 +1,12 @@
 name: Release
 
 on:
-  push:
+  - push:
     branches:
       - master
       - beta
 
+  - workflow_dispatch
 jobs:
   release:
     runs-on: ubuntu-latest
