@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -66,6 +67,7 @@ class Trigger extends Action
         if (!$redirectUrl) {
             $redirectUrl = $this->_url->getUrl('adminhtml');
         }
+
         $resultRedirect->setUrl($redirectUrl);
 
         return $resultRedirect;
