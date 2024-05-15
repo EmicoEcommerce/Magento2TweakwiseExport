@@ -18,6 +18,7 @@ use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface
 use Magento\InventoryCatalogApi\Api\DefaultStockProviderInterface;
 use Zend_Db_Expr;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
+use Magento\InventoryIndexer\Model\StockIndexTableNameResolver;
 
 /**
  * Class DefaultImplementation
@@ -70,6 +71,11 @@ class SourceItemMapProvider implements StockMapProviderInterface
     protected $defaultStockProvider;
 
     /**
+     * @var StockIndexTableNameResolver
+     */
+    protected $stockIndexTableNameResolver;
+
+    /**
      * StockData constructor.
      *
      * @param DbResourceHelper $dbResource
@@ -87,7 +93,8 @@ class SourceItemMapProvider implements StockMapProviderInterface
         StoreManagerInterface $storeManager,
         StockResolverFactory $stockResolverFactory,
         DefaultStockProviderInterfaceFactory $defaultStockProviderFactory,
-        DbResourceHelper $resourceHelper
+        DbResourceHelper $resourceHelper,
+        StockIndexTableNameResolver $stockIndexTableNameResolver
     ) {
         $this->dbResource = $dbResource;
         $this->stockSourceProviderFactory = $stockSourceProviderFactory;
@@ -96,6 +103,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $this->stockResolverFactory = $stockResolverFactory;
         $this->dbResource = $resourceHelper;
         $this->defaultStockProviderFactory = $defaultStockProviderFactory;
+        $this->stockIndexTableNameResolver = $stockIndexTableNameResolver;
     }
 
     /**
@@ -115,15 +123,13 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $entityIds = $collection->getAllIds();
 
         $store = $collection->getStore();
-        $sourceCodes = $this->getSourceCodesForStore($store);
         $stockId = $this->getStockIdForStoreId($store);
 
         $dbConnection = $this->dbResource->getConnection();
 
-        $sourceItemTableName = $this->dbResource->getTableName('inventory_source_item');
+        $stockIndexTableName = $this->stockIndexTableNameResolver->execute($stockId);
         $reservationTableName = $this->dbResource->getTableName('inventory_reservation');
         $productTableName = $this->dbResource->getTableName('catalog_product_entity');
-        $stockItemTable = $this->dbResource->getTableName('cataloginventory_stock_item');
 
         $reservationSelect = $dbConnection
             ->select()
@@ -139,81 +145,41 @@ class SourceItemMapProvider implements StockMapProviderInterface
             )
             ->group("$reservationTableName.sku");
 
-        // When stock id is default apparently the standard stock items are still used.
         // Todo We should check if we can use magento's api for this as this is feeling rather sensitive.
-        if ($this->getDefaultStockProvider()->getId() !== $stockId) {
-            $sourceItemSelect = $dbConnection
-                ->select()
-                ->from($sourceItemTableName)
-                ->reset('columns')
-                ->where("$sourceItemTableName.source_code IN (?)", $sourceCodes)
-                ->columns(
-                    [
-                        'sku',
-                        's_quantity' => "SUM($sourceItemTableName.quantity)",
-                        's_status' => "MAX($sourceItemTableName.status)"
-                    ]
-                )
-                ->group("$sourceItemTableName.sku");
-        } else {
-            $sourceItemSelect = $dbConnection
-                ->select()
-                ->from($stockItemTable)
-                ->reset('columns')
-                ->where("$stockItemTable.product_id IN (?)", $entityIds)
-                /*
-                $stock_id is in this case the default stock id (i.e. 1) this filter problably doesnt remove anything
-                but it is here just to be sure.
-                */
-                ->where("$stockItemTable.stock_id = ?", $stockId)
-                ->columns(
-                    [
-                        'product_id',
-                        's_quantity' => "$stockItemTable.qty",
-                        's_status' => "$stockItemTable.is_in_stock"
-                    ]
-                );
-        }
+        $sourceItemSelect = $dbConnection
+            ->select()
+            ->from($stockIndexTableName)
+            ->reset('columns')
+            ->columns(
+                [
+                    'sku',
+                    's_quantity' => "$stockIndexTableName.quantity",
+                    's_is_salable' => "$stockIndexTableName.is_salable"
+                ]
+            );
 
         $select = $dbConnection
             ->select()
             ->from($productTableName)
             ->reset('columns');
 
-        // When stock id is default apparently the standard stock items are still used.
-        // Todo We should check if we can use magento's api for this as this is feeling rather sensitive.
-        if ($this->getDefaultStockProvider()->getId() !== $stockId) {
-            $select->joinLeft(
-                ['s' => $sourceItemSelect],
-                "s.sku = $productTableName.sku",
-                []
-            );
-        } else {
-            $select->joinLeft(
-                ['s' => $sourceItemSelect],
-                "s.product_id = $productTableName.entity_id",
-                []
-            );
-        }
+        $select->joinLeft(
+            ['s' => $sourceItemSelect],
+            "s.sku = $productTableName.sku",
+            []
+        );
 
         $select->joinLeft(
             ['r' => $reservationSelect],
             "r.sku = $productTableName.sku AND r.stock_id = $stockId",
             []
-        );
-        $select->join(
-            $stockItemTable,
-            "$stockItemTable.product_id = $productTableName.entity_id",
-            [
-                'backorders',
-            ]
         )
         ->where("$productTableName.entity_id IN (?)", $entityIds)
         ->columns(
             [
                 'product_entity_id' => "$productTableName.entity_id",
                 'qty' => new Zend_Db_Expr('COALESCE(s.s_quantity,0) + COALESCE(r.r_quantity,0)'),
-                'is_in_stock' => 'COALESCE(s.s_status,0)'
+                'is_in_stock' => 'COALESCE(s.s_is_salable,0)'
             ]
         );
 
@@ -225,30 +191,6 @@ class SourceItemMapProvider implements StockMapProviderInterface
         }
 
         return $map;
-    }
-
-    /**
-     * @param Store $store
-     * @return array|null[]|string[]
-     * @throws LocalizedException
-     */
-    protected function getSourceCodesForStore(Store $store): array
-    {
-        $stockId = $this->getStockIdForStoreId($store);
-        $sourceModels = $this->getStockSourceProvider()->execute($stockId);
-
-        //don't get stock for disabled stock sources
-        foreach ($sourceModels as $key => $sourceModel) {
-            if (!$sourceModel->isEnabled()) {
-                unset($sourceModels[$key]);
-            }
-        }
-
-        $sourceCodeMapper = static function (SourceInterface $source) {
-            return $source->getSourceCode();
-        };
-
-        return array_map($sourceCodeMapper, $sourceModels);
     }
 
     /**
@@ -313,7 +255,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $tweakwiseStockItem = $this->tweakwiseStockItemFactory->create();
 
         $qty = (int)$item['qty'];
-        $isInStock = max((int)$item['backorders'], (int)$item['is_in_stock']);
+        $isInStock = (int)$item['is_in_stock'];
 
         $tweakwiseStockItem->setQty($qty);
         $tweakwiseStockItem->setIsInStock($isInStock);
