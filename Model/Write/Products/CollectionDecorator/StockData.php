@@ -78,6 +78,7 @@ class StockData implements DecoratorInterface
         $this->addStockItems($storeId, $collection);
         foreach ($toBeCombinedEntities as $item) {
             $this->addStockPercentage($item);
+            $this->addIsSalable($item);
         }
     }
 
@@ -130,6 +131,14 @@ class StockData implements DecoratorInterface
     protected function addStockPercentage(ExportEntity|StockExportEntity $entity): void
     {
         $entity->addAttribute('stock_percentage', $this->calculateStockPercentage($entity));
+    }
+
+    /**
+     * @param ExportEntity|StockExportEntity $entity
+     */
+    protected function addIsSalable(ExportEntity|StockExportEntity $entity): void
+    {
+        $entity->addAttribute('is_salable', $this->isInStock($entity));
     }
 
     /**
