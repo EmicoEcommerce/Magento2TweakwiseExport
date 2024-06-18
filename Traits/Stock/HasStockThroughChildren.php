@@ -4,6 +4,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Traits\Stock;
 
 use Tweakwise\Magento2TweakwiseExport\Model\StockItem;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
 
 /**
  * Trait HasChildren
@@ -40,7 +41,8 @@ trait HasStockThroughChildren
         $qty = (int) array_sum($childQty);
         $isInStock = min(
             max($childStockStatus),
-            $this->getTypeId() === Configurable::TYPE_CODE ? 1 : $this->stockItem->getIsInStock()
+            in_array($this->getTypeId(), [Configurable::TYPE_CODE, Grouped::TYPE_CODE], true) ? 1
+                : $this->stockItem->getIsInStock()
         );
         $stockItem = new StockItem();
         $stockItem->setQty($qty);
