@@ -398,7 +398,7 @@ class ExportEntity
      */
     protected function isInStock(): bool
     {
-        return $this->getStockItem() !== null ? $this->getStockItem()->getIsInStock() : false;
+        return $this->getStockItem() !== null ? (bool) $this->getStockItem()->getIsInStock() : false;
     }
 
     /**
