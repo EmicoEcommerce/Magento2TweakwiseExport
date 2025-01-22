@@ -39,6 +39,7 @@ class Config
     public const BATCH_SIZE_CATEGORIES = 'tweakwise/export/batch_size_categories';
     public const BATCH_SIZE_PRODUCTS = 'tweakwise/export/batch_size_products';
     public const BATCH_SIZE_PRODUCTS_CHILDREN = 'tweakwise/export/batch_size_products_children';
+    public const PATH_SKIP_CHILD_BY_COMPOSITE_TYPE = 'tweakwise/export/skip_child_by_composite_type';
 
     /**
      * Default feed filename
@@ -207,6 +208,20 @@ class Config
         }
 
         return isset($this->skipAttributes[$attribute]);
+    }
+
+    /**
+     * @param Store|int|string|null $store
+     * @return string[]
+     */
+    public function getSkipChildByCompositeTypes($store = null): array
+    {
+        $data = explode(
+            ',',
+            $this->config->getValue(self::PATH_SKIP_CHILD_BY_COMPOSITE_TYPE, ScopeInterface::SCOPE_STORE, $store)
+        );
+
+        return array_filter($data);
     }
 
     /**
