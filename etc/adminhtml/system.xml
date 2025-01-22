@@ -92,6 +92,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="skip_child_by_composite_type" translate="label,comment" type="multiselect" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Skip children for composite type(s)</label>
+                    <comment>Selected composite type(s) will exclude attributes from its children.</comment>
+                    <source_model>Tweakwise\Magento2TweakwiseExport\Model\Config\Source\CompositeTypes</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
 
                 <field id="price_field" translate="label,comment" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Price field</label>

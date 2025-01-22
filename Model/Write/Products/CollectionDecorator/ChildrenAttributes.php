@@ -35,7 +35,15 @@ class ChildrenAttributes implements DecoratorInterface
             if (!$exportEntity instanceof CompositeExportEntityInterface) {
                 continue;
             }
-
+            if (
+                in_array(
+                    $exportEntity->getTypeId(),
+                    $this->config->getSkipChildByCompositeTypes($exportEntity->getStore()),
+                    true
+                )
+            ) {
+                continue;
+            }
             foreach ($exportEntity->getExportChildren() as $child) {
                 foreach ($child->getAttributes() as $attributeData) {
                     if ($this->config->getSkipChildAttribute($attributeData['attribute'])) {
