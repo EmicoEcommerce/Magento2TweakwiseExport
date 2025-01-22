@@ -301,5 +301,4 @@ class Config
     {
         return (int) $this->config->getValue(self::BATCH_SIZE_PRODUCTS_CHILDREN);
     }
-
 }

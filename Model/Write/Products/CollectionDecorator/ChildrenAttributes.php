@@ -35,6 +35,7 @@ class ChildrenAttributes implements DecoratorInterface
             if (!$exportEntity instanceof CompositeExportEntityInterface) {
                 continue;
             }
+
             if (
                 in_array(
                     $exportEntity->getTypeId(),
