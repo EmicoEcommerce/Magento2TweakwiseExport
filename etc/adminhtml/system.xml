@@ -96,6 +96,7 @@
                     <label>Skip children for composite type(s)</label>
                     <comment>Selected composite type(s) will exclude attributes from its children.</comment>
                     <source_model>Tweakwise\Magento2TweakwiseExport\Model\Config\Source\CompositeTypes</source_model>
+                    <can_be_empty>1</can_be_empty>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
