@@ -185,7 +185,7 @@ class Config
     {
         $data = (array) explode(
             ',',
-            $this->config->getValue(self::PATH_PRICE_FIELD, ScopeInterface::SCOPE_STORE, $store)
+            (string) $this->config->getValue(self::PATH_PRICE_FIELD, ScopeInterface::SCOPE_STORE, $store)
         );
         return array_filter($data);
     }
@@ -199,7 +199,7 @@ class Config
     {
         if (!$this->skipAttributes) {
             $value = $this->config->getValue(self::PATH_EXCLUDE_CHILD_ATTRIBUTES, ScopeInterface::SCOPE_STORE, $store);
-            $skipAttributes = explode(',', $value);
+            $skipAttributes = explode(',', (string) $value);
             $this->skipAttributes = array_flip($skipAttributes);
         }
 
@@ -218,7 +218,11 @@ class Config
     {
         $data = explode(
             ',',
-            $this->config->getValue(self::PATH_SKIP_CHILD_BY_COMPOSITE_TYPE, ScopeInterface::SCOPE_STORE, $store)
+            (string) $this->config->getValue(
+                self::PATH_SKIP_CHILD_BY_COMPOSITE_TYPE,
+                ScopeInterface::SCOPE_STORE,
+                $store
+            )
         );
 
         return array_filter($data);
