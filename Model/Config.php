@@ -218,7 +218,11 @@ class Config
     {
         $data = explode(
             ',',
-            (string) $this->config->getValue(self::PATH_SKIP_CHILD_BY_COMPOSITE_TYPE, ScopeInterface::SCOPE_STORE, $store)
+            (string) $this->config->getValue(
+                self::PATH_SKIP_CHILD_BY_COMPOSITE_TYPE,
+                ScopeInterface::SCOPE_STORE,
+                $store
+            )
         );
 
         return array_filter($data);
