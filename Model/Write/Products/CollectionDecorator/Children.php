@@ -92,7 +92,8 @@ class Children implements DecoratorInterface
         CollectionFactory $collectionFactory,
         Helper $helper,
         DbResourceHelper $dbResource,
-        TweakwiseConfig $config
+        TweakwiseConfig $config,
+        private readonly WebsiteLink $websiteLink
     ) {
         $this->productType = $productType;
         $this->eavIteratorFactory = $eavIteratorFactory;
@@ -113,6 +114,7 @@ class Children implements DecoratorInterface
     {
         $this->childEntities = $this->collectionFactory->create(['store' => $collection->getStore()]);
         $this->createChildEntities($collection);
+        $this->websiteLink->decorate($this->childEntities);
         $this->loadChildAttributes($collection->getStore());
     }
 

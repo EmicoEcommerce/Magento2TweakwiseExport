@@ -71,7 +71,8 @@ class ExportEntityChild extends ExportEntity
     public function shouldExport(): bool
     {
         return $this->shouldExportByStock()
-            && $this->shouldExportByStatus();
+            && $this->shouldExportByStatus() &&
+            $this->shouldExportByWebsite();
     }
 
     /**
