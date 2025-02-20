@@ -268,7 +268,7 @@ class ExportEntity
     public function getAttributes(): array
     {
         $result = [];
-        $result['item_type' . 'product'] = ['attribute' => 'item_type', 'value' => 'product'];
+        $result['item_typeproduct'] = ['attribute' => 'item_type', 'value' => 'product'];
         foreach ($this->attributes as $attribute => $values) {
             foreach ($values as $value) {
                 $result[$attribute . $value] = ['attribute' => $attribute, 'value' => $value];
