@@ -83,6 +83,7 @@ class Children implements DecoratorInterface
      * @param Helper $helper
      * @param DbResourceHelper $dbResource
      * @param TweakwiseConfig $config
+     * @param WebsiteLink $websiteLink
      */
     public function __construct(
         ProductType $productType,
