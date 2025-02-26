@@ -71,7 +71,7 @@ class CompositeExportEntity extends ExportEntity implements CompositeExportEntit
         $this->enabledChildren = [];
 
         foreach ($this->getAllChildren() as $child) {
-            if ($child->shouldExportByStatus()) {
+            if ($child->shouldExport()) {
                 $this->enabledChildren[] = $child;
             }
         }
