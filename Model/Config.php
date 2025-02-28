@@ -305,4 +305,12 @@ class Config
     {
         return (int) $this->config->getValue(self::BATCH_SIZE_PRODUCTS_CHILDREN);
     }
+
+    /**
+     * @return bool
+     */
+    public function isGroupedExport(): bool
+    {
+        return (bool) $this->config->getValue('tweakwise/export/grouped_export_enabled');
+    }
 }

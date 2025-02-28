@@ -12,6 +12,7 @@
         <tweakwise>
             <export>
                 <enabled>0</enabled>
+                <grouped_export_enabled>0</grouped_export_enabled>
                 <schedule>0 3 * * *</schedule>
                 <archive/>
                 <validate>0</validate>

@@ -8,6 +8,7 @@ use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class ExportEntityChild extends ExportEntity
 {
@@ -15,6 +16,11 @@ class ExportEntityChild extends ExportEntity
      * @var ChildOptions
      */
     protected $childOptions;
+
+    /**
+     * @var int
+     */
+    private int $parentId;
 
     /**
      * @var Config
@@ -36,6 +42,7 @@ class ExportEntityChild extends ExportEntity
         StoreManagerInterface $storeManager,
         StockConfigurationInterface $stockConfiguration,
         Visibility $visibility,
+        private readonly Helper $helper,
         array $data = []
     ) {
         parent::__construct(
@@ -43,6 +50,8 @@ class ExportEntityChild extends ExportEntity
             $storeManager,
             $stockConfiguration,
             $visibility,
+            $config,
+            $helper,
             $data
         );
 
@@ -85,5 +94,10 @@ class ExportEntityChild extends ExportEntity
         }
 
         return $this->isInStock();
+    }
+
+    public function setParentId($parentId): void
+    {
+        $this->parentId = $parentId;
     }
 }

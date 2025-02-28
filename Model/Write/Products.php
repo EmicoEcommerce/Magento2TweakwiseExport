@@ -104,6 +104,9 @@ class Products implements WriterInterface
 
         /** @var Store $store */
         foreach ($stores as $store) {
+            if($store->getId() !== '1') {
+                continue;
+            }
             if ($this->config->isEnabled($store)) {
                 $profileKey = 'products::' . $store->getCode();
                 try {
@@ -162,6 +165,7 @@ class Products implements WriterInterface
         $xml->writeElement('name', $this->scalarValue($data['name']));
         $xml->writeElement('price', $this->scalarValue($data['price']));
         $xml->writeElement('stock', $this->scalarValue($data['stock']));
+        $xml->writeElement('groupcode', $this->scalarValue($data['groupcode']));
 
         // Write product categories
         $xml->startElement('categories');

@@ -3,12 +3,14 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItem;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
+use Tweakwise\Magento2TweakwiseExport\Model\Config;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -99,6 +101,8 @@ class ExportEntity
         StoreManagerInterface $storeManager,
         StockConfigurationInterface $stockConfiguration,
         Visibility $visibility,
+        private readonly Config $config,
+        private readonly Helper $helper,
         array $data = []
     ) {
         $this->setFromArray($data);
@@ -231,6 +235,18 @@ class ExportEntity
     public function getStockQty(): float
     {
         return (float) ($this->getStockItem() ? $this->getStockItem()->getQty() : 0);
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupCode(): string
+    {
+        if ($this->typeId === 'simple') {
+            //return $this->getParentSku();
+        }
+
+        return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->getId());
     }
 
     /**
@@ -391,6 +407,9 @@ class ExportEntity
      */
     protected function shouldExportByVisibility(): bool
     {
+        if ($this->config->isGroupedExport()) {
+            return true;
+        }
         return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
     }
 
