@@ -63,6 +63,11 @@ class ExportEntity
     protected $price = 0.0;
 
     /**
+     * @var int
+     */
+    protected $groupCode = 0;
+
+    /**
      * @var StockItem
      */
     protected $stockItem;
@@ -142,6 +147,8 @@ class ExportEntity
                     $this->setPrice((float) $value);
                     $this->addAttribute($key, (float) $value);
                     break;
+                case 'groupCode':
+                    $this->setGroupCode((int) $value);
                 default:
                     $this->addAttribute($key, $value);
                     break;
@@ -238,15 +245,20 @@ class ExportEntity
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getGroupCode(): string
+    public function getGroupCode(): int
     {
         if ($this->typeId === 'simple') {
-            //return $this->getParentSku();
+            return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->groupCode);
         }
 
         return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->getId());
+    }
+
+    public function setGroupCode(int $groupCode): void
+    {
+        $this->groupCode = $groupCode;
     }
 
     /**

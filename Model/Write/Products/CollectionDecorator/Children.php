@@ -305,6 +305,7 @@ class Children implements DecoratorInterface
         int $childId,
         ChildOptions $childOptions = null
     ): void {
+
         if (!$this->childEntities->has($childId)) {
             $child = $this->entityChildFactory->createChild(
                 [
@@ -327,6 +328,10 @@ class Children implements DecoratorInterface
             if ($parent instanceof CompositeExportEntityInterface) {
                 $parent->addChild($child);
             }
+
+            $childEntity = $collection->get($childId);
+            $childEntity->setGroupCode($parentId);
+
         } catch (InvalidArgumentException $exception) {
             // no implementation, parent was not found
         }

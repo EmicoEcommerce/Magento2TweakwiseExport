@@ -90,6 +90,7 @@ class Iterator extends EavIterator
                     'data' => $entityData
                 ]
             );
+
             if (!$entity->shouldProcess()) {
                 continue;
             }
@@ -125,11 +126,13 @@ class Iterator extends EavIterator
         }
 
         foreach ($collection->getExported() as $entity) {
+
             yield [
                 'entity_id' => $entity->getId(),
                 'name' => $entity->getName(),
                 'price' => $entity->getPrice(),
                 'stock' => (int) round($entity->getStockQty()),
+                'groupcode' => $entity->getGroupCode(),
                 'categories' => $entity->getCategories(),
                 'attributes' => $entity->getAttributes(),
             ];
