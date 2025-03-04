@@ -147,8 +147,6 @@ class ExportEntity
                     $this->setPrice((float) $value);
                     $this->addAttribute($key, (float) $value);
                     break;
-                case 'groupCode':
-                    $this->setGroupCode((int) $value);
                 default:
                     $this->addAttribute($key, $value);
                     break;
@@ -249,7 +247,7 @@ class ExportEntity
      */
     public function getGroupCode(): int
     {
-        if ($this->typeId === 'simple') {
+        if ($this->groupCode) {
             return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->groupCode);
         }
 

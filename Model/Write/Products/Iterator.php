@@ -58,7 +58,7 @@ class Iterator extends EavIterator
         CollectionFactory $collectionFactory,
         IteratorInitializer $iteratorInitializer,
         array $collectionDecorators,
-        TweakwiseConfig $config
+        private readonly TweakwiseConfig $config
     ) {
         parent::__construct(
             $helper,
@@ -126,6 +126,10 @@ class Iterator extends EavIterator
         }
 
         foreach ($collection->getExported() as $entity) {
+
+            if ($this->config->isGroupedExport() && $entity instanceof CompositeExportEntityInterface) {
+                continue;
+            }
 
             yield [
                 'entity_id' => $entity->getId(),
