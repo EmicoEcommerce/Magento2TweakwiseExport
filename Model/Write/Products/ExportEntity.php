@@ -425,7 +425,7 @@ class ExportEntity
         if ($this->config->isGroupedExport($this->store)) {
             return true;
         }
-        
+
         return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
     }
 
