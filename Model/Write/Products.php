@@ -104,9 +104,6 @@ class Products implements WriterInterface
 
         /** @var Store $store */
         foreach ($stores as $store) {
-            if($store->getId() !== '1') {
-                continue;
-            }
             if ($this->config->isEnabled($store)) {
                 $profileKey = 'products::' . $store->getCode();
                 try {
