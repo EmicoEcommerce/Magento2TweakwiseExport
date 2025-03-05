@@ -338,7 +338,6 @@ class Children implements DecoratorInterface
                     $childEntity->addCategoryId($category);
                 }
             }
-
         } catch (InvalidArgumentException $exception) {
             // no implementation, parent was not found
         }

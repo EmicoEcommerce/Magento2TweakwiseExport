@@ -311,6 +311,9 @@ class Config
      */
     public function isGroupedExport(StoreInterface $store = null): bool
     {
-        return (bool) $this->config->getValue('tweakwise/export/grouped_export_enabled', ScopeInterface::SCOPE_STORE, $store);
+        return (bool) $this->config->getValue(
+            'tweakwise/export/grouped_export_enabled',
+            ScopeInterface::SCOPE_STORE, $store
+        );
     }
 }
