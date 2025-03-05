@@ -99,6 +99,8 @@ class ExportEntity
      * @param StoreManagerInterface $storeManager
      * @param StockConfigurationInterface $stockConfiguration
      * @param Visibility $visibility
+     * @param Config $config
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -254,6 +256,9 @@ class ExportEntity
         return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->getId());
     }
 
+    /**
+     * @param int $groupCode
+     */
     public function setGroupCode(int $groupCode): void
     {
         $this->groupCode = $groupCode;
@@ -417,7 +422,7 @@ class ExportEntity
      */
     protected function shouldExportByVisibility(): bool
     {
-        if ($this->config->isGroupedExport()) {
+        if ($this->config->isGroupedExport($this->store)) {
             return true;
         }
         return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);

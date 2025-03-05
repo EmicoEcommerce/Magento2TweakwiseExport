@@ -126,8 +126,7 @@ class Iterator extends EavIterator
         }
 
         foreach ($collection->getExported() as $entity) {
-
-            if ($this->config->isGroupedExport() && $entity instanceof CompositeExportEntityInterface) {
+            if ($this->config->isGroupedExport($this->store) && $entity instanceof CompositeExportEntityInterface) {
                 continue;
             }
 

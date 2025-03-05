@@ -24,7 +24,7 @@
                     <label>Store Level Export</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="grouped_export_enabled" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="grouped_export_enabled" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Use groupcode for export</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>

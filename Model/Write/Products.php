@@ -162,7 +162,10 @@ class Products implements WriterInterface
         $xml->writeElement('name', $this->scalarValue($data['name']));
         $xml->writeElement('price', $this->scalarValue($data['price']));
         $xml->writeElement('stock', $this->scalarValue($data['stock']));
-        $xml->writeElement('groupcode', $this->scalarValue($data['groupcode']));
+
+        if ($this->config->isGroupedExport($this->storeManager->getStore($storeId))) {
+            $xml->writeElement('groupcode', $this->scalarValue($data['groupcode']));
+        }
 
         // Write product categories
         $xml->startElement('categories');

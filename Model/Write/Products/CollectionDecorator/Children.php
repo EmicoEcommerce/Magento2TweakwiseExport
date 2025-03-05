@@ -332,6 +332,13 @@ class Children implements DecoratorInterface
             $childEntity = $collection->get($childId);
             $childEntity->setGroupCode($parentId);
 
+            if ($childEntity->getCategories() === []) {
+                $categories = $parent->getCategories();
+                foreach ($categories as $category) {
+                    $childEntity->addCategoryId($category);
+                }
+            }
+
         } catch (InvalidArgumentException $exception) {
             // no implementation, parent was not found
         }

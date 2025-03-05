@@ -34,6 +34,7 @@ class ExportEntityChild extends ExportEntity
      * @param StoreManagerInterface $storeManager
      * @param StockConfigurationInterface $stockConfiguration
      * @param Visibility $visibility
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -94,10 +95,5 @@ class ExportEntityChild extends ExportEntity
         }
 
         return $this->isInStock();
-    }
-
-    public function setParentId($parentId): void
-    {
-        $this->parentId = $parentId;
     }
 }
