@@ -18,6 +18,7 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 
 class Iterator extends EavIterator
 {
@@ -65,6 +66,7 @@ class Iterator extends EavIterator
             $eavConfig,
             $dbContext,
             $eventManager,
+            $config,
             Product::ENTITY,
             [],
             $config->getBatchSizeProducts()
@@ -83,6 +85,8 @@ class Iterator extends EavIterator
     public function getIterator(): \Traversable
     {
         $batch = $this->collectionFactory->create(['store' => $this->store]);
+        $entityIds = [];
+
         foreach (parent::getIterator() as $entityData) {
             $entity = $this->entityFactory->create(
                 [
@@ -126,7 +130,7 @@ class Iterator extends EavIterator
         }
 
         foreach ($collection->getExported() as $entity) {
-            if ($this->config->isGroupedExport($this->store) && $entity instanceof CompositeExportEntityInterface) {
+            if ($this->config->isGroupedExport($this->store) && $entity instanceof ExportEntityConfigurable) {
                 continue;
             }
 
@@ -141,4 +145,5 @@ class Iterator extends EavIterator
             ];
         }
     }
+
 }
