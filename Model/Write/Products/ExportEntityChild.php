@@ -18,11 +18,6 @@ class ExportEntityChild extends ExportEntity
     protected $childOptions;
 
     /**
-     * @var int
-     */
-    private int $parentId;
-
-    /**
      * @var Config
      */
     protected $config;
