@@ -425,7 +425,7 @@ class ExportEntity
         if ($this->config->isGroupedExport($this->store)) {
             // Check if the simple product has a parent (belongs to a configurable)
             if ($this->getTypeId() === \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
-                try{
+                try {
                     $this->getAttribute('parent_id');
                     return true;
                 } catch (InvalidArgumentException $e) {

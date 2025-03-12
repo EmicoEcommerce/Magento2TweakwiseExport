@@ -145,5 +145,4 @@ class Iterator extends EavIterator
             ];
         }
     }
-
 }

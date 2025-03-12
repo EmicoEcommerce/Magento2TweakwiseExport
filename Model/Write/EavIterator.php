@@ -106,7 +106,9 @@ class EavIterator implements IteratorAggregate
      */
     protected $entityData = [];
 
-
+    /**
+     * @var array $parentRelations
+     */
     private array $parentRelations = [];
 
     /**
@@ -116,6 +118,7 @@ class EavIterator implements IteratorAggregate
      * @param EavConfig $eavConfig
      * @param DbContext $dbContext
      * @param Manager $eventManager
+     * @param Config $config
      * @param string $entityCode
      * @param string[] $attributes
      * @param int $batchSize
@@ -291,11 +294,14 @@ class EavIterator implements IteratorAggregate
                     // Loop over all rows and combine them to one array for entity
                     foreach ($this->loopUnionRows($stmt) as $result) {
                         $result = array_merge($result, $this->entityData[$result['entity_id']]);
-                        if ($this->config->isGroupedExport($this->store) && $this->entityCode === 'catalog_product') {
-                            if (isset($this->parentRelations[$result['entity_id']])) {
-                                $result['parent_id'] = $this->parentRelations[$result['entity_id']];
-                            }
+                        if (
+                            $this->config->isGroupedExport($this->store) &&
+                            $this->entityCode === 'catalog_product' &&
+                            isset($this->parentRelations[$result['entity_id']])
+                        ) {
+                            $result['parent_id'] = $this->parentRelations[$result['entity_id']];
                         }
+
                         yield $result;
                     }
                 } finally {
