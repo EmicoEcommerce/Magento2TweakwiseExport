@@ -93,7 +93,7 @@ class Children implements DecoratorInterface
         CollectionFactory $collectionFactory,
         Helper $helper,
         DbResourceHelper $dbResource,
-        TweakwiseConfig $config,
+        private readonly TweakwiseConfig $config,
         private readonly WebsiteLink $websiteLink
     ) {
         $this->productType = $productType;
@@ -329,13 +329,19 @@ class Children implements DecoratorInterface
                 $parent->addChild($child);
             }
 
-            $childEntity = $collection->get($childId);
-            $childEntity->setGroupCode($parentId);
+            if ($this->config->isGroupedExport($collection->getStore())) {
+                $childEntity = $collection->get($childId);
+                $childEntity->setGroupCode($parentId);
+                $childEntity->addAttribute('parent_url_key',
+                    $parent->getAttribute('url_key', false));
+                $childEntity->addAttribute('parent_name',
+                    $parent->getAttribute('name', false));
 
-            if ($childEntity->getCategories() === []) {
-                $categories = $parent->getCategories();
-                foreach ($categories as $category) {
-                    $childEntity->addCategoryId($category);
+                if ($childEntity->getCategories() === []) {
+                    $categories = $parent->getCategories();
+                    foreach ($categories as $category) {
+                        $childEntity->addCategoryId($category);
+                    }
                 }
             }
         } catch (InvalidArgumentException $exception) {
