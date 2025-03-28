@@ -50,7 +50,7 @@ class ExportEntity
     /**
      * @var float
      */
-    protected $price = 0.0;
+    protected $price = null;
 
     /**
      * @var StockItem
@@ -182,10 +182,14 @@ class ExportEntity
     }
 
     /**
-     * @return float
+     * @return float|null
      */
-    public function getPrice(): float
+    public function getPrice(): float|null
     {
+        if ($this->price === null) {
+            return null;
+        }
+
         return (float) $this->price;
     }
 

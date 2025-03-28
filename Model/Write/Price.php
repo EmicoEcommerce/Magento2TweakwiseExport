@@ -155,7 +155,7 @@ class Price implements WriterInterface
     protected function writeProduct(XMLWriter $xml, $storeId, array $data): void
     {
         //don't export products without price, this can happen when the price isn't in the price index table.
-        if ($data['price'] === 0.0) {
+        if ($data['price'] === null) {
             return;
         }
 
