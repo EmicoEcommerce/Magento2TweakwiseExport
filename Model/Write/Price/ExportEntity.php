@@ -184,7 +184,7 @@ class ExportEntity
     /**
      * @return float|null
      */
-    public function getPrice(): float|null
+    public function getPrice(): ?float
     {
         if ($this->price === null) {
             return null;
