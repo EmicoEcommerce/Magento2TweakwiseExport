@@ -308,11 +308,19 @@ class Config
         return (int) $this->config->getValue(self::BATCH_SIZE_PRODUCTS_CHILDREN);
     }
 
+    /**
+     * @param Store|int|string|null $store
+     * @return bool
+     */
     public function calculateCombinedPrices($store = null): bool
     {
         return (bool) $this->config->isSetFlag(self::CALCULATE_COMPOSITE_PRICES, ScopeInterface::SCOPE_STORE, $store);
     }
 
+    /**
+     * @param Store|int|string|null $store
+     * @return bool
+     */
     public function addVat($store = null): bool
     {
         return (bool) $this->config->isSetFlag(self::ADD_TAX_TO_PRICES, ScopeInterface::SCOPE_STORE, $store);

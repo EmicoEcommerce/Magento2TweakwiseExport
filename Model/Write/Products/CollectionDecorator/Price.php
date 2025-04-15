@@ -19,6 +19,7 @@ use Magento\Tax\Model\TaxCalculation;
 class Price implements DecoratorInterface
 {
     private const XML_PATH_ROUNDING_METHOD = 'tax/calculation/rounding_method';
+
     /**
      * @var CollectionFactory
      */
@@ -80,8 +81,13 @@ class Price implements DecoratorInterface
         if ($collection->getStore()->getCurrentCurrencyRate() > 0.00001) {
             $exchangeRate = (float)$collection->getStore()->getCurrentCurrencyRate();
         }
+
         $this->exchangeRate = $exchangeRate ?? 1.0;
-        $this->roundingMethod = $this->scopeConfig->getValue(self::XML_PATH_ROUNDING_METHOD, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getCode());
+        $this->roundingMethod = $this->scopeConfig->getValue(
+            self::XML_PATH_ROUNDING_METHOD,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $store->getCode()
+        );
 
         $priceFields = $this->config->getPriceFields($collection->getStore()->getId());
 
@@ -166,8 +172,6 @@ class Price implements DecoratorInterface
             $price * $this->exchangeRate,
             $this->roundingMethod
         );
-
-        return $price;
     }
 
     /**
@@ -224,6 +228,7 @@ class Price implements DecoratorInterface
             if (isset($product->getAttribute('tax_class_id')[0])) {
                 return $product->getAttribute('tax_class_id')[0];
             }
+
             return null;
         } catch (InvalidArgumentException) {
             return null;
@@ -286,9 +291,9 @@ class Price implements DecoratorInterface
     protected function calculateGroupedProductPrice(int $entityId, $store, ?int $taxClassId): float
     {
         return $this->calculateProductPrice($entityId, function ($product) {
-
             return $product->getTypeInstance()->getAssociatedProducts($product);
-        }, $store, $taxClassId);
+        }
+        , $store, $taxClassId);
     }
 
     /**
@@ -300,11 +305,11 @@ class Price implements DecoratorInterface
     protected function calculateBundleProductPrice(int $entityId, $store, ?int $taxClassId): float
     {
         return $this->calculateProductPrice($entityId, function ($product) {
-
             return $product->getTypeInstance()->getSelectionsCollection(
                 $product->getTypeInstance()->getOptionsIds($product),
                 $product
             );
-        }, $store, $taxClassId);
+        }
+        , $store, $taxClassId);
     }
 }
