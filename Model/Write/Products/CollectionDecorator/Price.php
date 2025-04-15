@@ -3,6 +3,10 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Tax\Model\Calculation;
+use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
@@ -10,9 +14,11 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceColle
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Db_Select;
+use Magento\Tax\Model\TaxCalculation;
 
 class Price implements DecoratorInterface
 {
+    private const XML_PATH_ROUNDING_METHOD = 'tax/calculation/rounding_method';
     /**
      * @var CollectionFactory
      */
@@ -29,15 +35,29 @@ class Price implements DecoratorInterface
     protected $config;
 
     /**
+     * @var float
+     */
+    private float $exchangeRate = 1.0;
+
+    /**
+     * @var string|null
+     */
+    private ?string $roundingMethod = null;
+
+    /**
      * Price constructor.
      * @param CollectionFactory $collectionFactory
      * @param StoreManagerInterface $storeManager
      * @param Config $config
+     * @param Calculation $taxCalculation
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         CollectionFactory $collectionFactory,
         StoreManagerInterface $storeManager,
-        Config $config
+        Config $config,
+        private readonly Calculation $taxCalculation,
+        private readonly ScopeConfigInterface $scopeConfig
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->storeManager = $storeManager;
@@ -50,16 +70,18 @@ class Price implements DecoratorInterface
      */
     public function decorate(Collection|PriceCollection $collection): void
     {
+        $store = $collection->getStore();
         $websiteId = $collection->getStore()->getWebsiteId();
+
         $priceSelect = $this->createPriceSelect($collection->getIds(), $websiteId);
-
         $priceQuery = $priceSelect->getSelect()->query();
-        $currency = $collection->getStore()->getCurrentCurrency();
-        $exchangeRate = 1;
 
+        $currency = $collection->getStore()->getCurrentCurrency();
         if ($collection->getStore()->getCurrentCurrencyRate() > 0.00001) {
             $exchangeRate = (float)$collection->getStore()->getCurrentCurrencyRate();
         }
+        $this->exchangeRate = $exchangeRate ?? 1.0;
+        $this->roundingMethod = $this->scopeConfig->getValue(self::XML_PATH_ROUNDING_METHOD, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store->getCode());
 
         $priceFields = $this->config->getPriceFields($collection->getStore()->getId());
 
@@ -68,13 +90,84 @@ class Price implements DecoratorInterface
             $row['currency'] = $currency->getCurrencyCode();
             $row['price'] = $this->getPriceValue($row, $priceFields);
 
-            //do all prices * exchange rate
-            foreach ($priceFields as $priceField) {
-                $row[$priceField] = (float) ($row[$priceField] * $exchangeRate);
+            $product = $this->collectionFactory->create()->getItemById($entityId);
+            $taxClassId = $this->getTaxClassId($collection->get($entityId));
+
+            if ($this->config->calculateCombinedPrices($store) && $this->isGroupedProduct($product)) {
+                $row['price'] = $this->calculateGroupedProductPrice($entityId, $store, $taxClassId);
+            } elseif ($this->config->calculateCombinedPrices($store) && $this->isBundleProduct($product)) {
+                $row['price'] = $this->calculateBundleProductPrice($entityId, $store, $taxClassId);
+            } else {
+                foreach ($priceFields as $priceField) {
+                    $row[$priceField] = $this->calculatePrice((float)$row[$priceField], $taxClassId, $store);
+                }
             }
 
             $collection->get($entityId)->setFromArray($row);
         }
+    }
+
+    /**
+     * @param float $value
+     * @return float
+     */
+    private function applyRoundingMethod(float $value): float
+    {
+        return match ($this->roundingMethod) {
+            'ceil' => ceil($value),
+            'floor' => floor($value),
+            default => round($value, 2),
+        };
+    }
+
+    /**
+     * @param float $price
+     * @param int|null $taxClassId
+     * @param Store $store
+     * @return float
+     */
+    private function calculatePrice(float $price, ?int $taxClassId, $store): float
+    {
+        if ($this->config->addVat($store)) {
+            $price = $this->addVat($price, $taxClassId, $store);
+        }
+
+        $price = $this->calculateExchangeRate($price);
+
+        return $price;
+    }
+
+    /**
+     * @param float $price
+     * @param int|null $taxClassId
+     * @param Store $store
+     * @return float
+     */
+    private function addVat(float $price, ?int $taxClassId, $store): float
+    {
+        $rateRequest = $this->taxCalculation->getRateRequest(null, null, null, $store);
+        $taxRate = $this->taxCalculation->getRate($rateRequest->setProductClassId($taxClassId));
+
+        $price = $this->applyRoundingMethod(
+            $price * (1 + $taxRate / 100),
+            $this->roundingMethod
+        );
+
+        return $price;
+    }
+
+    /**
+     * @param float $price
+     * @return float
+     */
+    private function calculateExchangeRate(float $price): float
+    {
+        return $this->applyRoundingMethod(
+            $price * $this->exchangeRate,
+            $this->roundingMethod
+        );
+
+        return $price;
     }
 
     /**
@@ -119,5 +212,99 @@ class Price implements DecoratorInterface
         }
 
         return 0;
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @return int|null
+     */
+    protected function getTaxClassId($product): ?int
+    {
+        try {
+            if (isset($product->getAttribute('tax_class_id')[0])) {
+                return $product->getAttribute('tax_class_id')[0];
+            }
+            return null;
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @return bool
+     */
+    protected function isGroupedProduct(ProductInterface $product): bool
+    {
+        return $product?->getTypeId() === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE;
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @return bool
+     */
+    protected function isBundleProduct($product): bool
+    {
+        return $product?->getTypeId() === \Magento\Bundle\Model\Product\Type::TYPE_CODE;
+    }
+
+    /**
+     * @param int $entityId
+     * @param callable $getAssociatedItems
+     * @param Store $store
+     * @param int|null $taxClassId
+     * @return float
+     */
+    protected function calculateProductPrice(int $entityId, callable $getAssociatedItems, $store, ?int $taxClassId): float
+    {
+        $product = $this->collectionFactory->create()->getItemById($entityId);
+        $associatedItems = $getAssociatedItems($product);
+
+        // Convert collection to array if necessary
+        if ($associatedItems instanceof \Magento\Framework\Data\Collection) {
+            $associatedItems = $associatedItems->getItems();
+        }
+
+        return array_reduce($associatedItems, function ($total, $item) use ($store, $taxClassId) {
+            $basePrice = $item->getPrice();
+            $price = $this->calculatePrice(
+                $basePrice,
+                $taxClassId,
+                $store
+            );
+
+            return $total + ($price * $item->getQty());
+        }, 0);
+    }
+
+    /**
+     * @param int $entityId
+     * @param Store $store
+     * @param int|null $taxClassId
+     * @return float
+     */
+    protected function calculateGroupedProductPrice(int $entityId, $store, ?int $taxClassId): float
+    {
+        return $this->calculateProductPrice($entityId, function ($product) {
+
+            return $product->getTypeInstance()->getAssociatedProducts($product);
+        }, $store, $taxClassId);
+    }
+
+    /**
+     * @param int $entityId
+     * @param Store $store
+     * @param int|null $taxClassId
+     * @return float
+     */
+    protected function calculateBundleProductPrice(int $entityId, $store, ?int $taxClassId): float
+    {
+        return $this->calculateProductPrice($entityId, function ($product) {
+
+            return $product->getTypeInstance()->getSelectionsCollection(
+                $product->getTypeInstance()->getOptionsIds($product),
+                $product
+            );
+        }, $store, $taxClassId);
     }
 }

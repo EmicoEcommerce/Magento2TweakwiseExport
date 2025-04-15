@@ -40,6 +40,8 @@ class Config
     public const BATCH_SIZE_PRODUCTS = 'tweakwise/export/batch_size_products';
     public const BATCH_SIZE_PRODUCTS_CHILDREN = 'tweakwise/export/batch_size_products_children';
     public const PATH_SKIP_CHILD_BY_COMPOSITE_TYPE = 'tweakwise/export/skip_child_by_composite_type';
+    public const CALCULATE_COMPOSITE_PRICES = 'tweakwise/export/calculate_composite_prices';
+    public const ADD_TAX_TO_PRICES = 'tweakwise/export/add_tax_to_prices';
 
     /**
      * Default feed filename
@@ -304,5 +306,15 @@ class Config
     public function getBatchSizeProductsChildren(): int
     {
         return (int) $this->config->getValue(self::BATCH_SIZE_PRODUCTS_CHILDREN);
+    }
+
+    public function calculateCombinedPrices($store = null): bool
+    {
+        return (bool) $this->config->isSetFlag(self::CALCULATE_COMPOSITE_PRICES, ScopeInterface::SCOPE_STORE, $store);
+    }
+
+    public function addVat($store = null): bool
+    {
+        return (bool) $this->config->isSetFlag(self::ADD_TAX_TO_PRICES, ScopeInterface::SCOPE_STORE, $store);
     }
 }
