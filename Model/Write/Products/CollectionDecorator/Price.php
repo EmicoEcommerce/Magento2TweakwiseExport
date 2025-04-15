@@ -260,7 +260,12 @@ class Price implements DecoratorInterface
      * @param int|null $taxClassId
      * @return float
      */
-    protected function calculateProductPrice(int $entityId, callable $getAssociatedItems, $store, ?int $taxClassId): float
+    protected function calculateProductPrice(
+        int $entityId,
+        callable $getAssociatedItems,
+        $store,
+        ?int $taxClassId
+    ): float
     {
         $product = $this->collectionFactory->create()->getItemById($entityId);
         $associatedItems = $getAssociatedItems($product);
@@ -270,16 +275,19 @@ class Price implements DecoratorInterface
             $associatedItems = $associatedItems->getItems();
         }
 
-        return array_reduce($associatedItems, function ($total, $item) use ($store, $taxClassId) {
-            $basePrice = $item->getPrice();
-            $price = $this->calculatePrice(
-                $basePrice,
-                $taxClassId,
-                $store
-            );
-
-            return $total + ($price * $item->getQty());
-        }, 0);
+        return array_reduce(
+            $associatedItems,
+            function ($total, $item) use ($store, $taxClassId) {
+                $basePrice = $item->getPrice();
+                $price = $this->calculatePrice(
+                    $basePrice,
+                    $taxClassId,
+                    $store
+                );
+                return $total + ($price * $item->getQty());
+            },
+            0
+        );
     }
 
     /**
@@ -290,10 +298,14 @@ class Price implements DecoratorInterface
      */
     protected function calculateGroupedProductPrice(int $entityId, $store, ?int $taxClassId): float
     {
-        return $this->calculateProductPrice($entityId, function ($product) {
-            return $product->getTypeInstance()->getAssociatedProducts($product);
-        }
-        , $store, $taxClassId);
+        return $this->calculateProductPrice(
+            $entityId,
+            function ($product) {
+                return $product->getTypeInstance()->getAssociatedProducts($product);
+            },
+            $store,
+            $taxClassId
+        );
     }
 
     /**
@@ -304,12 +316,16 @@ class Price implements DecoratorInterface
      */
     protected function calculateBundleProductPrice(int $entityId, $store, ?int $taxClassId): float
     {
-        return $this->calculateProductPrice($entityId, function ($product) {
-            return $product->getTypeInstance()->getSelectionsCollection(
-                $product->getTypeInstance()->getOptionsIds($product),
-                $product
-            );
-        }
-        , $store, $taxClassId);
+        return $this->calculateProductPrice(
+            $entityId,
+            function ($product) {
+                return $product->getTypeInstance()->getSelectionsCollection(
+                    $product->getTypeInstance()->getOptionsIds($product),
+                    $product
+                );
+            },
+            $store,
+            $taxClassId
+        );
     }
 }
