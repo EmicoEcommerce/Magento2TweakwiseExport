@@ -265,8 +265,7 @@ class Price implements DecoratorInterface
         callable $getAssociatedItems,
         $store,
         ?int $taxClassId
-    ): float
-    {
+    ): float {
         $product = $this->collectionFactory->create()->getItemById($entityId);
         $associatedItems = $getAssociatedItems($product);
 
