@@ -185,7 +185,10 @@ class Categories implements WriterInterface
         $xml->writeElement('categoryid', $tweakwiseId);
         $xml->writeElement('rank', $data['position']);
         $xml->writeElement('name', $data['name']);
-        $xml->writeElement('url', $data['url'] ?? '');
+
+        if (isset($data['url'])) {
+            $xml->writeElement('url', $data['url']);
+        }
 
         if (isset($data['parent_id']) && $data['parent_id']) {
             $xml->startElement('parents');
