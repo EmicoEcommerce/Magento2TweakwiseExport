@@ -68,7 +68,6 @@
                 <item name="level" xsi:type="string">level</item>
                 <item name="position" xsi:type="string">position</item>
                 <item name="is_active" xsi:type="string">is_active</item>
-                <item name="url_path" xsi:type="string">url_path</item>
             </argument>
         </arguments>
     </type>

@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 use Magento\Framework\UrlInterface;
+use Magento\UrlRewrite\Model\ResourceModel\UrlRewriteCollectionFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -54,13 +55,15 @@ class Categories implements WriterInterface
      * @param Config $config
      * @param Helper $helper
      * @param Logger $log
+     * @param UrlRewriteCollectionFactory $urlRewriteCollectionFactory
      */
     public function __construct(
         Iterator $iterator,
         StoreManager $storeManager,
         Config $config,
         Helper $helper,
-        Logger $log
+        Logger $log,
+        private readonly UrlRewriteCollectionFactory $urlRewriteCollectionFactory
     ) {
         $this->iterator = $iterator;
         $this->storeManager = $storeManager;
@@ -154,8 +157,9 @@ class Categories implements WriterInterface
                 continue;
             }
 
-            if (isset($data['url_path'])) {
-                $data['url'] = $this->getCategoryUrl($data['url_path'], $store);
+            $categoryUrl = $this->getCategoryUrl((int)$data['entity_id'], $store);
+            if ($categoryUrl) {
+                $data['url'] = $categoryUrl;
             }
 
             // Set category as exported
@@ -210,16 +214,28 @@ class Categories implements WriterInterface
     }
 
     /**
-     * @param string $urlPath
+     * @param int $categoryId
      * @param Store $store
-     * @return string
+     * @return string|null
      */
-    private function getCategoryUrl(string $urlPath, Store $store): string
+    private function getCategoryUrl(int $categoryId, Store $store): ?string
     {
-        return sprintf(
-            '%s%s',
-            $store->getBaseUrl(UrlInterface::URL_TYPE_WEB, true),
-            $urlPath
-        );
+        $collection = $this->urlRewriteCollectionFactory->create();
+        $collection->addFieldToFilter('entity_id', $categoryId)
+            ->addFieldToFilter('entity_type', 'category')
+            ->addFieldToFilter('store_id', $store->getId())
+            ->addFieldToFilter('redirect_type', 0);
+
+        $rewrite = $collection->getFirstItem();
+
+        if ($rewrite && $rewrite->getRequestPath()) {
+            return sprintf(
+                '%s%s',
+                $store->getBaseUrl(UrlInterface::URL_TYPE_WEB, true),
+                $rewrite->getRequestPath()
+            );
+        }
+
+        return null;
     }
 }
