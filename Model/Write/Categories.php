@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
+use Magento\Framework\UrlInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -153,6 +154,10 @@ class Categories implements WriterInterface
                 continue;
             }
 
+            if (isset($data['url_path'])) {
+                $data['url'] = $this->getCategoryUrl($data['url_path'], $store);
+            }
+
             // Set category as exported
             $exportedCategories[$data['entity_id']] = true;
             $this->writeCategory($xml, $storeId, $data);
@@ -180,6 +185,7 @@ class Categories implements WriterInterface
         $xml->writeElement('categoryid', $tweakwiseId);
         $xml->writeElement('rank', $data['position']);
         $xml->writeElement('name', $data['name']);
+        $xml->writeElement('url', $data['url'] ?? '');
 
         if (isset($data['parent_id']) && $data['parent_id']) {
             $xml->startElement('parents');
@@ -198,5 +204,19 @@ class Categories implements WriterInterface
         }
 
         $xml->endElement(); // </category>
+    }
+
+    /**
+     * @param string $urlPath
+     * @param Store $store
+     * @return string
+     */
+    private function getCategoryUrl(string $urlPath, Store $store): string
+    {
+        return sprintf(
+            '%s%s',
+            $store->getBaseUrl(UrlInterface::URL_TYPE_WEB, true),
+            $urlPath
+        );
     }
 }
