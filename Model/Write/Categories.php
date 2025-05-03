@@ -9,8 +9,10 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
+use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\Framework\UrlInterface;
-use Magento\UrlRewrite\Model\ResourceModel\UrlRewriteCollectionFactory;
+use Magento\UrlRewrite\Model\UrlFinderInterface;
+use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -55,7 +57,8 @@ class Categories implements WriterInterface
      * @param Config $config
      * @param Helper $helper
      * @param Logger $log
-     * @param UrlRewriteCollectionFactory $urlRewriteCollectionFactory
+     * @param UrlFinderInterface $urlFinder
+     * @param UrlInterface $url
      */
     public function __construct(
         Iterator $iterator,
@@ -63,7 +66,8 @@ class Categories implements WriterInterface
         Config $config,
         Helper $helper,
         Logger $log,
-        private readonly UrlRewriteCollectionFactory $urlRewriteCollectionFactory
+        private readonly UrlFinderInterface $urlFinder,
+        private readonly UrlInterface $url
     ) {
         $this->iterator = $iterator;
         $this->storeManager = $storeManager;
@@ -220,20 +224,16 @@ class Categories implements WriterInterface
      */
     private function getCategoryUrl(int $categoryId, Store $store): ?string
     {
-        $collection = $this->urlRewriteCollectionFactory->create();
-        $collection->addFieldToFilter('entity_id', $categoryId)
-            ->addFieldToFilter('entity_type', 'category')
-            ->addFieldToFilter('store_id', $store->getId())
-            ->addFieldToFilter('redirect_type', 0);
-
-        $rewrite = $collection->getFirstItem();
-
-        if ($rewrite && $rewrite->getRequestPath()) {
-            return sprintf(
-                '%s%s',
-                $store->getBaseUrl(UrlInterface::URL_TYPE_WEB, true),
-                $rewrite->getRequestPath()
-            );
+        $rewrite = $this->urlFinder->findOneByData(
+            [
+                UrlRewrite::ENTITY_ID => $categoryId,
+                UrlRewrite::ENTITY_TYPE => CategoryUrlRewriteGenerator::ENTITY_TYPE,
+                UrlRewrite::STORE_ID => $store->getId(),
+                UrlRewrite::REDIRECT_TYPE => 0
+            ]
+        );
+        if ($rewrite) {
+            return $this->url->getDirectUrl($rewrite->getRequestPath());
         }
 
         return null;
