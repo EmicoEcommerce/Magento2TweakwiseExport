@@ -9,6 +9,10 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
+use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
+use Magento\Framework\UrlInterface;
+use Magento\UrlRewrite\Model\UrlFinderInterface;
+use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -53,13 +57,17 @@ class Categories implements WriterInterface
      * @param Config $config
      * @param Helper $helper
      * @param Logger $log
+     * @param UrlFinderInterface $urlFinder
+     * @param UrlInterface $url
      */
     public function __construct(
         Iterator $iterator,
         StoreManager $storeManager,
         Config $config,
         Helper $helper,
-        Logger $log
+        Logger $log,
+        private readonly UrlFinderInterface $urlFinder,
+        private readonly UrlInterface $url
     ) {
         $this->iterator = $iterator;
         $this->storeManager = $storeManager;
@@ -153,6 +161,11 @@ class Categories implements WriterInterface
                 continue;
             }
 
+            $categoryUrl = $this->getCategoryUrl((int)$data['entity_id'], $store);
+            if ($categoryUrl) {
+                $data['url'] = $categoryUrl;
+            }
+
             // Set category as exported
             $exportedCategories[$data['entity_id']] = true;
             $this->writeCategory($xml, $storeId, $data);
@@ -181,6 +194,10 @@ class Categories implements WriterInterface
         $xml->writeElement('rank', $data['position']);
         $xml->writeElement('name', $data['name']);
 
+        if (isset($data['url'])) {
+            $xml->writeElement('url', $data['url']);
+        }
+
         if (isset($data['parent_id']) && $data['parent_id']) {
             $xml->startElement('parents');
 
@@ -198,5 +215,27 @@ class Categories implements WriterInterface
         }
 
         $xml->endElement(); // </category>
+    }
+
+    /**
+     * @param int $categoryId
+     * @param Store $store
+     * @return string|null
+     */
+    private function getCategoryUrl(int $categoryId, Store $store): ?string
+    {
+        $rewrite = $this->urlFinder->findOneByData(
+            [
+                UrlRewrite::ENTITY_ID => $categoryId,
+                UrlRewrite::ENTITY_TYPE => CategoryUrlRewriteGenerator::ENTITY_TYPE,
+                UrlRewrite::STORE_ID => $store->getId(),
+                UrlRewrite::REDIRECT_TYPE => 0
+            ]
+        );
+        if ($rewrite) {
+            return $this->url->getDirectUrl($rewrite->getRequestPath());
+        }
+
+        return null;
     }
 }
