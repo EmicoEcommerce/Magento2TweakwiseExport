@@ -309,19 +309,19 @@ class Config
     }
 
     /**
-     * @param Store|int|string|null $store
+     * @param Store $store
      * @return bool
      */
-    public function calculateCombinedPrices($store = null): bool
+    public function calculateCombinedPrices(Store $store): bool
     {
         return (bool) $this->config->isSetFlag(self::CALCULATE_COMPOSITE_PRICES, ScopeInterface::SCOPE_STORE, $store);
     }
 
     /**
-     * @param Store|int|string|null $store
+     * @param Store $store
      * @return bool
      */
-    public function addVat($store = null): bool
+    public function addVat(Store $store): bool
     {
         return (bool) $this->config->isSetFlag(self::ADD_TAX_TO_PRICES, ScopeInterface::SCOPE_STORE, $store);
     }

@@ -111,7 +111,7 @@
                     </depends>
                 </field>
 
-                <field id="calculate_composite_prices" translate="label,comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="calculate_composite_prices" translate="label,comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Calculate combined prices</label>
                     <comment>Would you like to export the combined price of an grouped/bundle product?</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -120,7 +120,7 @@
                     </depends>
                 </field>
 
-                <field id="add_tax_to_prices" translate="label,comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="add_tax_to_prices" translate="label,comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export prices incl vat</label>
                     <comment>Add the vat to the prices exported. Only enable this if the prices exported to Tweakwise are missing the vat</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -132,7 +132,7 @@
                 <field id="batch_size_categories"
                        translate="batch size for categories"
                        type="text"
-                       sortOrder="110"
+                       sortOrder="130"
                        showInDefault="1"
                        showInWebsite="0"
                        showInStore="0"
@@ -148,7 +148,7 @@
                 <field id="batch_size_products"
                        translate="batch size for products"
                        type="text"
-                       sortOrder="120"
+                       sortOrder="140"
                        showInDefault="1"
                        showInWebsite="0"
                        showInStore="0"
@@ -164,7 +164,7 @@
                 <field id="batch_size_products_children"
                        translate="batch size for products children"
                        type="text"
-                       sortOrder="130"
+                       sortOrder="150"
                        showInDefault="1"
                        showInWebsite="0"
                        showInStore="0"
@@ -177,7 +177,7 @@
                     </comment>
                 </field>
 
-                <field id="schedule" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="schedule" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule full export</label>
                     <comment>Leave empty to disable export by cron.</comment>
                     <depends>
@@ -185,14 +185,14 @@
                         <field id="real_time">0</field>
                     </depends>
                 </field>
-                <field id="export_state" translate="label,comment" type="label" sortOrder="150" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="export_state" translate="label,comment" type="label" sortOrder="170" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>State</label>
                     <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportState</frontend_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="start" translate="label,comment" type="label" sortOrder="160" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="start" translate="label,comment" type="label" sortOrder="180" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Schedule exports</label>
                     <frontend_model>Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field\ExportStart</frontend_model>
                     <comment>Start exports on next cron run</comment>

@@ -3,8 +3,10 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
+use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Tax\Model\Calculation;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
@@ -15,6 +17,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Db_Select;
 use Magento\Tax\Model\TaxCalculation;
+use Magento\Framework\Data\Collection as DataCollection;
 
 class Price implements DecoratorInterface
 {
@@ -241,7 +244,7 @@ class Price implements DecoratorInterface
      */
     protected function isGroupedProduct(ProductInterface $product): bool
     {
-        return $product?->getTypeId() === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE;
+        return $product?->getTypeId() === Grouped::TYPE_CODE;
     }
 
     /**
@@ -250,7 +253,7 @@ class Price implements DecoratorInterface
      */
     protected function isBundleProduct($product): bool
     {
-        return $product?->getTypeId() === \Magento\Bundle\Model\Product\Type::TYPE_CODE;
+        return $product?->getTypeId() === Type::TYPE_CODE;
     }
 
     /**
@@ -270,7 +273,7 @@ class Price implements DecoratorInterface
         $associatedItems = $getAssociatedItems($product);
 
         // Convert collection to array if necessary
-        if ($associatedItems instanceof \Magento\Framework\Data\Collection) {
+        if ($associatedItems instanceof DataCollection) {
             $associatedItems = $associatedItems->getItems();
         }
 
