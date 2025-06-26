@@ -24,8 +24,6 @@ use Magento\Store\Model\ScopeInterface;
 
 class Price implements DecoratorInterface
 {
-    private const XML_PATH_ROUNDING_METHOD = 'tax/calculation/rounding_method';
-
     /**
      * @var CollectionFactory
      */
@@ -45,11 +43,6 @@ class Price implements DecoratorInterface
      * @var float
      */
     private float $exchangeRate = 1.0;
-
-    /**
-     * @var string|null
-     */
-    private ?string $roundingMethod = null;
 
     /**
      * Price constructor.
@@ -89,11 +82,6 @@ class Price implements DecoratorInterface
         }
 
         $this->exchangeRate = $exchangeRate ?? 1.0;
-        $this->roundingMethod = $this->scopeConfig->getValue(
-            self::XML_PATH_ROUNDING_METHOD,
-            ScopeInterface::SCOPE_STORE,
-            $store->getCode()
-        );
 
         $priceFields = $this->config->getPriceFields($collection->getStore()->getId());
 
@@ -125,11 +113,7 @@ class Price implements DecoratorInterface
      */
     private function applyRoundingMethod(float $value): float
     {
-        return match ($this->roundingMethod) {
-            'ceil' => ceil($value),
-            'floor' => floor($value),
-            default => round($value, 2),
-        };
+        return round($value, 2);
     }
 
     /**
@@ -161,8 +145,7 @@ class Price implements DecoratorInterface
         $taxRate = $this->taxCalculation->getRate($rateRequest->setProductClassId($taxClassId));
 
         $price = $this->applyRoundingMethod(
-            $price * (1 + $taxRate / 100),
-            $this->roundingMethod
+            $price * (1 + $taxRate / 100)
         );
 
         return $price;
@@ -175,8 +158,7 @@ class Price implements DecoratorInterface
     private function calculateExchangeRate(float $price): float
     {
         return $this->applyRoundingMethod(
-            $price * $this->exchangeRate,
-            $this->roundingMethod
+            $price * $this->exchangeRate
         );
     }
 
