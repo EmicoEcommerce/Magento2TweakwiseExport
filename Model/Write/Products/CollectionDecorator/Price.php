@@ -7,6 +7,7 @@ use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
+use Magento\Store\Model\Store;
 use Magento\Tax\Model\Calculation;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
@@ -15,9 +16,11 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 use Zend_Db_Select;
 use Magento\Tax\Model\TaxCalculation;
 use Magento\Framework\Data\Collection as DataCollection;
+use Magento\Store\Model\ScopeInterface;
 
 class Price implements DecoratorInterface
 {
@@ -88,7 +91,7 @@ class Price implements DecoratorInterface
         $this->exchangeRate = $exchangeRate ?? 1.0;
         $this->roundingMethod = $this->scopeConfig->getValue(
             self::XML_PATH_ROUNDING_METHOD,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORE,
             $store->getCode()
         );
 
@@ -135,7 +138,7 @@ class Price implements DecoratorInterface
      * @param Store $store
      * @return float
      */
-    private function calculatePrice(float $price, ?int $taxClassId, $store): float
+    private function calculatePrice(float $price, ?int $taxClassId, Store $store): float
     {
         if ($this->config->addVat($store)) {
             $price = $this->addVat($price, $taxClassId, $store);
@@ -152,7 +155,7 @@ class Price implements DecoratorInterface
      * @param Store $store
      * @return float
      */
-    private function addVat(float $price, ?int $taxClassId, $store): float
+    private function addVat(float $price, ?int $taxClassId, Store $store): float
     {
         $rateRequest = $this->taxCalculation->getRateRequest(null, null, null, $store);
         $taxRate = $this->taxCalculation->getRate($rateRequest->setProductClassId($taxClassId));
@@ -225,7 +228,7 @@ class Price implements DecoratorInterface
      * @param ProductInterface $product
      * @return int|null
      */
-    protected function getTaxClassId($product): ?int
+    protected function getTaxClassId(ExportEntity $product): ?int
     {
         try {
             if (isset($product->getAttribute('tax_class_id')[0])) {
@@ -251,7 +254,7 @@ class Price implements DecoratorInterface
      * @param ProductInterface $product
      * @return bool
      */
-    protected function isBundleProduct($product): bool
+    protected function isBundleProduct(ProductInterface $product): bool
     {
         return $product?->getTypeId() === Type::TYPE_CODE;
     }
@@ -266,7 +269,7 @@ class Price implements DecoratorInterface
     protected function calculateProductPrice(
         int $entityId,
         callable $getAssociatedItems,
-        $store,
+        Store $store,
         ?int $taxClassId
     ): float {
         $product = $this->collectionFactory->create()->getItemById($entityId);
@@ -298,7 +301,7 @@ class Price implements DecoratorInterface
      * @param int|null $taxClassId
      * @return float
      */
-    protected function calculateGroupedProductPrice(int $entityId, $store, ?int $taxClassId): float
+    protected function calculateGroupedProductPrice(int $entityId, Store $store, ?int $taxClassId): float
     {
         return $this->calculateProductPrice(
             $entityId,
@@ -316,7 +319,7 @@ class Price implements DecoratorInterface
      * @param int|null $taxClassId
      * @return float
      */
-    protected function calculateBundleProductPrice(int $entityId, $store, ?int $taxClassId): float
+    protected function calculateBundleProductPrice(int $entityId, Store $store, ?int $taxClassId): float
     {
         return $this->calculateProductPrice(
             $entityId,
