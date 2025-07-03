@@ -49,7 +49,7 @@ class CompositeExportEntity extends ExportEntity implements CompositeExportEntit
         $this->exportableChildren = [];
 
         foreach ($this->getAllChildren() as $child) {
-            if ($child->shouldExport()) {
+            if ($child->shouldExportByStatus() && $child->shouldExportByWebsite()) {
                 $this->exportableChildren[] = $child;
             }
         }
