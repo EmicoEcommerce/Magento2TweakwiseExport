@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
 class CompositeExportEntity extends ExportEntity implements CompositeExportEntityInterface
@@ -49,9 +51,11 @@ class CompositeExportEntity extends ExportEntity implements CompositeExportEntit
         $this->exportableChildren = [];
 
         foreach ($this->getAllChildren() as $child) {
-            if ($child->shouldExport()) {
-                $this->exportableChildren[] = $child;
+            if (!$child->shouldExport()) {
+                continue;
             }
+
+            $this->exportableChildren[] = $child;
         }
 
         return $this->exportableChildren;
@@ -71,9 +75,11 @@ class CompositeExportEntity extends ExportEntity implements CompositeExportEntit
         $this->enabledChildren = [];
 
         foreach ($this->getAllChildren() as $child) {
-            if ($child->shouldExport()) {
-                $this->enabledChildren[] = $child;
+            if (!$child->shouldExportByStatus() || !$child->shouldExportByWebsite()) {
+                continue;
             }
+
+            $this->enabledChildren[] = $child;
         }
 
         return $this->enabledChildren;
