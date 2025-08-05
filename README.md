@@ -91,6 +91,8 @@ https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/store/storecode //st
 - Export out of stock Combined product children: Tweakwise export aggregates child data on parent products, this setting determines if data from out of child products should be included in this aggregation.
 - Exclude child attributes: These values of these attributes will be excluded from product data when aggregating onto the parent product.
 - Which price value will be exported as "price" to tweakwise.
+- Calculate combined prices: Set this to yes if you want to send te combined price (of all children) of an grouped/bundle product to tweakwise. Instead of the min/max price of one of the children.
+- Add the vat to prices exported. Only enable this if the prices expoted to tweakwise are missing the vat.
 
 ### Visibility settings
 Magento has multiple visibility settings, tweakwise only knows visible products meaning that if a product is in the feed then it will be visible while navigating and searching.
