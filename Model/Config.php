@@ -41,7 +41,6 @@ class Config
     public const BATCH_SIZE_PRODUCTS_CHILDREN = 'tweakwise/export/batch_size_products_children';
     public const PATH_SKIP_CHILD_BY_COMPOSITE_TYPE = 'tweakwise/export/skip_child_by_composite_type';
     public const CALCULATE_COMPOSITE_PRICES = 'tweakwise/export/calculate_composite_prices';
-    public const ADD_TAX_TO_PRICES = 'tweakwise/export/add_tax_to_prices';
 
     /**
      * Default feed filename
