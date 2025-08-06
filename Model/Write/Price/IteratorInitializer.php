@@ -34,5 +34,6 @@ class IteratorInitializer
         $iterator->selectAttribute('status');
         $iterator->selectAttribute('visibility');
         $iterator->selectAttribute('type_id');
+        $iterator->selectAttribute('tax_class_id');
     }
 }

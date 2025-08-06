@@ -26,6 +26,7 @@
                 <batch_size_categories>5000</batch_size_categories>
                 <batch_size_products>5000</batch_size_products>
                 <batch_size_products_children>5000</batch_size_products_children>
+                <calculate_composite_prices>0</calculate_composite_prices>
             </export>
             <export_stock>
                 <enabled>0</enabled>
