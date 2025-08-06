@@ -315,13 +315,4 @@ class Config
     {
         return (bool) $this->config->isSetFlag(self::CALCULATE_COMPOSITE_PRICES, ScopeInterface::SCOPE_STORE, $store);
     }
-
-    /**
-     * @param Store $store
-     * @return bool
-     */
-    public function addVat(Store $store): bool
-    {
-        return (bool) $this->config->isSetFlag(self::ADD_TAX_TO_PRICES, ScopeInterface::SCOPE_STORE, $store);
-    }
 }
