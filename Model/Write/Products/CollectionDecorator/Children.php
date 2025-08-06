@@ -332,10 +332,18 @@ class Children implements DecoratorInterface
             if ($this->config->isGroupedExport($collection->getStore())) {
                 $childEntity = $collection->get($childId);
                 $childEntity->setGroupCode($parentId);
-                $childEntity->addAttribute('parent_url_key',
-                    $parent->getAttribute('url_key', false));
-                $childEntity->addAttribute('parent_name',
-                    $parent->getAttribute('name', false));
+                $childEntity->addAttribute(
+                    'parent_url_key',
+                    $parent->getAttribute('url_key', false)
+                );
+                $childEntity->addAttribute(
+                    'parent_name',
+                    $parent->getAttribute('name', false)
+                );
+                $childEntity->addAttribute(
+                    'parent_visibility',
+                    $parent->getAttribute('visibility', false)
+                );
 
                 if ($childEntity->getCategories() === []) {
                     $categories = $parent->getCategories();
