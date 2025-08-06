@@ -108,15 +108,6 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param float $value
-     * @return float
-     */
-    private function applyRoundingMethod(float $value): float
-    {
-        return round($value, 2);
-    }
-
-    /**
      * @param float $price
      * @param int|null $taxClassId
      * @param Store $store
@@ -124,29 +115,7 @@ class Price implements DecoratorInterface
      */
     private function calculatePrice(float $price, ?int $taxClassId, Store $store): float
     {
-        if ($this->config->addVat($store)) {
-            $price = $this->addVat($price, $taxClassId, $store);
-        }
-
         $price = $this->calculateExchangeRate($price);
-
-        return $price;
-    }
-
-    /**
-     * @param float $price
-     * @param int|null $taxClassId
-     * @param Store $store
-     * @return float
-     */
-    private function addVat(float $price, ?int $taxClassId, Store $store): float
-    {
-        $rateRequest = $this->taxCalculation->getRateRequest(null, null, null, $store);
-        $taxRate = $this->taxCalculation->getRate($rateRequest->setProductClassId($taxClassId));
-
-        $price = $this->applyRoundingMethod(
-            $price * (1 + $taxRate / 100)
-        );
 
         return $price;
     }
@@ -157,9 +126,7 @@ class Price implements DecoratorInterface
      */
     private function calculateExchangeRate(float $price): float
     {
-        return $this->applyRoundingMethod(
-            $price * $this->exchangeRate
-        );
+        return $price * $this->exchangeRate;
     }
 
     /**
