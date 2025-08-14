@@ -47,7 +47,7 @@ class PriceField implements ArrayInterface
      * @return array
      * phpcs:disable Magento2.Performance.ForeachArrayMerge.ForeachArrayMerge
      */
-    protected function combineArrayPermutations(array $input, array $processed = null): array
+    protected function combineArrayPermutations(array $input, ?array $processed = null): array
     {
         $permutations = [];
         foreach ($input as $key => $value) {
