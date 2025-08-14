@@ -68,6 +68,18 @@ The feed contains only attributes which have bearing on search or navigation, ch
 
 The feed prices are exported in the default configured currency of the store (from v5.1.0 forward). If an exchange rate is available the prices for that currency are calculated. If no exchange rate is available, the original prices are used.
 
+## Grouped export
+If you have groupcode enabled all products are exported with their groupcode. All variants of a product (configurable, grouped, bundle) are linked together using the groupcode. If this is enabled all variants are separated products in Tweakwise. Use this if you want to filter out products based on variant data.
+If you switch from to normal export to groupcode export, you will need to do the following:
+1. Enable groupcode export in the configuration.
+2. Run the tweakwise:export command to generate the feed.
+3. Make sure the image urls are correct in Tweakwise.
+4. Import the feed into Tweakwise and publish the catalog.
+5. Enable Stores->configuration->catalog->tweakwise->general->Grouped products
+6. Clear the cache
+
+During the switch the catalog may be empty. If the image url are not correct no product images may be shown in magento. Please contact support if you have issues with this.
+
 ## A note on the feed implementation
 Magento's native interfaces and handlers for data retrieval were deemed to slow for a large catalog.
 Since performance is essential we decided on our own queries for data retrieval. The consequence is that we need to keep track of the inner workings of magento and are subject to its changes.
@@ -80,17 +92,42 @@ https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/type/price //price e
 https://yoursite.com/tweakwise/feed/export/key/{{feed_key}}/store/storecode //store level export, only available if store level export is enabled
 
 ## Export Settings
-- Store Level Export: Enables generating seperate feed for each store. If store level export is enabled.
-- Enabled: If products of that store should be exported to tweakwise, note that if this is false for some store then navigation and search should also be disabled for that store.
-- Schedule: Cron schedule for generating the feed. We strongly encourage you to register the export task on the server crontab instead of using the Magento cron.
-- Schedule export: Generate the feed on the next cron run. (default feed)
-- Key: This will be validated by the export module when the ExportController is asked for feed content or when the CacheFlush controller is asked to flush cache. If the request does not have a key parameter that matches the feed will not be served (or in case of the cache controller the cache will not be flushed).
-- Allow cache flush: Allow automated flushing of cache, you can configure a task in the navigator to run after it is done publishing to flush Magento caches. You must specify an url in the task configuration: use https://yoursite.com/tweakwise/cache/flush/key/{{feed_key}} as its url, here feed_key is equal to the key configured in the Key setting (see above). If this setting is set to no tweakwise-export will ignore these requests. 
-- Export realtime: When the ExportController is asked for a feed it will generate a new one on the fly. Note that this is not recommended!
-- Tweakwise import API url: Tasks in the navigator can be executed via API. Use the import task API url here to automatically tell tweakwise to import the feed after it has been generated. An seperate trigger for stock/price export can be used.
-- Export out of stock Combined product children: Tweakwise export aggregates child data on parent products, this setting determines if data from out of child products should be included in this aggregation.
-- Exclude child attributes: These values of these attributes will be excluded from product data when aggregating onto the parent product.
-- Which price value will be exported as "price" to tweakwise.
+
+All export settings can be found under Stores -> Configuration -> Catalog -> Tweakwise -> Export.
+
+- **Enabled**: If products of that store should be exported to Tweakwise. If disabled, navigation and search should also be disabled for that store.
+- **Store Level Export**: Enables generating separate feeds for each store. If enabled, feeds are generated per store.
+- **Use groupcode for export**: Use groupcode for product export.
+- **Key**: Used to validate feed and cache flush requests. The feed will only be served if the request contains the correct key.
+- **Allow cache flush**: Allows automated cache flush via a specific URL. Used for post-publish cache clearing.
+- **Validate**: Validates export on product, category, and product-category link count.
+- **Archive**: Number of feeds to keep in archive.
+- **Export in Real Time**: Always export the feed in real time when requested. Not recommended for production.
+- **Tweakwise Import API Url**: API trigger URL to start import in Tweakwise after feed generation.
+- **Export out of stock combined product children**: Export out-of-stock child attributes in parent products.
+- **Exclude child attributes**: Attributes that should not be combined in parent products.
+- **Skip children for composite type(s)**: Composite product types for which child attributes should be excluded.
+- **Price field**: Select which field is used as "price" in Tweakwise. The first nonzero value is exported.
+- **Batch size categories**: Set the batch size for categories during export. Lower for less memory, higher for more speed.
+- **Batch size products**: Set the batch size for products during export.
+- **Batch size products children**: Set the batch size for product children during export.
+- **Schedule full export**: Cron schedule for generating the feed. Leave empty to disable export by cron.
+- **State**: Shows the current export state.
+- **Schedule exports**: Start exports on next cron run.
+
+### Export Stock Settings
+
+- **Schedule stock export**: Cron schedule for stock feed export.
+- **State (stock)**: Shows the current stock export state.
+- **Schedule stock export (start)**: Start stock exports on next cron run.
+- **Tweakwise Import API Url for stock feed**: API trigger URL for stock feed import.
+
+### Export Price Settings
+
+- **Schedule price export**: Cron schedule for price feed export.
+- **State (price)**: Shows the current price export state.
+- **Schedule price export (start)**: Start price exports on next cron run.
+- **Tweakwise Import API Url for price feed**: API trigger URL for price feed import.
 
 ### Visibility settings
 Magento has multiple visibility settings, tweakwise only knows visible products meaning that if a product is in the feed then it will be visible while navigating and searching.
