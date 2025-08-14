@@ -78,7 +78,9 @@ If you switch from to normal export to groupcode export, you will need to do the
 5. Enable Stores->configuration->catalog->tweakwise->general->Grouped products
 6. Clear the cache
 
-During the switch the catalog may be empty. If the image url are not correct no product images may be shown in magento. Please contact support if you have issues with this.
+During the switch the catalog may be empty. If the image url are not correct no product images may be shown in magento.
+If you use recommendations, add an attribute with the name "groupcode" in tweakwise and use it as an api attribute. Without this recommendations will not work.
+Please contact Tweakwise support if you have any issues with the groupcode export.
 
 ## A note on the feed implementation
 Magento's native interfaces and handlers for data retrieval were deemed to slow for a large catalog.
