@@ -11,6 +11,7 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
+use Magento\Catalog\Model\Product\Type;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -424,7 +425,7 @@ class ExportEntity
     {
         if ($this->config->isGroupedExport($this->store)) {
             // Check if the simple product has a parent (belongs to a configurable)
-            if ($this->getTypeId() === \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
+            if ($this->getTypeId() === Type::TYPE_SIMPLE) {
                 try {
                     $this->getAttribute('parent_id');
                     return true;

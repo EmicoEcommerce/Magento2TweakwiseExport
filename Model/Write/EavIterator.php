@@ -27,6 +27,7 @@ use Magento\Framework\Profiler;
 use Magento\Store\Model\Store;
 use Zend_Db_Expr;
 use Zend_Db_Select;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -275,6 +276,7 @@ class EavIterator implements IteratorAggregate
                 if ($this->config->isGroupedExport($this->store) && $this->entityCode === 'catalog_product') {
                     $this->preloadParentRelations($entityIds);
                 }
+
                 $select = $this->createSelect();
 
                 Profiler::start('query');
@@ -569,7 +571,7 @@ class EavIterator implements IteratorAggregate
                 [] // We don't need additional columns, just filtering
             )
             ->where('cpsl.product_id IN (?)', $productIds)
-            ->where('cpe.type_id = ?', \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
+            ->where('cpe.type_id = ?', Configurable::TYPE_CODE);
 
         $this->parentRelations = $connection->fetchPairs($select);
     }
