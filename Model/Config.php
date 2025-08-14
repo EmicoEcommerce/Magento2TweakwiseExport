@@ -318,8 +318,8 @@ class Config
             $store
         );
     }
-  
-    /**  
+
+    /**
      * @param Store $store
      * @return bool
      */

@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
+use Magento\Catalog\Model\Product;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use IteratorAggregate;
@@ -298,7 +299,7 @@ class EavIterator implements IteratorAggregate
                         $result = array_merge($result, $this->entityData[$result['entity_id']]);
                         if (
                             $this->config->isGroupedExport($this->store) &&
-                            $this->entityCode === 'catalog_product' &&
+                            $this->entityCode === Product::ENTITY &&
                             isset($this->parentRelations[$result['entity_id']])
                         ) {
                             $result['parent_id'] = $this->parentRelations[$result['entity_id']];

@@ -430,7 +430,7 @@ class ExportEntity
                     $this->getAttribute('parent_id');
                     return true;
                 } catch (InvalidArgumentException $e) {
-                    return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
+                    return in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
                 }
             }
         }

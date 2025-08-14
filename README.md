@@ -110,7 +110,6 @@ All export settings can be found under Stores -> Configuration -> Catalog -> Twe
 - **Exclude child attributes**: Attributes that should not be combined in parent products.
 - **Skip children for composite type(s)**: Composite product types for which child attributes should be excluded.
 - **Price field**: Select which field is used as "price" in Tweakwise. The first nonzero value is exported.
-- **Calculate combined prices**: Set this to yes if you want to send te combined price (of all children) of an grouped/bundle product to tweakwise. Instead of the min/max price of one of the children.
 - **Batch size categories**: Set the batch size for categories during export. Lower for less memory, higher for more speed.
 - **Batch size products**: Set the batch size for products during export.
 - **Batch size products children**: Set the batch size for product children during export.
@@ -135,7 +134,7 @@ All export settings can be found under Stores -> Configuration -> Catalog -> Twe
 ### Visibility settings
 Magento has multiple visibility settings, tweakwise only knows visible products meaning that if a product is in the feed then it will be visible while navigating and searching.
 The magento visibility setting is exported in the feed so you can add a hidden filter to your tweakwise template to artificially use the correct settings.
-If you do this then exclude the visibility attribute from child products (see "Export Settings").
+If you do this then exclude the visibility attribute from child products (see "Export Settings"). If you use groupcode export then you need to use the parent_visibility as an hidden filter instead of visibility.
 
 ## Contributors 
 If you want to create a pull request as a contributor, use the guidelines of semantic-release. semantic-release automates the whole package release workflow including: determining the next version number, generating the release notes, and publishing the package.
