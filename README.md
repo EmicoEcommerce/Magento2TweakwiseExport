@@ -110,6 +110,7 @@ All export settings can be found under Stores -> Configuration -> Catalog -> Twe
 - **Exclude child attributes**: Attributes that should not be combined in parent products.
 - **Skip children for composite type(s)**: Composite product types for which child attributes should be excluded.
 - **Price field**: Select which field is used as "price" in Tweakwise. The first nonzero value is exported.
+- **Calculate combined prices**: Set this to yes if you want to send te combined price (of all children) of an grouped/bundle product to tweakwise. Instead of the min/max price of one of the children.
 - **Batch size categories**: Set the batch size for categories during export. Lower for less memory, higher for more speed.
 - **Batch size products**: Set the batch size for products during export.
 - **Batch size products children**: Set the batch size for product children during export.

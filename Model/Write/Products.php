@@ -160,7 +160,7 @@ class Products implements WriterInterface
         $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id']);
         $xml->writeElement('id', $tweakwiseId);
         $xml->writeElement('name', $this->scalarValue($data['name']));
-        $xml->writeElement('price', $this->scalarValue($data['price']));
+        $xml->writeElement('price', $this->scalarValue((float)$data['price']));
         $xml->writeElement('stock', $this->scalarValue($data['stock']));
 
         if ($this->config->isGroupedExport($this->storeManager->getStore($storeId))) {
