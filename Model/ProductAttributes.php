@@ -40,7 +40,7 @@ class ProductAttributes
      * @param string[]|null $attributeCodes
      * @return Attribute[]
      */
-    public function getAttributesToExport(array $attributeCodes = null): array
+    public function getAttributesToExport(?array $attributeCodes = null): array
     {
         try {
             $type = $this->eavConfig->getEntityType(Product::ENTITY);

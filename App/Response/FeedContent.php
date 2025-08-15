@@ -55,7 +55,7 @@ class FeedContent
         Export $export,
         Logger $log,
         File $driver,
-        StoreInterface $store = null,
+        ?StoreInterface $store = null,
         $type = null
     ) {
         $this->export = $export;

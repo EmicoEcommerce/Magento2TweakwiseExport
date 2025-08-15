@@ -129,7 +129,7 @@ class Writer
      * @param resource $resource
      * @param null|StoreInterface $store
      */
-    public function write($resource, StoreInterface $store = null, $type = null): void
+    public function write($resource, ?StoreInterface $store = null, ?string $type = null): void
     {
         try {
             Profiler::start('write');
@@ -200,7 +200,7 @@ class Writer
         }
     }
 
-    protected function startDocumentType(StoreInterface $store = null, $type = null)
+    protected function startDocumentType(?StoreInterface $store = null, ?string $type = null)
     {
         if ($type === 'stock' || $type === 'price') {
             $this->startExternalDocument();
@@ -212,7 +212,7 @@ class Writer
     /**
      * Write document start
      */
-    protected function startDocument(StoreInterface $store = null): void
+    protected function startDocument(?StoreInterface $store = null): void
     {
         if ($store === null) {
             $store = $this->storeManager->getDefaultStoreView();

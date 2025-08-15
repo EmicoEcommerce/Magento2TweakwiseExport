@@ -81,7 +81,7 @@ class Categories implements WriterInterface
      * @param XMLWriter $xml
      * @param StoreInterface|null $store
      */
-    public function write(Writer $writer, XMLWriter $xml, StoreInterface  $store = null): void
+    public function write(Writer $writer, XMLWriter $xml, ?StoreInterface $store = null): void
     {
         $xml->startElement('categories');
         $writer->flush();

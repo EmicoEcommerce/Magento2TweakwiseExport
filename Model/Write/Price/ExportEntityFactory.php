@@ -74,7 +74,7 @@ class ExportEntityFactory
      * @param string $typeId
      * @return string
      */
-    protected function getInstanceType(string $typeId = null): string
+    protected function getInstanceType(?string $typeId = null): string
     {
         return $this->typeMap[$typeId] ?? $this->getDefaultType($typeId);
     }

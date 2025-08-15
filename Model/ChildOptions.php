@@ -24,7 +24,7 @@ class ChildOptions
      * @param int|null $optionId
      * @param null $isRequired
      */
-    public function __construct(int $optionId = null, $isRequired = null)
+    public function __construct(?int $optionId = null, $isRequired = null)
     {
         $this->optionId = $optionId;
         $this->isRequired = $isRequired;
