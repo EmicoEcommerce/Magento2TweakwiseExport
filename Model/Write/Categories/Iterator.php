@@ -60,6 +60,7 @@ class Iterator extends EavIterator
             $eavConfig,
             $dbContext,
             $eventManager,
+            $config,
             'catalog_category',
             $attributes,
             $config->getBatchSizeCategories()

@@ -3,12 +3,15 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItem;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
+use Tweakwise\Magento2TweakwiseExport\Model\Config;
+use Magento\Catalog\Model\Product\Type;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -61,6 +64,11 @@ class ExportEntity
     protected $price = 0.0;
 
     /**
+     * @var int
+     */
+    protected $groupCode = 0;
+
+    /**
      * @var StockItem
      */
     protected $stockItem;
@@ -92,6 +100,8 @@ class ExportEntity
      * @param StoreManagerInterface $storeManager
      * @param StockConfigurationInterface $stockConfiguration
      * @param Visibility $visibility
+     * @param Config $config
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -99,6 +109,8 @@ class ExportEntity
         StoreManagerInterface $storeManager,
         StockConfigurationInterface $stockConfiguration,
         Visibility $visibility,
+        private readonly Config $config,
+        private readonly Helper $helper,
         array $data = []
     ) {
         $this->setFromArray($data);
@@ -231,6 +243,22 @@ class ExportEntity
     public function getStockQty(): float
     {
         return (float) ($this->getStockItem() ? $this->getStockItem()->getQty() : 0);
+    }
+
+    /**
+     * @return int
+     */
+    public function getGroupCode(): int
+    {
+        return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->groupCode ?? $this->getId());
+    }
+
+    /**
+     * @param int $groupCode
+     */
+    public function setGroupCode(int $groupCode): void
+    {
+        $this->groupCode = $groupCode;
     }
 
     /**
@@ -391,6 +419,18 @@ class ExportEntity
      */
     protected function shouldExportByVisibility(): bool
     {
+        if ($this->config->isGroupedExport($this->store)) {
+            // Check if the simple product has a parent (belongs to a configurable)
+            if ($this->getTypeId() === Type::TYPE_SIMPLE) {
+                try {
+                    $this->getAttribute('parent_id');
+                    return true;
+                } catch (InvalidArgumentException $e) {
+                    return in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
+                }
+            }
+        }
+
         return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
     }
 
