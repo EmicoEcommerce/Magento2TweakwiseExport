@@ -250,11 +250,7 @@ class ExportEntity
      */
     public function getGroupCode(): int
     {
-        if ($this->groupCode) {
-            return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->groupCode);
-        }
-
-        return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->getId());
+        return $this->helper->getTweakwiseId($this->getStore()->getId(), $this->groupCode ?? $this->getId());
     }
 
     /**

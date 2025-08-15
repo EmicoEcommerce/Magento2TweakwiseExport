@@ -274,7 +274,7 @@ class EavIterator implements IteratorAggregate
             try {
                 Profiler::start('eav-iterator::' . $this->entityCode);
                 $this->setEntityIds($entityIds);
-                if ($this->config->isGroupedExport($this->store) && $this->entityCode === 'catalog_product') {
+                if ($this->config->isGroupedExport($this->store) && $this->entityCode === Product::ENTITY) {
                     $this->preloadParentRelations($entityIds);
                 }
 

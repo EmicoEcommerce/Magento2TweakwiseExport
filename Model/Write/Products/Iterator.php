@@ -85,7 +85,6 @@ class Iterator extends EavIterator
     public function getIterator(): \Traversable
     {
         $batch = $this->collectionFactory->create(['store' => $this->store]);
-        $entityIds = [];
 
         foreach (parent::getIterator() as $entityData) {
             $entity = $this->entityFactory->create(

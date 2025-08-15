@@ -41,6 +41,7 @@ class Config
     public const BATCH_SIZE_PRODUCTS_CHILDREN = 'tweakwise/export/batch_size_products_children';
     public const PATH_SKIP_CHILD_BY_COMPOSITE_TYPE = 'tweakwise/export/skip_child_by_composite_type';
     public const CALCULATE_COMPOSITE_PRICES = 'tweakwise/export/calculate_composite_prices';
+    public const PATH_GROUPED_EXPORT_ENABLED = 'tweakwise/export/grouped_export_enabled';
 
     /**
      * Default feed filename
@@ -313,7 +314,7 @@ class Config
     public function isGroupedExport(StoreInterface $store = null): bool
     {
         return (bool) $this->config->getValue(
-            'tweakwise/export/grouped_export_enabled',
+            self::PATH_GROUPED_EXPORT_ENABLED,
             ScopeInterface::SCOPE_STORE,
             $store
         );
