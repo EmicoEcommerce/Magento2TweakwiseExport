@@ -18,6 +18,7 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 
 class Iterator extends EavIterator
 {
@@ -58,13 +59,14 @@ class Iterator extends EavIterator
         CollectionFactory $collectionFactory,
         IteratorInitializer $iteratorInitializer,
         array $collectionDecorators,
-        TweakwiseConfig $config
+        private readonly TweakwiseConfig $config
     ) {
         parent::__construct(
             $helper,
             $eavConfig,
             $dbContext,
             $eventManager,
+            $config,
             Product::ENTITY,
             [],
             $config->getBatchSizeProducts()
@@ -83,6 +85,7 @@ class Iterator extends EavIterator
     public function getIterator(): \Traversable
     {
         $batch = $this->collectionFactory->create(['store' => $this->store]);
+
         foreach (parent::getIterator() as $entityData) {
             $entity = $this->entityFactory->create(
                 [
@@ -90,6 +93,7 @@ class Iterator extends EavIterator
                     'data' => $entityData
                 ]
             );
+
             if (!$entity->shouldProcess()) {
                 continue;
             }
@@ -125,11 +129,16 @@ class Iterator extends EavIterator
         }
 
         foreach ($collection->getExported() as $entity) {
+            if ($this->config->isGroupedExport($this->store) && $entity instanceof ExportEntityConfigurable) {
+                continue;
+            }
+
             yield [
                 'entity_id' => $entity->getId(),
                 'name' => $entity->getName(),
                 'price' => $entity->getPrice(),
                 'stock' => (int) round($entity->getStockQty()),
+                'groupcode' => $entity->getGroupCode(),
                 'categories' => $entity->getCategories(),
                 'attributes' => $entity->getAttributes(),
             ];

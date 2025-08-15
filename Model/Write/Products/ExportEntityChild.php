@@ -8,6 +8,7 @@ use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 
 class ExportEntityChild extends ExportEntity
 {
@@ -28,6 +29,7 @@ class ExportEntityChild extends ExportEntity
      * @param StoreManagerInterface $storeManager
      * @param StockConfigurationInterface $stockConfiguration
      * @param Visibility $visibility
+     * @param Helper $helper
      * @param array $data
      */
     public function __construct(
@@ -36,6 +38,7 @@ class ExportEntityChild extends ExportEntity
         StoreManagerInterface $storeManager,
         StockConfigurationInterface $stockConfiguration,
         Visibility $visibility,
+        private readonly Helper $helper,
         array $data = []
     ) {
         parent::__construct(
@@ -43,6 +46,8 @@ class ExportEntityChild extends ExportEntity
             $storeManager,
             $stockConfiguration,
             $visibility,
+            $config,
+            $helper,
             $data
         );
 
