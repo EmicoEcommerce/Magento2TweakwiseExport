@@ -311,7 +311,7 @@ class Config
     /**
      * @return bool
      */
-    public function isGroupedExport(StoreInterface $store = null): bool
+    public function isGroupedExport(?StoreInterface $store = null): bool
     {
         return (bool) $this->config->getValue(
             self::PATH_GROUPED_EXPORT_ENABLED,
