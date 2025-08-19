@@ -93,7 +93,7 @@ class Children implements DecoratorInterface
         CollectionFactory $collectionFactory,
         Helper $helper,
         DbResourceHelper $dbResource,
-        TweakwiseConfig $config,
+        private readonly TweakwiseConfig $config,
         private readonly WebsiteLink $websiteLink
     ) {
         $this->productType = $productType;
@@ -305,6 +305,7 @@ class Children implements DecoratorInterface
         int $childId,
         ?ChildOptions $childOptions = null
     ): void {
+
         if (!$this->childEntities->has($childId)) {
             $child = $this->entityChildFactory->createChild(
                 [
@@ -326,6 +327,30 @@ class Children implements DecoratorInterface
             $parent = $collection->get($parentId);
             if ($parent instanceof CompositeExportEntityInterface) {
                 $parent->addChild($child);
+            }
+
+            if ($this->config->isGroupedExport($collection->getStore())) {
+                $childEntity = $collection->get($childId);
+                $childEntity->setGroupCode($parentId);
+                $childEntity->addAttribute(
+                    'parent_url_key',
+                    $parent->getAttribute('url_key', false)
+                );
+                $childEntity->addAttribute(
+                    'parent_name',
+                    $parent->getAttribute('name', false)
+                );
+                $childEntity->addAttribute(
+                    'parent_visibility',
+                    $parent->getAttribute('visibility', false)
+                );
+
+                if ($childEntity->getCategories() === []) {
+                    $categories = $parent->getCategories();
+                    foreach ($categories as $category) {
+                        $childEntity->addCategoryId($category);
+                    }
+                }
             }
         } catch (InvalidArgumentException $exception) {
             // no implementation, parent was not found

@@ -10,10 +10,12 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
+use Magento\Catalog\Model\Product;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use IteratorAggregate;
 use Magento\Framework\Event\Manager;
+use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Type;
@@ -26,6 +28,7 @@ use Magento\Framework\Profiler;
 use Magento\Store\Model\Store;
 use Zend_Db_Expr;
 use Zend_Db_Select;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -106,12 +109,18 @@ class EavIterator implements IteratorAggregate
     protected $entityData = [];
 
     /**
+     * @var array $parentRelations
+     */
+    private array $parentRelations = [];
+
+    /**
      * EavIterator constructor.
      *
      * @param Helper $helper
      * @param EavConfig $eavConfig
      * @param DbContext $dbContext
      * @param Manager $eventManager
+     * @param Config $config
      * @param string $entityCode
      * @param string[] $attributes
      * @param int $batchSize
@@ -121,6 +130,7 @@ class EavIterator implements IteratorAggregate
         EavConfig $eavConfig,
         DbContext $dbContext,
         Manager $eventManager,
+        private readonly Config $config,
         string $entityCode,
         array $attributes,
         int $batchSize = 5000
@@ -264,6 +274,10 @@ class EavIterator implements IteratorAggregate
             try {
                 Profiler::start('eav-iterator::' . $this->entityCode);
                 $this->setEntityIds($entityIds);
+                if ($this->config->isGroupedExport($this->store) && $this->entityCode === Product::ENTITY) {
+                    $this->preloadParentRelations($entityIds);
+                }
+
                 $select = $this->createSelect();
 
                 Profiler::start('query');
@@ -283,6 +297,14 @@ class EavIterator implements IteratorAggregate
                     // Loop over all rows and combine them to one array for entity
                     foreach ($this->loopUnionRows($stmt) as $result) {
                         $result = array_merge($result, $this->entityData[$result['entity_id']]);
+                        if (
+                            $this->config->isGroupedExport($this->store) &&
+                            $this->entityCode === Product::ENTITY &&
+                            isset($this->parentRelations[$result['entity_id']])
+                        ) {
+                            $result['parent_id'] = $this->parentRelations[$result['entity_id']];
+                        }
+
                         yield $result;
                     }
                 } finally {
@@ -527,5 +549,31 @@ class EavIterator implements IteratorAggregate
         }
 
         return $selects;
+    }
+
+    /**
+     * @return void
+     */
+    protected function preloadParentRelations(array $productIds): void
+    {
+        if (empty($productIds)) {
+            return;
+        }
+
+        $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from(
+                ['cpsl' => 'catalog_product_super_link'],
+                ['child_id' => 'cpsl.product_id', 'parent_id' => 'cpsl.parent_id']
+            )
+            ->join(
+                ['cpe' => 'catalog_product_entity'],
+                'cpsl.parent_id = cpe.entity_id',
+                [] // We don't need additional columns, just filtering
+            )
+            ->where('cpsl.product_id IN (?)', $productIds)
+            ->where('cpe.type_id = ?', Configurable::TYPE_CODE);
+
+        $this->parentRelations = $connection->fetchPairs($select);
     }
 }

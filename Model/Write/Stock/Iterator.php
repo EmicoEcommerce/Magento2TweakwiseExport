@@ -66,6 +66,7 @@ class Iterator extends EavIterator
             $eavConfig,
             $dbContext,
             $eventManager,
+            $config,
             Product::ENTITY,
             [],
             $config->getBatchSizeProducts()

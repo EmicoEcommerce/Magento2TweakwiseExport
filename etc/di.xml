@@ -76,10 +76,10 @@
         <arguments>
             <!-- update batchSize if memory is less important then speed -->
             <argument name="collectionDecorators" xsi:type="array">
+                <item name="category_reference" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\CategoryReference</item>
                 <item name="children" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Children</item>
                 <item name="stock_data" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData</item>
                 <item name="children_attributes" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\ChildrenAttributes</item>
-                <item name="category_reference" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\CategoryReference</item>
                 <item name="price" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Price</item>
                 <item name="website_link" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\WebsiteLink</item>
                 <item name="review" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\Review</item>
