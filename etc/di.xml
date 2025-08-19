@@ -16,7 +16,7 @@
     <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="TweakwiseMagento2TweakwiseExportCommand" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Console\Command\ExportCommand\Proxy</item>
+                <item name="TweakwiseMagento2TweakwiseExportCommand" xsi:type="object">Tweakwise\Magento2TweakwiseExport\Console\Command\ExportCommand</item>
             </argument>
         </arguments>
     </type>
