@@ -237,7 +237,7 @@ class Config
      * @throws FileSystemException
      * @throws RuntimeException
      */
-    public function getDefaultFeedFile(StoreInterface $store = null, $type = null): string
+    public function getDefaultFeedFile(?StoreInterface $store = null, ?string $type = null): string
     {
         $dir = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . 'feeds';
         if (
@@ -275,7 +275,7 @@ class Config
      * @param string|null $file
      * @return string
      */
-    public function getFeedTmpFile($file = null, StoreInterface  $store = null): string
+    public function getFeedTmpFile(?string $file = null, ?StoreInterface  $store = null): string
     {
         if (!$file) {
             $file = $this->getDefaultFeedFile($store);
@@ -311,7 +311,7 @@ class Config
     /**
      * @return bool
      */
-    public function isGroupedExport(StoreInterface $store = null): bool
+    public function isGroupedExport(?StoreInterface $store = null): bool
     {
         return (bool) $this->config->getValue(
             self::PATH_GROUPED_EXPORT_ENABLED,

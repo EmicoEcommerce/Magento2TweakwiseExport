@@ -99,7 +99,7 @@ class Export
      * phpcs:disable Magento2.Functions.DiscouragedFunction.DiscouragedWithAlternative
      * @SuppressWarnings(PHPMD.ErrorControlOperator)
      */
-    protected function executeLocked(callable $action, StoreInterface $store = null, $type = null): void
+    protected function executeLocked(callable $action, ?StoreInterface $store = null, ?string $type = null): void
     {
         Profiler::start('tweakwise::export');
         $lockFile = $this->config->getFeedLockFile(null, $store, $type);
@@ -164,7 +164,7 @@ class Export
      * phpcs:disable Magento2.Functions.DiscouragedFunction.DiscouragedWithAlternative
      * @SuppressWarnings(PHPMD.ErrorControlOperator)
      */
-    public function getFeed($targetHandle, StoreInterface $store = null, $type = null): void
+    public function getFeed($targetHandle, ?StoreInterface $store = null, ?string $type = null): void
     {
         if ($this->config->isRealTime()) {
             $this->generateFeed($targetHandle, $store, $type);

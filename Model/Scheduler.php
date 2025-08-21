@@ -71,7 +71,7 @@ class Scheduler
      * @return Schedule
      * @throws Exception
      */
-    public function schedule(string $type = null): Schedule
+    public function schedule(?string $type = null): Schedule
     {
         $job = 'tweakwise_magento2_tweakwise_export';
 

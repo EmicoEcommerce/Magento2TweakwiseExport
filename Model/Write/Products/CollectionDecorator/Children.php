@@ -303,7 +303,7 @@ class Children implements DecoratorInterface
         Collection|StockCollection|PriceCollection $collection,
         int $parentId,
         int $childId,
-        ChildOptions $childOptions = null
+        ?ChildOptions $childOptions = null
     ): void {
 
         if (!$this->childEntities->has($childId)) {

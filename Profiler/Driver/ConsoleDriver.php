@@ -40,7 +40,7 @@ class ConsoleDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
-    public function start($timerId, array $tags = null)
+    public function start($timerId, ?array $tags = null)
     {
         $this->stat->start($timerId, microtime(true), memory_get_usage(true), memory_get_usage());
         $this->display($timerId);
