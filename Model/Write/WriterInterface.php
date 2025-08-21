@@ -17,5 +17,5 @@ interface WriterInterface
      * @param Writer $writer
      * @param XMLWriter $xml
      */
-    public function write(Writer $writer, XMLWriter $xml, StoreInterface $store = null);
+    public function write(Writer $writer, XMLWriter $xml, ?StoreInterface $store = null);
 }
