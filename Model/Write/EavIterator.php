@@ -114,6 +114,11 @@ class EavIterator implements IteratorAggregate
     private array $parentRelations = [];
 
     /**
+     * @var array
+     */
+    private array $parentRelationsImageAttributes = [];
+
+    /**
      * EavIterator constructor.
      *
      * @param Helper $helper
