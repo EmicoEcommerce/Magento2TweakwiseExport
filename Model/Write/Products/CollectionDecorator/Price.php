@@ -104,7 +104,7 @@ class Price implements DecoratorInterface
         }
 
         if ($this->isGroupedProduct($product)) {
-            $prices = $this->calculateGroupedProductPrice((int)$product->getId());
+            $prices = $this->calculateGroupedProductPrice($product);
             foreach ($prices as $price => $value) {
                 $row[$price] = $value;
             }
@@ -113,7 +113,7 @@ class Price implements DecoratorInterface
         }
 
         if ($this->isBundleProduct($product)) {
-            $prices = $this->calculateBundleProductPrice((int)$product->getId());
+            $prices = $this->calculateBundleProductPrice($product);
             foreach ($prices as $price => $value) {
                 $row[$price] = $value;
             }
@@ -208,15 +208,14 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $entityId
+     * @param DataObject $entityId
      * @param callable $getAssociatedItems
      * @return array
      */
     protected function calculateProductPrice(
-        int $entityId,
+        DataObject $product,
         callable $getAssociatedItems
     ): array {
-        $product = $this->collectionFactory->create()->getItemById($entityId);
         $associatedItems = $getAssociatedItems($product);
 
         // Convert collection to array if necessary
@@ -243,13 +242,13 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $entityId
+     * @param DataObject $product
      * @return array
      */
-    protected function calculateGroupedProductPrice(int $entityId): array
+    protected function calculateGroupedProductPrice(DataObject $product): array
     {
         return $this->calculateProductPrice(
-            $entityId,
+            $product,
             function ($product) {
                 return $product->getTypeInstance()->getAssociatedProducts($product);
             }
@@ -257,10 +256,10 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $entityId
+     * @param DataObject|null $product
      * @return array
      */
-    protected function calculateBundleProductPrice(int $entityId): array
+    protected function calculateBundleProductPrice(?DataObject $product): array
     {
         $price = [
             'min_price' => 0.0,
@@ -268,7 +267,6 @@ class Price implements DecoratorInterface
             'final_price' => 0.0,
         ];
 
-        $product = $this->collectionFactory->create()->getItemById($entityId);
         if ($product === null) {
             return $price;
         }
