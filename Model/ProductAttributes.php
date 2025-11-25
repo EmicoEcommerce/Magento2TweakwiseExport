@@ -72,7 +72,7 @@ class ProductAttributes
      * @param Attribute $attribute
      * @return bool
      */
-    protected function shouldExportAttribute(Attribute $attribute): bool
+    public function shouldExportAttribute(Attribute $attribute): bool
     {
         $isBlackListed = $this->isAttributeBlacklisted($attribute);
         return !$isBlackListed &&
