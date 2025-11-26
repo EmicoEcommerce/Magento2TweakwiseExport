@@ -178,7 +178,7 @@ class ExportCommand extends Command
                         $feedFile = $this->config->getDefaultFeedFile($store, $type);
                     }
 
-                    $output->writeln("<info>generatig feed for {$store->getCode()}</info>");
+                    $output->writeln("<info>generating feed for {$store->getCode()}</info>");
                     $this->export->generateToFile($feedFile, $validate, $store, $type);
                     $output->writeln("<info>feed file: {$feedFile}</info>");
                 } else {

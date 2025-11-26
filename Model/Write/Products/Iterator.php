@@ -144,4 +144,17 @@ class Iterator extends EavIterator
             ];
         }
     }
+
+    protected function addStoreFilter(\Zend_Db_Select $select): void
+    {
+        $storeTable = $this->getResources()->getTableName('store');
+        $cpwTable = $this->getResources()->getTableName('catalog_product_website');
+
+        $subSelect = $this->getConnection()->select()
+            ->from($storeTable, ['website_id'])
+            ->where('store_id = ?', $this->store->getId());
+
+        $select->join(['cpw' => $cpwTable], 'cpw.product_id = ' . $this->getEntityType()->getEntityTable() . '.entity_id')
+            ->where('cpw.website_id = (' . $subSelect . ')');
+    }
 }
