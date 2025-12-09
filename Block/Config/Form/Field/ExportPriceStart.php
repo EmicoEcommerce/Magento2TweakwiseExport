@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -27,6 +27,7 @@ class ExportPriceStart extends Field
      * @param AbstractElement $element
      * @return string
      * @throws LocalizedException
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
      */
     protected function _getElementHtml(AbstractElement $element): string
     {
@@ -35,7 +36,7 @@ class ExportPriceStart extends Field
         $button->setData(
             [
             'label' => __('Schedule'),
-            'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger/type/price')}')",
+            'onclick' => sprintf("setLocation('%s')", $this->getUrl('tweakwise/export/trigger/type/price')),
             ]
         );
 

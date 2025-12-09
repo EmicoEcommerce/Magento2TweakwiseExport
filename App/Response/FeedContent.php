@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -13,7 +13,6 @@ use Magento\Framework\Filesystem\Driver\File;
 use Magento\Store\Api\Data\StoreInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
-use Magento\Store\Model\StoreManager;
 use Exception;
 
 /**
@@ -33,14 +32,10 @@ class FeedContent
      */
     protected $log;
 
-    protected $type;
-
-    protected $store;
-
     /**
-     * @var File
+     * @var StoreInterface|null
      */
-    protected File $driver;
+    protected $store;
 
     /**
      * SomeFeedResponse constructor.
@@ -54,15 +49,13 @@ class FeedContent
     public function __construct(
         Export $export,
         Logger $log,
-        File $driver,
+        protected File $driver,
         ?StoreInterface $store = null,
-        $type = null
+        protected $type = null
     ) {
         $this->export = $export;
         $this->log = $log;
-        $this->type = $type;
         $this->store = $store;
-        $this->driver = $driver;
     }
 
     /**

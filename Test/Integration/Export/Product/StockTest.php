@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -15,12 +15,13 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class StockTest extends ExportTest
 {
     /**
      * Test export with one product and check on product data
+     * @return void
      */
     public function testEnableStockManagement()
     {
@@ -37,6 +38,7 @@ class StockTest extends ExportTest
 
     /**
      * Test export with one product and check on product data
+     * @return void
      */
     public function testEnableStockManagementShowOutOfStockProducts()
     {
@@ -51,10 +53,13 @@ class StockTest extends ExportTest
 
     /**
      * Test export with one product and check on product data
+     * @return void
      */
     public function testDisableStockManagement()
     {
+        // @phpstan-ignore-next-line
         $this->setConfig(StockConfiguration::XML_PATH_MANAGE_STOCK, false, 0);
+        // @phpstan-ignore-next-line
         $this->setConfig(StockConfiguration::XML_PATH_SHOW_OUT_OF_STOCK, false, 0);
 
         $product = $this->productData->create(['qty' => 0, 'is_in_stock' => 1]);
@@ -66,6 +71,7 @@ class StockTest extends ExportTest
     /**
      * - Product with qty > 0 but less then configured qty threshold should not be exported.
      * - Product with qty > qty threshold should be exported.
+     * @return void
      */
     public function testInStockWithQtyThreshold()
     {
@@ -84,6 +90,7 @@ class StockTest extends ExportTest
     /**
      * - Product with qty < General qty threshold but qty threshold on product < qty should be exported.
      * - Product with qty > General qty threshold but qty threshold on product > qty should not be exported.
+     * @return void
      */
     public function testInStockWithQtyThresholdOnProduct()
     {

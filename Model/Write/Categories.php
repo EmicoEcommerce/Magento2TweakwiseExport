@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -10,7 +10,6 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
-use Magento\Framework\UrlInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
@@ -58,7 +57,6 @@ class Categories implements WriterInterface
      * @param Helper $helper
      * @param Logger $log
      * @param UrlFinderInterface $urlFinder
-     * @param UrlInterface $url
      */
     public function __construct(
         Iterator $iterator,
@@ -67,7 +65,6 @@ class Categories implements WriterInterface
         Helper $helper,
         Logger $log,
         private readonly UrlFinderInterface $urlFinder,
-        private readonly UrlInterface $url
     ) {
         $this->iterator = $iterator;
         $this->storeManager = $storeManager;
@@ -121,7 +118,7 @@ class Categories implements WriterInterface
      * @param XMLWriter $xml
      * @param Store $store
      * @param int[] $entityIds
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      */
     public function exportStore(Writer $writer, XMLWriter $xml, Store $store, array $entityIds = []): void
     {
@@ -170,9 +167,11 @@ class Categories implements WriterInterface
             $exportedCategories[$data['entity_id']] = true;
             $this->writeCategory($xml, $storeId, $data);
             // Flush every so often
-            if ($index % 100 === 0) {
-                $writer->flush();
+            if ($index % 100 !== 0) {
+                continue;
             }
+
+            $writer->flush();
         }
 
         // Flush any remaining categories
@@ -187,7 +186,7 @@ class Categories implements WriterInterface
     protected function writeCategory(XMLWriter $xml, int $storeId, array $data): void
     {
         $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id']);
-        $xml->addCategoryExport($tweakwiseId);
+        $xml->addCategoryExport((int)$tweakwiseId);
 
         $xml->startElement('category');
         $xml->writeElement('categoryid', $tweakwiseId);

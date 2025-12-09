@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -20,7 +20,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 /**
  * @magentoDbIsolation enabled
  * @@magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class ExcludeAttributesTest extends ExportTest
 {
@@ -46,6 +46,7 @@ class ExcludeAttributesTest extends ExportTest
 
     /**
      * Test to see if attributes of simple products are not shown
+     * @return void
      */
     public function testAttributesWhenDisabled()
     {
@@ -72,6 +73,7 @@ class ExcludeAttributesTest extends ExportTest
     /**
      * Test to see if child attributes are taken     from the parent but not from the child when they are set to disabled
      * in configuration.
+     * @return void
      */
     public function testAttributesHiddenWhenExcluded()
     {
@@ -91,6 +93,7 @@ class ExcludeAttributesTest extends ExportTest
     /**
      * Test to see if child attributes are taken from the parent but not from the child when they are set to disabled
      * in configuration.
+     * @return void
      */
     public function testAttributesHiddenWhenIncluded()
     {

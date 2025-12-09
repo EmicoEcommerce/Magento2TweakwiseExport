@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tweakwise\Magento2TweakwiseExport\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,18 +9,18 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Test\Integration\Export\Product;
 
-use Magento\Framework\Composer\ComposerInformation;
 use Tweakwise\Magento2TweakwiseExport\Test\Integration\ExportTest;
 
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class BasicTest extends ExportTest
 {
     /**
      * Test if empty export does not throw error
+     * @return void
      */
     public function testEmptyExport()
     {
@@ -30,6 +30,7 @@ class BasicTest extends ExportTest
             ->getInstalledMagentoPackages();
         $version = $installedPackages['tweakwise/magento2-tweakwise-export']['version'];
         $emptyFile = file_get_contents($file);
+        // @phpstan-ignore-next-line
         $emptyFile = str_replace('GENERATED_BY', $version, $emptyFile);
 
         $this->assertEquals($emptyFile, (string) $this->exportFeed());
@@ -37,6 +38,7 @@ class BasicTest extends ExportTest
 
     /**
      * Test export with one product and check on product data
+     * @return void
      */
     public function testOneProduct()
     {

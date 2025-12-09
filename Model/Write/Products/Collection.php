@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
@@ -138,16 +138,19 @@ class Collection implements IteratorAggregate, Countable
             $ids[] = $entity->getId();
             $skus[] = $entity->getAttribute('sku', false);
 
-            if ($entity instanceof CompositeExportEntityInterface) {
-                foreach ($entity->getAllChildren() as $child) {
-                    $ids[] = $child->getId();
-                    $skus[] = $child->getAttribute('sku', false);
-                }
+            if (!($entity instanceof CompositeExportEntityInterface)) {
+                continue;
+            }
+
+            foreach ($entity->getAllChildren() as $child) {
+                $ids[] = $child->getId();
+                $skus[] = $child->getAttribute('sku', false);
             }
         }
 
         // Make unique
         $this->ids = array_flip($ids);
+        // @phpstan-ignore-next-line
         $this->skus = array_flip($skus);
     }
 

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -135,6 +135,7 @@ class AttributeProvider
     /**
      * @param string $code
      * @param string $label
+     * @return void
      * @throws LocalizedException
      */
     public function deleteOption(string $code, string $label)

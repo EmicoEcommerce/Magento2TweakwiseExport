@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model;
 
@@ -15,19 +15,13 @@ class ChildOptions
     protected $optionId;
 
     /**
-     * @var bool
-     */
-    protected $isRequired;
-
-    /**
      * ChildOptions constructor.
      * @param int|null $optionId
      * @param null $isRequired
      */
-    public function __construct(?int $optionId = null, $isRequired = null)
+    public function __construct(?int $optionId = null, protected $isRequired = null)
     {
         $this->optionId = $optionId;
-        $this->isRequired = $isRequired;
     }
 
     /**
@@ -59,6 +53,7 @@ class ChildOptions
      */
     public function setIsRequired(bool $isRequired): void
     {
+        // @phpstan-ignore-next-line
         $this->isRequired = $isRequired;
     }
 }

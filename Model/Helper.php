@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -69,11 +69,11 @@ class Helper
     public function getTweakwiseId(int $storeId, int $entityId): string
     {
         if (!$storeId) {
-            return $entityId;
+            return (string)$entityId;
         }
 
         // Prefix 1 is to make sure it stays the same length when casting to int
-        return '1' . str_pad($storeId, 4, '0', STR_PAD_LEFT) . $entityId;
+        return '1' . str_pad((string)$storeId, 4, '0', STR_PAD_LEFT) . $entityId;
     }
 
     /**
@@ -83,7 +83,7 @@ class Helper
      */
     public function getStoreId(int $id): int
     {
-        return (int)substr($id, 5);
+        return (int)substr((string)$id, 5);
     }
 
     /**

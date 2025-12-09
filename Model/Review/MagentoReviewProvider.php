@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Review;
 
@@ -31,10 +31,9 @@ class MagentoReviewProvider implements ReviewProviderInterface
     {
         $summaryCollection = $this->summaryCollectionFactory->create()
             ->addStoreFilter($collection->getStore()->getId())
-            ->addEntityFilter($collection->getAllIds());
+            ->addEntityFilter($collection->getAllIds()); // @phpstan-ignore-line
 
         $reviews = [];
-        /** @var Summary $rating */
         foreach ($summaryCollection as $summary) {
             $reviews[] = $this->createProductReviewSummary($summary);
         }
@@ -49,7 +48,7 @@ class MagentoReviewProvider implements ReviewProviderInterface
     protected function createProductReviewSummary(Summary $summary): ProductReviewSummary
     {
         return new ProductReviewSummary(
-            $summary->getRatingSummary(),
+            $summary->getRatingSummary(), // @phpstan-ignore-line
             $summary->getReviewsCount(),
             $summary->getEntityPkValue()
         );

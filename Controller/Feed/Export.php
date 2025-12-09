@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -54,11 +54,6 @@ class Export implements ActionInterface
     protected $storeManager;
 
     /**
-     * @var File
-     */
-    protected File $driver;
-
-    /**
      * Export constructor.
      *
      * @param Context $context
@@ -76,15 +71,15 @@ class Export implements ActionInterface
         RequestValidator $requestValidator,
         ResponseFactory $responseFactory,
         StoreManagerInterface $storeManager,
-        File $driver
+        protected File $driver
     ) {
         $this->context = $context;
+        // @phpstan-ignore-next-line
         $this->export = $export;
         $this->log = $log;
         $this->requestValidator = $requestValidator;
         $this->responseFactory = $responseFactory;
         $this->storeManager = $storeManager;
-        $this->driver = $driver;
     }
 
     /**
@@ -99,7 +94,7 @@ class Export implements ActionInterface
      * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
      * @return Response
      * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
-     * @SuppressWarnings(PHPMD.ExitExpression)
+     * @SuppressWarnings("PHPMD.ExitExpression")
      */
     public function execute(): Response
     {
@@ -119,6 +114,7 @@ class Export implements ActionInterface
             $store = $this->storeManager->getStore($storeId);
         }
 
+        // @phpstan-ignore-next-line
         (new FeedContent($this->export, $this->log, $this->driver, $store, $request->getParam('type')))->__toString();
 
         exit();

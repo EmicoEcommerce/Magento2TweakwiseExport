@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
@@ -14,8 +14,8 @@ class ExportEntityBundle extends CompositeExportEntity
 
     /**
      * @return StockItem
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.NPathComplexity")
      */
     public function getStockItem(): ?StockItem
     {
@@ -48,9 +48,11 @@ class ExportEntityBundle extends CompositeExportEntity
 
             $optionGroups[$optionId]['is_in_stock'] = $child->getStockItem()->getIsInStock();
 
-            if (!$childOptions->isRequired()) {
-                $optionGroups[$optionId]['is_in_stock'] = 1;
+            if ($childOptions->isRequired()) {
+                continue;
             }
+
+            $optionGroups[$optionId]['is_in_stock'] = 1;
         }
 
         if (empty($optionGroups)) {
@@ -95,6 +97,6 @@ class ExportEntityBundle extends CompositeExportEntity
             $optionGroupStatus[$optionId] = $childStatus;
         }
 
-        return (empty($optionGroupStatus)) || array_product($optionGroupStatus) === 1;
+        return empty($optionGroupStatus) || array_product($optionGroupStatus) === 1;
     }
 }

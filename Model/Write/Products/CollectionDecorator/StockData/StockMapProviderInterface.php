@@ -1,10 +1,9 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData;
 
 use Tweakwise\Magento2TweakwiseExport\Model\StockItem;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
-use Magento\Store\Model\Store;
 
 /**
  * Interface StockMapProviderInterface

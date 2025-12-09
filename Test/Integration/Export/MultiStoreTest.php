@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -17,7 +17,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Class MultiStoreTest
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 abstract class MultiStoreTest extends ExportTest
 {
@@ -52,11 +52,12 @@ abstract class MultiStoreTest extends ExportTest
 
     /**
      * Fixture for creating multi store
+     * @return void
      */
     public static function createMultiStoreFixture()
     {
         /** @var StoreProvider $storeProvider */
-        $storeProvider = Bootstrap::getObjectManager()->create(StoreProvider::class);
+        $storeProvider = Bootstrap::getObjectManager()->create(StoreProvider::class); // @phpstan-ignore-line
 
         $website = $storeProvider->createWebsite(['code' => self::STORE_WEBSITE_CODE]);
         $group = $storeProvider->createStoreGroup($website, ['code' => self::STORE_GROUP_CODE]);
@@ -65,11 +66,12 @@ abstract class MultiStoreTest extends ExportTest
 
     /**
      * Fixture for rollback multi store
+     * @return void
      */
     public static function createMultistoryFixtureRollback()
     {
         /** @var StoreProvider $storeProvider */
-        $storeProvider = Bootstrap::getObjectManager()->create(StoreProvider::class);
+        $storeProvider = Bootstrap::getObjectManager()->create(StoreProvider::class); // @phpstan-ignore-line
 
         $storeProvider->removeStoreView(self::STORE_STORE_CODE);
         $storeProvider->removeStoreGroup(self::STORE_GROUP_CODE);

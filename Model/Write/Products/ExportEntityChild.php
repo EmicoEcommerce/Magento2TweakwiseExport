@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
@@ -38,7 +38,7 @@ class ExportEntityChild extends ExportEntity
         StoreManagerInterface $storeManager,
         StockConfigurationInterface $stockConfiguration,
         Visibility $visibility,
-        private readonly Helper $helper,
+        Helper $helper,
         array $data = []
     ) {
         parent::__construct(

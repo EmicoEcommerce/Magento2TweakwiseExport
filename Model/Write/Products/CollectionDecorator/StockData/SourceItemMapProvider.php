@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData;
 
@@ -7,7 +7,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\StockItemFactory as TweakwiseStockIt
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\DbResourceHelper;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\InventoryApi\Api\Data\SourceInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\StockSourceProviderFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\StockResolverFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\DefaultStockProviderInterfaceFactory;
@@ -112,7 +111,8 @@ class SourceItemMapProvider implements StockMapProviderInterface
      * @throws LocalizedException
      * @throws \Zend_Db_Statement_Exception
      * phpcs:disable Squiz.Arrays.ArrayDeclaration.KeySpecified
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * phpcs:disable Squiz.Strings.DoubleQuoteUsage.ContainsVar
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
     public function getStockItemMap(Collection|StockCollection $collection): array
     {
@@ -186,6 +186,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
         $result = $select->query();
         $map = [];
 
+        // @phpstan-ignore-next-line
         while ($row = $result->fetch()) {
             $map[$row['product_entity_id']] = $this->getTweakwiseStockItem($row);
         }
@@ -201,6 +202,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
      */
     protected function getStockSourceProvider(): GetSourcesAssignedToStockOrderedByPriorityInterface
     {
+        // @phpstan-ignore-next-line
         if (!$this->stockSourceProvider) {
             $this->stockSourceProvider = $this->stockSourceProviderFactory->create();
         }
@@ -213,6 +215,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
      */
     protected function getDefaultStockProvider(): DefaultStockProviderInterface
     {
+        // @phpstan-ignore-next-line
         if (!$this->defaultStockProvider) {
             $this->defaultStockProvider = $this->defaultStockProviderFactory->create();
         }
@@ -227,6 +230,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
      */
     protected function getStockIdForStoreId(Store $store): ?int
     {
+        // @phpstan-ignore-next-line
         $websiteCode = $store->getWebsite()->getCode();
         return $this->getStockResolver()->execute('website', $websiteCode)->getStockId();
     }
@@ -239,6 +243,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
      */
     protected function getStockResolver(): StockResolverInterface
     {
+        // @phpstan-ignore-next-line
         if (!$this->stockResolver) {
             $this->stockResolver = $this->stockResolverFactory->create();
         }

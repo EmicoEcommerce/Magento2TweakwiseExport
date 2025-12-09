@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
@@ -69,6 +69,7 @@ class WebsiteLink implements DecoratorInterface
             ->where('product_id in(' . implode(',', $collection->getIds()) . ')');
         $query = $select->query();
 
+        // @phpstan-ignore-next-line
         while ($row = $query->fetch()) {
             $productId = (int)$row['product_id'];
             $collection->get($productId)->addLinkedWebsiteId((int)$row['website_id']);

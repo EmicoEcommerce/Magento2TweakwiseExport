@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
@@ -26,6 +26,7 @@ class IteratorInitializer
      * Select all attributes who should be exported
      *
      * @param EavIterator $iterator
+     * @return void
      */
     public function initializeAttributes(EavIterator $iterator)
     {

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -127,6 +127,7 @@ class FeedData
     /**
      * @param int $entityId
      * @param string|null $storeCode
+     * @return void
      */
     public function assertProductMissing(int $entityId, string $storeCode = null)
     {
@@ -158,6 +159,7 @@ class FeedData
 
     /**
      * Parse category data
+     * @return void
      */
     protected function parseCategories()
     {
@@ -169,14 +171,17 @@ class FeedData
         $this->products = [];
 
         $xml = simplexml_load_string($this->feed);
+        // @phpstan-ignore-next-line
         foreach ($xml->xpath('//category') as $element) {
             $id = (string) $element->id;
+            // @phpstan-ignore-next-line
             $this->products[$id] = $this->categoryDataFactory->create(['test' => $this->test, 'element' => $element]);
         }
     }
 
     /**
      * Parse product data
+     * @return void
      */
     protected function parseProducts()
     {
@@ -187,6 +192,7 @@ class FeedData
         $this->products = [];
 
         $xml = simplexml_load_string($this->feed);
+        // @phpstan-ignore-next-line
         foreach ($xml->xpath('//item') as $element) {
             $id = (string) $element->id;
             $this->products[$id] = $this->productDataFactory->create(['test' => $this->test, 'element' => $element]);

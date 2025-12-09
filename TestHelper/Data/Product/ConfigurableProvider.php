@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -104,6 +104,7 @@ class ConfigurableProvider
         $product->setExtensionAttributes($extensionAttributes);
 
         $product = $this->productRepository->save($product);
+        // @phpstan-ignore-next-line
         $product->addData([self::GENERATED_CHILD_PRODUCTS => $simpleProducts]);
         return $product;
     }
@@ -141,14 +142,16 @@ class ConfigurableProvider
                     sprintf(
                         'Attribute code %s does not exists in simple data %s',
                         $attributeCode,
-                        Json::encode($data)
+                        Json::encode($data) // @phpstan-ignore-line
                     )
                 );
             }
 
-            if (!\is_int($data[$attributeCode])) {
-                $data[$attributeCode] = $this->attributeProvider->getOptionId($attributeCode, $data[$attributeCode]);
+            if (\is_int($data[$attributeCode])) {
+                continue;
             }
+
+            $data[$attributeCode] = $this->attributeProvider->getOptionId($attributeCode, $data[$attributeCode]);
         }
 
         if (!isset($data['visibility'])) {

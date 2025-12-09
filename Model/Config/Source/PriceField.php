@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,10 +9,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Config\Source;
 
-use Tweakwise\Magento2TweakwiseExport\Model\Helper;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Option\ArrayInterface;
 
 class PriceField implements ArrayInterface

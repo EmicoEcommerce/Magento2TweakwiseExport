@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
+
 
 declare(strict_types=1);
 
@@ -8,6 +9,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecor
 use Magento\Bundle\Model\Product\Type;
 use Magento\Framework\DataObject;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
+use Magento\Store\Model\Store;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
@@ -16,7 +18,6 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Zend_Db_Select;
 use Magento\Framework\Data\Collection as DataCollection;
-use Magento\Store\Model\Store;
 
 class Price implements DecoratorInterface
 {
@@ -66,6 +67,7 @@ class Price implements DecoratorInterface
         $websiteId = $store->getWebsiteId();
 
         $priceSelect = $this->createPriceSelect($collection->getIds(), (int)$websiteId);
+        // @phpstan-ignore-next-line
         $priceQueryResult = $priceSelect->getSelect()->query()->fetchAll();
 
         $currency = $store->getCurrentCurrency();
@@ -104,7 +106,7 @@ class Price implements DecoratorInterface
         }
 
         if ($this->isGroupedProduct($product)) {
-            $prices = $this->calculateGroupedProductPrice((int)$product->getId());
+            $prices = $this->calculateGroupedProductPrice($product);
             foreach ($prices as $price => $value) {
                 $row[$price] = $value;
             }
@@ -113,7 +115,7 @@ class Price implements DecoratorInterface
         }
 
         if ($this->isBundleProduct($product)) {
-            $prices = $this->calculateBundleProductPrice((int)$product->getId());
+            $prices = $this->calculateBundleProductPrice($product);
             foreach ($prices as $price => $value) {
                 $row[$price] = $value;
             }
@@ -190,7 +192,7 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param DataObject$product
+     * @param DataObject $product
      * @return bool
      */
     protected function isGroupedProduct(DataObject $product): bool
@@ -208,15 +210,15 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $entityId
+     * @param DataObject $product
      * @param callable $getAssociatedItems
      * @return array
      */
     protected function calculateProductPrice(
-        int $entityId,
+        DataObject $product,
         callable $getAssociatedItems
     ): array {
-        $product = $this->collectionFactory->create()->getItemById($entityId);
+        $product = $this->collectionFactory->create()->getItemById($product->getId());
         $associatedItems = $getAssociatedItems($product);
 
         // Convert collection to array if necessary
@@ -243,13 +245,13 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $entityId
+     * @param DataObject $product
      * @return array
      */
-    protected function calculateGroupedProductPrice(int $entityId): array
+    protected function calculateGroupedProductPrice(DataObject $product): array
     {
         return $this->calculateProductPrice(
-            $entityId,
+            $product,
             function ($product) {
                 return $product->getTypeInstance()->getAssociatedProducts($product);
             }
@@ -257,10 +259,10 @@ class Price implements DecoratorInterface
     }
 
     /**
-     * @param int $entityId
+     * @param DataObject $product
      * @return array
      */
-    protected function calculateBundleProductPrice(int $entityId): array
+    protected function calculateBundleProductPrice(DataObject $product): array
     {
         $price = [
             'min_price' => 0.0,
@@ -268,13 +270,9 @@ class Price implements DecoratorInterface
             'final_price' => 0.0,
         ];
 
-        $product = $this->collectionFactory->create()->getItemById($entityId);
-        if ($product === null) {
-            return $price;
-        }
-
+        // @phpstan-ignore-next-line
         $selections = $product->getTypeInstance()->getSelectionsCollection(
-            $product->getTypeInstance()->getOptionsIds($product),
+            $product->getTypeInstance()->getOptionsIds($product), // @phpstan-ignore-line
             $product
         );
 

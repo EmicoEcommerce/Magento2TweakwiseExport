@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Test\Integration\Export\Product\Configurable;
 
-use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Test\Integration\ExportTest;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\AttributeProvider;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\ConfigurableProvider;
@@ -20,7 +19,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 /**
  * @magentoDbIsolation enabled
  * @@magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class ChildExportedTest extends ExportTest
 {
@@ -46,6 +45,7 @@ class ChildExportedTest extends ExportTest
 
     /**
      * Test to see if export where simples are also visible work as expected.
+     * @return void
      */
     public function testVisibleSimples()
     {

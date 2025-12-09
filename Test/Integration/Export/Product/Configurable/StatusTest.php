@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -15,7 +15,7 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
  * @magentoDbIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class StatusTest extends ExportTest
 {
@@ -35,6 +35,7 @@ class StatusTest extends ExportTest
 
     /**
      * Test to see if attributes of simple products are not shown
+     * @return void
      */
     public function testAttributesWhenDisabled()
     {
@@ -51,6 +52,7 @@ class StatusTest extends ExportTest
 
     /**
      * Test to see if product will not be exported if all simples are disabled
+     * @return void
      */
     public function testWhenAllSimpleDisabled()
     {

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,7 +9,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Stock;
 
-use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\DecoratorInterface;
@@ -98,14 +97,16 @@ class Iterator extends EavIterator
 
             $batch->add($entity);
 
-            if ($batch->count() === $this->batchSize) {
-                // After PHP7+ we can use yield from
-                foreach ($this->processBatch($batch) as $processedEntity) {
-                    yield $processedEntity;
-                }
-
-                $batch = $this->collectionFactory->create(['store' => $this->store]);
+            if ($batch->count() !== $this->batchSize) {
+                continue;
             }
+
+            // After PHP7+ we can use yield from
+            foreach ($this->processBatch($batch) as $processedEntity) {
+                yield $processedEntity;
+            }
+
+            $batch = $this->collectionFactory->create(['store' => $this->store]);
         }
 
         // After PHP7+ we can use yield from
@@ -122,6 +123,7 @@ class Iterator extends EavIterator
     {
         if ($collection->count()) {
             foreach ($this->collectionDecorators as $decorator) {
+                // @phpstan-ignore-next-line
                 $decorator->decorate($collection);
             }
         }

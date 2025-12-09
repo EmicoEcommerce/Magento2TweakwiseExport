@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,8 +9,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Cron;
 
-use Tweakwise\Magento2TweakwiseExport\Console\Command\ExportCommand;
-use Tweakwise\Magento2TweakwiseExport\Exception\FeedException;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportService;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -81,7 +79,7 @@ class Export
      * Export feed
      * @throws \Exception
      */
-    public function generateFeed($type = null): void
+    public function generateFeed($type = null): void // @phpstan-ignore-line
     {
         if ($this->config->isRealTime()) {
             $this->log->debug('Export set to real time, skipping cron export.');
@@ -95,10 +93,13 @@ class Export
         $validate = $this->config->isValidate();
         if ($this->config->isStoreLevelExportEnabled()) {
             foreach ($this->storeManager->getStores() as $store) {
-                if ($this->config->isEnabled($store)) {
-                    $feedFile = $this->config->getDefaultFeedFile($store, $type);
-                    $this->export->generateToFile($feedFile, $validate, $store, $type);
+                // @phpstan-ignore-next-line
+                if (!$this->config->isEnabled($store)) {
+                    continue;
                 }
+
+                $feedFile = $this->config->getDefaultFeedFile($store, $type);
+                $this->export->generateToFile($feedFile, $validate, $store, $type);
             }
 
             return;

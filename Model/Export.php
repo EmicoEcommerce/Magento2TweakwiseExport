@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -59,11 +59,6 @@ class Export
     protected $storeManager;
 
     /**
-     * @var File
-     */
-    private File $driver;
-
-    /**
      * Export constructor.
      *
      * @param Config $config
@@ -79,14 +74,13 @@ class Export
         Writer $writer,
         Logger $log,
         StoreManagerInterface $storeManager,
-        File $driver
+        private File $driver
     ) {
         $this->config = $config;
         $this->validator = $validator;
         $this->writer = $writer;
         $this->log = $log;
         $this->storeManager = $storeManager;
-        $this->driver = $driver;
     }
 
     /**
@@ -97,7 +91,7 @@ class Export
      * phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
      * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      * phpcs:disable Magento2.Functions.DiscouragedFunction.DiscouragedWithAlternative
-     * @SuppressWarnings(PHPMD.ErrorControlOperator)
+     * @SuppressWarnings("PHPMD.ErrorControlOperator")
      */
     protected function executeLocked(callable $action, ?StoreInterface $store = null, ?string $type = null): void
     {
@@ -112,11 +106,14 @@ class Export
                 );
             }
 
+            // @phpstan-ignore-next-line
             if ($this->driver->fileLock($lockHandle)) {
                 try {
                     $action();
                 } finally {
+                    // @phpstan-ignore-next-line
                     $this->driver->fileLock($lockHandle, LOCK_UN);
+                    // @phpstan-ignore-next-line
                     $this->driver->fileClose($lockHandle);
                 }
             } else {
@@ -162,7 +159,7 @@ class Export
      * phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
      * phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
      * phpcs:disable Magento2.Functions.DiscouragedFunction.DiscouragedWithAlternative
-     * @SuppressWarnings(PHPMD.ErrorControlOperator)
+     * @SuppressWarnings("PHPMD.ErrorControlOperator")
      */
     public function getFeed($targetHandle, ?StoreInterface $store = null, ?string $type = null): void
     {
@@ -182,10 +179,13 @@ class Export
             header('Content-type: text/xml');
             header('Cache-Control: no-cache');
 
+            // @phpstan-ignore-next-line
             while (!$this->driver->endOfFile($sourceHandle)) {
+                // @phpstan-ignore-next-line
                 $this->driver->fileWrite($targetHandle, fread($sourceHandle, self::FEED_COPY_BUFFER_SIZE));
             }
 
+            // @phpstan-ignore-next-line
             $this->driver->fileClose($sourceHandle);
         } else {
             $this->generateToFile($feedFile, $this->config->isValidate(), $store, $type);
@@ -198,9 +198,9 @@ class Export
      * @param bool $validate
      * @param null|StoreInterface $store
      * @throws Exception
-     * @SuppressWarnings(PHPMD.ErrorControlOperator)
+     * @SuppressWarnings("PHPMD.ErrorControlOperator")
      */
-    public function generateToFile($feedFile, $validate, $store = null, $type = null): void
+    public function generateToFile($feedFile, $validate, $store = null, $type = null): void // @phpstan-ignore-line
     {
         $this->executeLocked(
             function () use ($feedFile, $validate, $store, $type) {
@@ -216,9 +216,11 @@ class Export
                 try {
                     // Write
                     try {
+                        // @phpstan-ignore-next-line
                         $this->writer->write($sourceHandle, $store, $type);
                         $this->log->debug('Feed exported to ' . $tmpFeedFile);
                     } finally {
+                        // @phpstan-ignore-next-line
                         fclose($sourceHandle);
                     }
 
@@ -269,7 +271,7 @@ class Export
     /**
      * Trigger TW import call if configured
      */
-    protected function triggerTweakwiseImport($store = null, $type = null): void
+    protected function triggerTweakwiseImport($store = null, $type = null): void // @phpstan-ignore-line
     {
         $apiImportUrl = $this->config->getApiImportUrl($store, $type);
         if (empty($apiImportUrl)) {
@@ -291,7 +293,7 @@ class Export
      *
      * Update last modified time from feed file
      */
-    protected function touchFeedGenerateDate($store = null, $type = null): void
+    protected function touchFeedGenerateDate($store = null, $type = null): void // @phpstan-ignore-line
     {
         touch($this->config->getDefaultFeedFile($store, $type));
     }

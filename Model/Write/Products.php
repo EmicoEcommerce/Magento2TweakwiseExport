@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -138,9 +138,11 @@ class Products implements WriterInterface
         foreach ($this->iterator as $index => $data) {
             $this->writeProduct($xml, $store->getId(), $data);
             // Flush every so often
-            if ($index % 100 === 0) {
-                $writer->flush();
+            if ($index % 100 !== 0) {
+                continue;
             }
+
+            $writer->flush();
         }
 
         // Flush any remaining products
@@ -171,6 +173,7 @@ class Products implements WriterInterface
         $xml->startElement('categories');
         foreach ($data['categories'] as $categoryId) {
             $categoryTweakwiseId = $this->helper->getTweakwiseId($storeId, $categoryId);
+            // @phpstan-ignore-next-line
             if ($xml->hasCategoryExport($categoryTweakwiseId)) {
                 $xml->writeElement('categoryid', $categoryTweakwiseId);
             } else {
@@ -211,7 +214,7 @@ class Products implements WriterInterface
         $values = array_unique($values);
 
         foreach ($values as $value) {
-            if (empty($value) && $value !== "0") {
+            if (empty($value) && $value !== '0') {
                 continue;
             }
 
@@ -277,6 +280,7 @@ class Products implements WriterInterface
         }
 
         if (is_numeric($value)) {
+            // @phpstan-ignore-next-line
             $value = $this->normalizeExponent($value);
         }
 
@@ -293,6 +297,7 @@ class Products implements WriterInterface
      */
     protected function normalizeExponent($value)
     {
+        // @phpstan-ignore-next-line
         if (stripos($value, 'E+') !== false) {
             // Assume integer value
             $decimals = 0;
@@ -325,7 +330,8 @@ class Products implements WriterInterface
     {
         $result = [];
         foreach ($data as $value) {
-            $result[] = explode($delimiter, $value) ?: [];
+            // @phpstan-ignore-next-line
+            $result[] = explode($delimiter, $value) ? explode($delimiter, $value) : [];
         }
 
         return !empty($result) ? array_merge([], ...$result) : [];
@@ -357,6 +363,7 @@ class Products implements WriterInterface
         }
 
         // Attribute does not exists so just return value
+        // @phpstan-ignore-next-line
         if (!$attribute || !$attribute->getId()) {
             return $values;
         }
@@ -367,6 +374,7 @@ class Products implements WriterInterface
         }
 
         // Explode values if source is used (multi select)
+        // @phpstan-ignore-next-line
         $values = $this->explodeValues($values);
         try {
             $attributeSource = $attribute->getSource();
@@ -375,6 +383,7 @@ class Products implements WriterInterface
             return $values;
         }
 
+        // @phpstan-ignore-next-line
         if (!$attributeSource instanceof SourceInterface) {
             return $values;
         }

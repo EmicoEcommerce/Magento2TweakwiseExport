@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
+use Magento\Framework\DB\Select;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\DecoratorInterface;
@@ -100,14 +101,16 @@ class Iterator extends EavIterator
 
             $batch->add($entity);
 
-            if ($batch->count() === $this->batchSize) {
-                // After PHP7+ we can use yield from
-                foreach ($this->processBatch($batch) as $processedEntity) {
-                    yield $processedEntity;
-                }
-
-                $batch = $this->collectionFactory->create(['store' => $this->store]);
+            if ($batch->count() !== $this->batchSize) {
+                continue;
             }
+
+            // After PHP7+ we can use yield from
+            foreach ($this->processBatch($batch) as $processedEntity) {
+                yield $processedEntity;
+            }
+
+            $batch = $this->collectionFactory->create(['store' => $this->store]);
         }
 
         // After PHP7+ we can use yield from
@@ -143,5 +146,21 @@ class Iterator extends EavIterator
                 'attributes' => $entity->getAttributes(),
             ];
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function addStoreFilter(Select $select): void
+    {
+        $storeTable = $this->getResources()->getTableName('store');
+        $cpwTable = $this->getResources()->getTableName('catalog_product_website');
+
+        $subSelect = $this->getConnection()->select()
+            ->from($storeTable, ['website_id'])
+            ->where('store_id = ?', $this->store->getId());
+
+        $select->join(['cpw' => $cpwTable], 'cpw.product_id = ' . $this->getEntityType()->getEntityTable() . '.entity_id')
+            ->where('cpw.website_id = (' . $subSelect . ')');
     }
 }

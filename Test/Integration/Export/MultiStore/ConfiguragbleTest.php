@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -22,7 +22,7 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
  *
  * @magentoDataFixtureBeforeTransaction createMultiStoreFixture
  * @magentoDbIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class ConfiguragbleTest extends MultiStoreTest
 {
@@ -42,6 +42,7 @@ class ConfiguragbleTest extends MultiStoreTest
 
     /**
      * Test multiple stores enabled
+     * @return void
      */
     public function testConfigurableNotExportedWhenChildrenDisabledSingleStore()
     {

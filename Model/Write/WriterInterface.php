@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -16,6 +16,8 @@ interface WriterInterface
     /**
      * @param Writer $writer
      * @param XMLWriter $xml
+     * @param StoreInterface|null $store
+     * @return void
      */
     public function write(Writer $writer, XMLWriter $xml, ?StoreInterface $store = null);
 }

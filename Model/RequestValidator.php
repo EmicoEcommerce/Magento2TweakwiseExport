@@ -1,9 +1,8 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model;
 
 use Magento\Framework\App\RequestInterface;
-use Magento\Store\Api\Data\StoreInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 
 class RequestValidator

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
@@ -57,6 +57,7 @@ class StockData implements DecoratorInterface
         array $stockMapProviders
     ) {
         $this->metaData = $metaData;
+        // @phpstan-ignore-next-line
         $this->stockMapProviders = $stockMapProviders;
         $this->stockItemFactory = $stockItemFactory;
         $this->config = $config;
@@ -96,15 +97,18 @@ class StockData implements DecoratorInterface
         }
 
         $stockMapProvider = $this->resolveStockMapProvider();
+        // @phpstan-ignore-next-line
         $stockItemMap = $stockMapProvider->getStockItemMap($collection, $storeId);
 
         foreach ($collection as $entity) {
             $this->assignStockItem($stockItemMap, $entity);
 
-            if ($entity instanceof CompositeExportEntityInterface) {
-                foreach ($entity->getAllChildren() as $childEntity) {
-                    $this->assignStockItem($stockItemMap, $childEntity);
-                }
+            if (!($entity instanceof CompositeExportEntityInterface)) {
+                continue;
+            }
+
+            foreach ($entity->getAllChildren() as $childEntity) {
+                $this->assignStockItem($stockItemMap, $childEntity);
             }
         }
     }
@@ -159,7 +163,7 @@ class StockData implements DecoratorInterface
         }
 
         $inStockChildrenCount = \count(\array_filter($children, [$this, 'isInStock']));
-        return round(($inStockChildrenCount / $childrenCount) * 100, 2);
+        return round($inStockChildrenCount / $childrenCount * 100, 2);
     }
 
     /**
@@ -169,6 +173,7 @@ class StockData implements DecoratorInterface
     protected function isInStock(ExportEntity|StockExportEntity $entity): bool
     {
         $stockItem = $entity->getStockItem();
+        // @phpstan-ignore-next-line
         return (int)(!$stockItem || $stockItem->getIsInStock());
     }
 
@@ -184,6 +189,7 @@ class StockData implements DecoratorInterface
         $version = $this->metaData->getVersion();
         // In case of magento 2.2.X use magento stock items
         if (version_compare($version, '2.3.0', '<')) {
+            // @phpstan-ignore-next-line
             return $this->stockMapProviders['stockItemMapProvider'];
         }
 
@@ -192,10 +198,12 @@ class StockData implements DecoratorInterface
             !$this->moduleManager->isEnabled('Magento_Inventory') ||
             !$this->moduleManager->isEnabled('Magento_InventoryApi')
         ) {
+            // @phpstan-ignore-next-line
             return $this->stockMapProviders['stockItemMapProvider'];
         }
 
         // Use sourceItems to determine stock
+        // @phpstan-ignore-next-line
         return $this->stockMapProviders['sourceItemMapProvider'];
     }
 }

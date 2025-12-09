@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -9,9 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model;
 
-use Tweakwise\Magento2TweakwiseExport\Cron\Export;
 use Exception;
-use InvalidArgumentException;
 use Magento\Cron\Model\ResourceModel\Schedule\Collection;
 use Magento\Cron\Model\Schedule;
 use Magento\Framework\App\ProductMetadataInterface;
@@ -76,11 +74,11 @@ class Scheduler
         $job = 'tweakwise_magento2_tweakwise_export';
 
         if (!empty($type)) {
-            if ($type == 'stock') {
+            if ($type === 'stock') {
                 $job = 'tweakwise_magento2_tweakwise_export_stock';
             }
 
-            if ($type == 'price') {
+            if ($type === 'price') {
                 $job = 'tweakwise_magento2_tweakwise_export_price';
             }
         }
@@ -95,8 +93,10 @@ class Scheduler
             ->setCreatedAt(date('Y-m-d H:i:s', $createdAtTime))
             ->setScheduledAt(date('Y-m-d H:i', $scheduledAtTime));
 
+        // @phpstan-ignore-next-line
         $schedule->save();
 
+        // @phpstan-ignore-next-line
         return $schedule;
     }
 

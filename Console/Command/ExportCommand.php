@@ -1,5 +1,4 @@
-<?php
-
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
@@ -52,6 +51,7 @@ class ExportCommand extends Command
      */
     protected $log;
 
+    // @phpstan-ignore-next-line
     protected $type;
 
     /**
@@ -109,8 +109,8 @@ class ExportCommand extends Command
      * {@inheritdoc}
      * @throws Exception
      * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings("PHPMD.CyclomaticComplexity")
+     * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -132,22 +132,24 @@ class ExportCommand extends Command
                     $type = $this->type;
                 }
 
-                if ($type !== "stock" && $type !== "" && $type !== "price") {
+                if ($type !== 'stock' && $type !== '' && $type !== 'price') {
                     $output->writeln('Type option should be stock, price or not set');
 
                     return -1;
-                } elseif (empty($type)) {
+                }
+
+                if (empty($type)) {
                     $type = null;
                 }
 
                 $validate = (string)$input->getOption('validate');
-                if ($validate !== 'y' && $validate !== 'n' && $validate !== "") {
+                if ($validate !== 'y' && $validate !== 'n' && $validate !== '') {
                     $output->writeln('Validate option can only contain y or n');
 
                     return -1;
                 }
 
-                $validate = $validate === "" ? $this->config->isValidate() : $validate === 'y';
+                $validate = $validate === '' ? $this->config->isValidate() : $validate === 'y';
                 $startTime = microtime(true);
                 $feedFile = (string)$input->getOption('file');
 
@@ -167,7 +169,7 @@ class ExportCommand extends Command
 
                         return -1;
                     }
-
+                    // @phpstan-ignore-next-line
                     if (!$this->config->isEnabled($store)) {
                         $output->writeln('<error>Tweakwise export does not enabled in this store</error>');
 
@@ -178,9 +180,9 @@ class ExportCommand extends Command
                         $feedFile = $this->config->getDefaultFeedFile($store, $type);
                     }
 
-                    $output->writeln("<info>generatig feed for {$store->getCode()}</info>");
+                    $output->writeln(sprintf('<info>generating feed for %s</info>', $store->getCode()));
                     $this->export->generateToFile($feedFile, $validate, $store, $type);
-                    $output->writeln("<info>feed file: {$feedFile}</info>");
+                    $output->writeln(sprintf('<info>feed file:  %s</info>', $feedFile));
                 } else {
                     if ($storeCode) {
                         $output->writeln('<error>Store level export disabled, remove --store parameter</error>');
@@ -191,9 +193,9 @@ class ExportCommand extends Command
                         $feedFile = $this->config->getDefaultFeedFile(null, $type);
                     }
 
-                    $output->writeln("<info>generating single feed for export enabled stores</info>");
+                    $output->writeln('<info>generating single feed for export enabled stores</info>');
                     $this->export->generateToFile($feedFile, $validate, null, $type);
-                    $output->writeln("<info>feed file: {$feedFile}</info>");
+                    $output->writeln(sprintf('<info>feed file:  %s</info>', $feedFile));
                 }
 
                 $generateTime = round(microtime(true) - $startTime, 2);
@@ -215,6 +217,12 @@ class ExportCommand extends Command
         );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     * @throws Exception
+     */
     public function executeStock(InputInterface $input, OutputInterface $output)
     {
         $this->type = 'stock';

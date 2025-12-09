@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -17,12 +17,13 @@ use Magento\Catalog\Model\Product\Attribute\Source\Status;
  * @magentoDataFixtureBeforeTransaction createMultiStoreFixture
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class BasicTest extends MultiStoreTest
 {
     /**
      * Test multiple stores enabled
+     * @return void
      */
     public function testEnabled()
     {
@@ -35,6 +36,7 @@ class BasicTest extends MultiStoreTest
 
     /**
      * Test if feed will not be exported for disabled store
+     * @return void
      */
     public function testDisabledStore()
     {
@@ -49,6 +51,7 @@ class BasicTest extends MultiStoreTest
 
     /**
      * Test if product will be skipped if disabled in store
+     * @return void
      */
     public function testDisabledProductForOneStore()
     {
@@ -63,6 +66,7 @@ class BasicTest extends MultiStoreTest
 
     /**
      * Test if feed will not be exported for disabled store
+     * @return void
      */
     public function testUnlinkStore()
     {

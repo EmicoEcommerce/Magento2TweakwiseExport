@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -42,11 +42,6 @@ class Writer
     protected $appState;
 
     /**
-     * @var WriterInterface[]
-     */
-    protected $writers;
-
-    /**
      * @var DateTime
      */
     protected $now;
@@ -55,11 +50,6 @@ class Writer
      * @var ComposerInformation
      */
     protected $composerInformation;
-
-    /**
-     * @var File
-     */
-    private File $driver;
 
     /**
      * Writer constructor.
@@ -74,14 +64,12 @@ class Writer
         StoreManager $storeManager,
         AppState $appState,
         ComposerInformation $composerInformation,
-        $writers,
-        File $driver
+        protected $writers,
+        private File $driver
     ) {
         $this->storeManager = $storeManager;
         $this->appState = $appState;
-        $this->writers = $writers;
         $this->composerInformation = $composerInformation;
-        $this->driver = $driver;
     }
 
     /**
@@ -89,6 +77,7 @@ class Writer
      */
     public function getNow(): DateTime
     {
+        // @phpstan-ignore-next-line
         if (!$this->now) {
             $this->now = new DateTime();
         }
@@ -156,6 +145,7 @@ class Writer
      */
     protected function getXml(): XMLWriter
     {
+        // @phpstan-ignore-next-line
         if (!$this->xml) {
             $xml = new XMLWriter();
             $xml->openMemory();
@@ -177,7 +167,9 @@ class Writer
      */
     protected function close(): void
     {
+        // @phpstan-ignore-next-line
         $this->xml = null;
+        // @phpstan-ignore-next-line
         $this->resource = null;
     }
 
@@ -195,11 +187,20 @@ class Writer
     public function flush(): void
     {
         $output = $this->getXml()->flush();
-        if ($output) {
-            $this->driver->fileWrite($this->resource, $output);
+        if (!$output) {
+            return;
         }
+
+        // @phpstan-ignore-next-line
+        $this->driver->fileWrite($this->resource, $output);
     }
 
+    /**
+     * @param StoreInterface|null $store
+     * @param string|null $type
+     * @return void
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+     */
     protected function startDocumentType(?StoreInterface $store = null, ?string $type = null)
     {
         if ($type === 'stock' || $type === 'price') {
@@ -265,16 +266,23 @@ class Writer
         $this->flush();
     }
 
-    protected function determineWriters($type = null): void
+    /**
+     * @param $type
+     * @return void
+     * @SuppressWarnings("PHPMD.UnusedLocalVariable")
+     */
+    protected function determineWriters($type = null): void // @phpstan-ignore-line
     {
         if ($type === null) {
             unset($this->writers['stock']);
             unset($this->writers['price']);
         } else {
             foreach ($this->writers as $key => $value) {
-                if ($type !== $key) {
-                    unset($this->writers[$key]);
+                if ($type === $key) {
+                    continue;
                 }
+
+                unset($this->writers[$key]);
             }
         }
     }

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
@@ -204,10 +204,11 @@ class Children implements DecoratorInterface
         );
 
         $query = $select->query();
+        // @phpstan-ignore-next-line
         while ($row = $query->fetch()) {
             $bundleOption = new ChildOptions(
                 (int) $row['option_id'],
-                (bool) $row['required']
+                (bool) $row['required'] // @phpstan-ignore-line
             );
             $this->addChild(
                 $collection,
@@ -251,6 +252,7 @@ class Children implements DecoratorInterface
         }
 
         $query = $select->query();
+        // @phpstan-ignore-next-line
         while ($row = $query->fetch()) {
             $this->addChild($collection, (int) $row['product_id'], (int) $row['linked_product_id']);
         }
@@ -286,6 +288,7 @@ class Children implements DecoratorInterface
         }
 
         $query = $select->query();
+        // @phpstan-ignore-next-line
         while ($row = $query->fetch()) {
             $this->addChild($collection, (int) $row['parent_id'], (int) $row['product_id']);
         }
@@ -331,6 +334,7 @@ class Children implements DecoratorInterface
 
             if ($this->config->isGroupedExport($collection->getStore())) {
                 $childEntity = $collection->get($childId);
+                // @phpstan-ignore-next-line
                 $childEntity->setGroupCode($parentId);
                 $childEntity->addAttribute(
                     'parent_url_key',

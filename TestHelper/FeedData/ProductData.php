@@ -1,8 +1,7 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\TestHelper\FeedData;
 
-use ArrayAccess;
 use Tweakwise\Magento2TweakwiseExport\Test\TestCase;
 use SimpleXMLElement;
 
@@ -52,6 +51,7 @@ class ProductData
 
     /**
      * @param string $sku
+     * @return void
      */
     public function assertSku(string $sku)
     {
@@ -69,6 +69,7 @@ class ProductData
 
     /**
      * @param string $name
+     * @return void
      */
     public function assertName(string $name)
     {
@@ -79,6 +80,7 @@ class ProductData
 
     /**
      * @param float $price
+     * @return void
      */
     public function assertPrice(float $price)
     {
@@ -89,6 +91,7 @@ class ProductData
 
     /**
      * @param array $attributes
+     * @return void
      */
     public function assertAttributes(array $attributes)
     {
@@ -112,6 +115,7 @@ class ProductData
      * Ensure categories contain
      *
      * @param array $categories
+     * @return void
      */
     public function assertCategories(array $categories)
     {
@@ -124,6 +128,7 @@ class ProductData
 
     /**
      * Parse price data from feed
+     * @return void
      */
     protected function parsePrice()
     {
@@ -136,6 +141,7 @@ class ProductData
 
     /**
      * Parse name data from feed
+     * @return void
      */
     protected function parseName()
     {
@@ -148,6 +154,7 @@ class ProductData
 
     /**
      * Parse categories data from feed
+     * @return void
      */
     protected function parseCategories()
     {
@@ -163,6 +170,7 @@ class ProductData
 
     /**
      * Parse attributes data from feed
+     * @return void
      */
     protected function parseAttributes()
     {

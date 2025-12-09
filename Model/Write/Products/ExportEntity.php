@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
@@ -14,7 +14,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Magento\Catalog\Model\Product\Type;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
  */
 class ExportEntity
 {
@@ -312,11 +312,13 @@ class ExportEntity
         $currentTime = strtotime(current($this->attributes[$attribute]));
 
         if (
-            ($dateFieldType === DateFieldType::MIN && $valueTime < $currentTime) ||
-            ($dateFieldType === DateFieldType::MAX && $valueTime > $currentTime)
+            ($dateFieldType !== DateFieldType::MIN || $valueTime >= $currentTime) &&
+            ($dateFieldType !== DateFieldType::MAX || $valueTime <= $currentTime)
         ) {
-            $this->attributes[$attribute] = [$value];
+            return;
         }
+
+        $this->attributes[$attribute] = [$value];
     }
 
     /**
@@ -376,9 +378,11 @@ class ExportEntity
     {
         $attributeSetNames = $this->helper->getAttributeSetNames();
 
-        if (isset($attributeSetNames[$attributeSetId])) {
-            $this->addAttribute('attribute_set_name', $attributeSetNames[$attributeSetId]);
+        if (!isset($attributeSetNames[$attributeSetId])) {
+            return;
         }
+
+        $this->addAttribute('attribute_set_name', $attributeSetNames[$attributeSetId]);
     }
 
     /**

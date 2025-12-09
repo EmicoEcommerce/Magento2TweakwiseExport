@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -12,11 +12,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
-use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Config as EavConfig;
-use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Model\Entity\Attribute\Source\SourceInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Profiler;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
@@ -138,9 +134,11 @@ class Price implements WriterInterface
         foreach ($this->iterator as $index => $data) {
             $this->writeProduct($xml, $store->getId(), $data);
             // Flush every so often
-            if ($index % 100 === 0) {
-                $writer->flush();
+            if ($index % 100 !== 0) {
+                continue;
             }
+
+            $writer->flush();
         }
 
         // Flush any remaining products
@@ -203,6 +201,7 @@ class Price implements WriterInterface
         }
 
         if (is_numeric($value)) {
+            // @phpstan-ignore-next-line
             $value = $this->normalizeExponent($value);
         }
 
@@ -219,6 +218,7 @@ class Price implements WriterInterface
      */
     protected function normalizeExponent($value)
     {
+        // @phpstan-ignore-next-line
         if (stripos($value, 'E+') !== false) {
             // Assume integer value
             $decimals = 0;

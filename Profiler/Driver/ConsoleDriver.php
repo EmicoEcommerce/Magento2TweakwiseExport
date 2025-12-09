@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -39,9 +39,11 @@ class ConsoleDriver implements DriverInterface
 
     /**
      * {@inheritdoc}
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
     public function start($timerId, ?array $tags = null)
     {
+        // @phpstan-ignore-next-line
         $this->stat->start($timerId, microtime(true), memory_get_usage(true), memory_get_usage());
         $this->display($timerId);
     }
@@ -51,6 +53,7 @@ class ConsoleDriver implements DriverInterface
      */
     public function stop($timerId)
     {
+        // @phpstan-ignore-next-line
         $this->stat->stop($timerId, microtime(true), memory_get_usage(true), memory_get_usage());
         $this->display($timerId);
     }
@@ -66,6 +69,7 @@ class ConsoleDriver implements DriverInterface
 
     /**
      * @param string $timerId
+     * @return void
      */
     protected function display($timerId)
     {

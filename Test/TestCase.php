@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -16,12 +16,14 @@ if (class_exists('PHPUnit\Framework\TestCase')) {
 } else {
     // phpcs:disable Generic.Classes.DuplicateClassName.Found
     // phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
-    abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
+    // phpcs:disable Generic.Files.OneClassPerFile.MultipleFound
+    abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
     {
     }
 }
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable Generic.Files.OneClassPerFile.MultipleFound
 abstract class TestCase extends BaseTestCase
 {
     /**
@@ -29,6 +31,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array $subset
      * @param array $array
+     * @return void
      */
     public function safeAssertArraySubset(array $subset, array $array)
     {

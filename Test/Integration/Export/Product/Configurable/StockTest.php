@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -17,7 +17,7 @@ use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 /**
  * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class StockTest extends ExportTest
 {
@@ -37,6 +37,7 @@ class StockTest extends ExportTest
 
     /**
      * Test to see if show out of stock children is handled when set to true
+     * @return void
      */
     public function testAttributesVisibleWhenOutStock()
     {
@@ -57,6 +58,7 @@ class StockTest extends ExportTest
 
     /**
      * Test to see if show out of stock children is handled when set to false
+     * @return void
      */
     public function testAttributesNotVisibleWhenOutStock()
     {
@@ -77,6 +79,7 @@ class StockTest extends ExportTest
 
     /**
      * When product specific configuration is set check if child product will not be exported.
+     * @return void
      */
     public function testAttributesNotVisibleWhenOutStockWithProductSpecificConfiguration()
     {
@@ -97,6 +100,7 @@ class StockTest extends ExportTest
 
     /**
      * When product specific configuration is set check and all children are not valid check if entire product will be skipped.
+     * @return void
      */
     public function testProductNotExportWhenOutStockWithProductSpecificConfiguration()
     {

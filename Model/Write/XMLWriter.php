@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -25,7 +25,7 @@ class XMLWriter extends BaseXMLWriter
      * @param mixed $value
      * @return $this
      */
-    #[\ReturnTypeWillChange]
+    #[\ReturnTypeWillChange] // @phpstan-ignore-line
     public function writeElement($elementName, $value = null)
     {
         parent::startElement($elementName);
@@ -37,6 +37,7 @@ class XMLWriter extends BaseXMLWriter
             $value = $this->xmlPrepare($value);
         }
 
+        // @phpstan-ignore-next-line
         $this->text((string) $value);
 
         if (!is_numeric($value) && !empty($value)) {
@@ -63,6 +64,7 @@ class XMLWriter extends BaseXMLWriter
     public function addCategoryExport($categoryId): void
     {
         $categoryId = (int) $categoryId;
+        // @phpstan-ignore-next-line
         $this->categories[$categoryId] = true;
     }
 

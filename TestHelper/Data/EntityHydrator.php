@@ -1,11 +1,10 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\TestHelper\Data;
 
 use ReflectionClass;
 use ReflectionException;
 use Zend\Filter\Exception\InvalidArgumentException;
-use Zend\Filter\Exception\RuntimeException;
 use Zend\Filter\FilterChain;
 use Zend\Filter\FilterInterface;
 use Zend\Filter\Word\UnderscoreToCamelCase;
@@ -25,15 +24,13 @@ class EntityHydrator
     /**
      * @var FilterInterface
      */
-    protected $fieldToMethodFilter;
+    protected $fieldToMethodFilter; // @phpstan-ignore-line
 
     /**
      * @param array $data
      * @param object $object
      * @return object
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws RuntimeException
      */
     public function hydrate(array $data, $object)
     {
@@ -45,9 +42,11 @@ class EntityHydrator
         $class = \get_class($object);
         foreach ($data as $field => $value) {
             $method = $this->getSetMethod($class, $field);
-            if ($method) {
-                $object->$method($value);
+            if (!$method) {
+                continue;
             }
+
+            $object->$method($value);
         }
 
         return $object;
@@ -57,15 +56,19 @@ class EntityHydrator
      * @return FilterInterface
      * @throws InvalidArgumentException
      */
-    protected function getFieldToMethodFilter(): FilterInterface
+    protected function getFieldToMethodFilter(): FilterInterface // @phpstan-ignore-line
     {
         if ($this->fieldToMethodFilter === null) {
+            // @phpstan-ignore-next-line
             $filter = new FilterChain();
+            // @phpstan-ignore-next-line
             $filter->attach(new UnderscoreToCamelCase());
 
+            // @phpstan-ignore-next-line
             $this->fieldToMethodFilter = $filter;
         }
 
+        // @phpstan-ignore-next-line
         return $this->fieldToMethodFilter;
     }
 
@@ -76,7 +79,9 @@ class EntityHydrator
      */
     protected function getReflectionClass(string $class): ReflectionClass
     {
+        // @phpstan-ignore-next-line
         if (!isset($this->reflectionCache[$class])) {
+            // @phpstan-ignore-next-line
             $this->reflectionCache[$class] = new ReflectionClass($class);
         }
 
@@ -88,16 +93,16 @@ class EntityHydrator
      * @param string $field
      * @return string|false
      * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
      */
     protected function getSetMethod(string $class, string $field)
     {
         $key = $class . $field;
         if (!isset($this->methodCache[$key])) {
+            // @phpstan-ignore-next-line
             $method = 'set' . $this->getFieldToMethodFilter()->filter($field);
             $reflection = $this->getReflectionClass($class);
 
+            // @phpstan-ignore-next-line
             $this->methodCache[$key] = $reflection->hasMethod($method) ? $method : false;
         }
 

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Price;
 
@@ -372,6 +372,7 @@ class ExportEntity
      */
     protected function isInStock(): bool
     {
+        // @phpstan-ignore-next-line
         return $this->getStockItem() !== null ? $this->getStockItem()->getIsInStock() : false;
     }
 

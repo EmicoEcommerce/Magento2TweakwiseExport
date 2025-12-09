@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -10,7 +10,6 @@
 namespace Tweakwise\Magento2TweakwiseExport\Block\Config\Form\Field;
 
 use Magento\Backend\Block\Widget\Button;
-use Magento\Config\Block\System\Config\Form;
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Exception\LocalizedException;
@@ -21,6 +20,7 @@ class ExportStart extends Field
      * @param AbstractElement $element
      * @return string
      * @throws LocalizedException
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
      */
     protected function _getElementHtml(AbstractElement $element): string
     {
@@ -29,7 +29,7 @@ class ExportStart extends Field
         $button->setData(
             [
             'label' => __('Schedule'),
-            'onclick' => "setLocation('{$this->getUrl('tweakwise/export/trigger')}')",
+            'onclick' => sprintf("setLocation('%s')", $this->getUrl('tweakwise/export/trigger')),
             ]
         );
 

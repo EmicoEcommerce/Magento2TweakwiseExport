@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -127,6 +127,7 @@ class StoreProvider
             return $existingWebsite;
         }
 
+        // @phpstan-ignore-next-line
         $website->save();
 
         return $website;
@@ -202,6 +203,7 @@ class StoreProvider
             return $existingGroup;
         }
 
+        // @phpstan-ignore-next-line
         $group->save();
 
         return $group;
@@ -261,6 +263,7 @@ class StoreProvider
         $store->setWebsiteId($group->getWebsiteId());
         $store->setGroupId($group->getId());
         $store->setSortOrder(10);
+        // @phpstan-ignore-next-line
         $store->setIsActive(true);
 
         $this->hydrator->hydrate($data, $store);
@@ -270,6 +273,7 @@ class StoreProvider
             return $existingStore;
         }
 
+        // @phpstan-ignore-next-line
         $store->save();
 
         $this->reindex();
@@ -303,6 +307,7 @@ class StoreProvider
 
     /**
      * Reindex flat and full text so we have the required tables
+     * @return void
      */
     protected function reindex()
     {

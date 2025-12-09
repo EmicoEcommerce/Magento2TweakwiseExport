@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData;
 
@@ -61,6 +61,7 @@ class StockItemMapProvider implements StockMapProviderInterface
         }
 
         $criteria = $this->criteriaFactory->create();
+        // @phpstan-ignore-next-line
         $criteria->setProductsFilter([$entityIds]);
         $items = $this->stockItemRepository->getList($criteria)->getItems();
 
@@ -71,6 +72,7 @@ class StockItemMapProvider implements StockMapProviderInterface
             $map[$productId] = $tweakwiseStockItem;
         }
 
+        // @phpstan-ignore-next-line
         return $map;
     }
 

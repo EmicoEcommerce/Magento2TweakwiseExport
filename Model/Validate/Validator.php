@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -18,8 +18,9 @@ class Validator
     /**
      * @param string $file
      * @throws ValidationException
+     * @return void
      * phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
-     * @SuppressWarnings(PHPMD.ErrorControlOperator)
+     * @SuppressWarnings("PHPMD.ErrorControlOperator")
      */
     public function validate($file)
     {
@@ -48,6 +49,7 @@ class Validator
      * Validate category parent en product category references.
      *
      * @param SimpleXMLElement $xml
+     * @return void
      * @throws ValidationException
      */
     protected function validateCategoryLinks(SimpleXMLElement $xml)

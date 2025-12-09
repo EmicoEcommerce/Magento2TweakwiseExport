@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -27,6 +27,7 @@ abstract class TestCase extends \Tweakwise\Magento2TweakwiseExport\Test\TestCase
      */
     protected function getObject(string $type)
     {
+        // @phpstan-ignore-next-line
         return Bootstrap::getObjectManager()->get($type);
     }
 
@@ -37,19 +38,26 @@ abstract class TestCase extends \Tweakwise\Magento2TweakwiseExport\Test\TestCase
      */
     protected function createObject(string $type, array $arguments = [])
     {
+        // @phpstan-ignore-next-line
         return Bootstrap::getObjectManager()->create($type, $arguments);
     }
 
     /**
      * Ensure all objects are destroyed
      * @param string $type
+     * @return void
      */
     protected function clearObject(string $type)
     {
+        // @phpstan-ignore-next-line
         $objectManager = Bootstrap::getObjectManager();
-        if ($objectManager instanceof ObjectManager) {
-            $objectManager->removeSharedInstance($type);
+        // @phpstan-ignore-next-line
+        if (!($objectManager instanceof ObjectManager)) {
+            return;
         }
+
+        // @phpstan-ignore-next-line
+        $objectManager->removeSharedInstance($type);
     }
 
     /**

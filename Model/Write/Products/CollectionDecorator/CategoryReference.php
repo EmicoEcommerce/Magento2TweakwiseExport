@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
@@ -37,6 +37,7 @@ class CategoryReference implements DecoratorInterface
             ->where('product_id IN(' . implode(',', $collection->getIds()) . ')');
         $resultSet = $select->query();
 
+        // @phpstan-ignore-next-line
         while ($row = $resultSet->fetch()) {
             $entityId = (int) $row['product_id'];
             $entity = $collection->get($entityId);

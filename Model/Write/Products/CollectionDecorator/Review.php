@@ -1,9 +1,8 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
-use Tweakwise\Magento2TweakwiseExport\Model\Review\ProductReviewSummary;
 use Tweakwise\Magento2TweakwiseExport\Model\Review\ReviewProviderInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 

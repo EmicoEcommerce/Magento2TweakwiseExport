@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -115,7 +115,8 @@ class ProductProvider
      * @param ProductAction $productAction
      * @param StoreManagerInterface $storeManager
      * @param EavConfig $eavConfig
-     * @param Link $websiteLink
+     * @param WebsiteLink $websiteLink
+     * @SuppressWarnings("PHPMD.ExcessiveParameterList")
      */
     public function __construct(
         ProductRepositoryInterface $productRepository,
@@ -206,6 +207,7 @@ class ProductProvider
      * @param string $attribute
      * @param mixed $value
      * @param string|null $store
+     * @return void
      */
     public function saveAttribute(ProductInterface $product, string $attribute, $value, string $store = null)
     {
@@ -243,6 +245,7 @@ class ProductProvider
     /**
      * @param ProductInterface $product
      * @param array $websiteIds
+     * @return void
      */
     public function saveWebsiteLink(ProductInterface $product, array $websiteIds)
     {

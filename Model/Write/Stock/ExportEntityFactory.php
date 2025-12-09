@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Stock;
 
@@ -6,6 +6,8 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\DataObject;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntity;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
 
 class ExportEntityFactory
 {

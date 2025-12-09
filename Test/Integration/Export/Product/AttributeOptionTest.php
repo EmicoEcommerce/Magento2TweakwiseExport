@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
@@ -14,7 +14,7 @@ use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\AttributeProvider;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\ConfigurableProvider;
 
 /**
- * @SuppressWarnings(PHPMD.DepthOfInheritance)
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 class AttributeOptionTest extends ExportTest
 {
@@ -41,6 +41,7 @@ class AttributeOptionTest extends ExportTest
 
     /**
      * Test exporting a product with deleted attributes.
+     * @return void
      * @see Issue #42
      */
     public function testProductWithRemovedOption()
