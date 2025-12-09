@@ -588,7 +588,7 @@ class EavIterator implements IteratorAggregate
      * @param Zend_Db_Select $select
      * @return void
      */
-    protected function addStoreFilter(\Zend_Db_Select $select): void
+    protected function addStoreFilter(Select $select): void
     {
         // Override in subclass to add store filter functionality
     }

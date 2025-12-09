@@ -218,7 +218,7 @@ class Price implements DecoratorInterface
         DataObject $product,
         callable $getAssociatedItems
     ): array {
-        $product = $this->collectionFactory->create()->getItemById($product);
+        $product = $this->collectionFactory->create()->getItemById($product->getId());
         $associatedItems = $getAssociatedItems($product);
 
         // Convert collection to array if necessary

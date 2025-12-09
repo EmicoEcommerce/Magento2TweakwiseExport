@@ -137,9 +137,9 @@ class Iterator extends EavIterator
     /**
      * {@inheritdoc}
      */
-    protected function addStoreFilter(\Zend_Db_Select $select): void
+    protected function addStoreFilter(Select $select): void
     {
         $storeId = $this->store->getRootCategoryId();
-        $select->where('path like ?', '%/'.$storeId.'%');
+        $select->where('path like ?', '%/' . $storeId . '%');
     }
 }
