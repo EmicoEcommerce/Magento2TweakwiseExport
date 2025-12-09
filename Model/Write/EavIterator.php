@@ -328,6 +328,7 @@ class EavIterator implements IteratorAggregate
         if (!isset($this->entitySet[$storeId])) {
             $select = $this->getConnection()->select();
             $select->from($this->getEntityType()->getEntityTable());
+            $this->addStoreFilter($select);
             $select->reset('columns')->columns(['entity_id', 'created_at', 'updated_at', 'attribute_set_id']);
             $this->addEntityBatchOrder($select);
 
@@ -581,5 +582,14 @@ class EavIterator implements IteratorAggregate
             ->where('cpe.type_id = ?', Configurable::TYPE_CODE);
 
         $this->parentRelations = $connection->fetchPairs($select);
+    }
+
+    /**
+     * @param Zend_Db_Select $select
+     * @return void
+     */
+    protected function addStoreFilter(\Zend_Db_Select $select): void
+    {
+        // Override in subclass to add store filter functionality
     }
 }
