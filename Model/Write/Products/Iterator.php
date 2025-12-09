@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
+use Magento\Framework\DB\Select;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\DecoratorInterface;
@@ -150,7 +151,7 @@ class Iterator extends EavIterator
     /**
      * {@inheritdoc}
      */
-    protected function addStoreFilter(\Zend_Db_Select $select): void
+    protected function addStoreFilter(Select $select): void
     {
         $storeTable = $this->getResources()->getTableName('store');
         $cpwTable = $this->getResources()->getTableName('catalog_product_website');
