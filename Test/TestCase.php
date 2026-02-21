@@ -9,15 +9,17 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Test;
 
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+
 if (class_exists('PHPUnit\Framework\TestCase')) {
-    abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
+    abstract class BaseTestCase extends PHPUnitTestCase
     {
     }
 } else {
     // phpcs:disable Generic.Classes.DuplicateClassName.Found
     // phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
     // phpcs:disable Generic.Files.OneClassPerFile.MultipleFound
-    abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
+    abstract class BaseTestCase extends PHPUnitTestCase
     {
     }
 }

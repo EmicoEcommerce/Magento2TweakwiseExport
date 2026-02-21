@@ -9,6 +9,8 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ExportExceptionInterface
+use InvalidArgumentException as BaseInvalidArgumentException;
+
+class InvalidArgumentException extends BaseInvalidArgumentException implements ExportExceptionInterface
 {
 }
