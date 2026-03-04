@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 use XMLWriter as BaseXMLWriter;
+use ReturnTypeWillChange;
 
 class XMLWriter extends BaseXMLWriter
 {
@@ -25,7 +26,7 @@ class XMLWriter extends BaseXMLWriter
      * @param mixed $value
      * @return $this
      */
-    #[\ReturnTypeWillChange] // @phpstan-ignore-line
+    #[ReturnTypeWillChange] // @phpstan-ignore-line
     public function writeElement($elementName, $value = null)
     {
         parent::startElement($elementName);

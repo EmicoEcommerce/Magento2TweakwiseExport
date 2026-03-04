@@ -92,7 +92,7 @@ class ProductAttributes
      */
     protected function isAttributeBlacklisted(Attribute $attribute): bool
     {
-        return \in_array(
+        return in_array(
             $attribute->getAttributeCode(),
             $this->attributeBlacklist,
             true

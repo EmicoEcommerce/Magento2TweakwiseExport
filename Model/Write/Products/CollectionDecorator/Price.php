@@ -270,13 +270,12 @@ class Price implements DecoratorInterface
             'final_price' => 0.0,
         ];
 
-        // @phpstan-ignore-next-line
         $selections = $product->getTypeInstance()->getSelectionsCollection(
-            $product->getTypeInstance()->getOptionsIds($product), // @phpstan-ignore-line
+            $product->getTypeInstance()->getOptionsIds($product),
             $product
         );
 
-        if ($selections instanceof \Magento\Framework\Data\Collection) {
+        if ($selections instanceof DataCollection) {
             $selections = $selections->getItems();
         }
 

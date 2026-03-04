@@ -9,6 +9,9 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\TestHelper\Data;
 
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Type;
+use Magento\Catalog\Model\Product\Visibility;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\AttributeProvider;
 use Faker\Factory;
 use Faker\Generator;
@@ -159,11 +162,11 @@ class ProductProvider
         // Set product defaults
         $product->setSku('test-' . $this->faker->uuid);
         $product->setName($this->faker->name);
-        $product->setTypeId(Product\Type::TYPE_SIMPLE);
-        $product->setVisibility(Product\Visibility::VISIBILITY_BOTH);
+        $product->setTypeId(Type::TYPE_SIMPLE);
+        $product->setVisibility(Visibility::VISIBILITY_BOTH);
         $product->setPrice($this->faker->randomNumber(2));
         $product->setAttributeSetId($this->attributeProvider->getSetId());
-        $product->setStatus(Product\Attribute\Source\Status::STATUS_ENABLED);
+        $product->setStatus(Status::STATUS_ENABLED);
 
         // Overwrite with provided data
         $this->hydrator->hydrate($data, $product);

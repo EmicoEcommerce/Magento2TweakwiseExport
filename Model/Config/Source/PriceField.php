@@ -49,8 +49,8 @@ class PriceField implements ArrayInterface
         foreach ($input as $key => $value) {
             $copy = $processed ?? [];
             $copy[$key] = $value;
-            $tmp = \array_diff_key($input, $copy);
-            if (\count($tmp) === 0) {
+            $tmp = array_diff_key($input, $copy);
+            if (count($tmp) === 0) {
                 $permutations[] = $copy;
             } else {
                 /** @noinspection SlowArrayOperationsInLoopInspection */

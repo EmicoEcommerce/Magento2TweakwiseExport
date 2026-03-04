@@ -150,7 +150,7 @@ class StoreProvider
         }
 
         if (!method_exists($website, 'delete')) {
-            throw new BadMethodCallException(sprintf('Method delete not found on %s', \get_class($website)));
+            throw new BadMethodCallException(sprintf('Method delete not found on %s', get_class($website)));
         }
 
         $website->delete();
@@ -226,7 +226,7 @@ class StoreProvider
         }
 
         if (!method_exists($group, 'delete')) {
-            throw new BadMethodCallException(sprintf('Method delete not found on %s', \get_class($group)));
+            throw new BadMethodCallException(sprintf('Method delete not found on %s', get_class($group)));
         }
 
         $group->delete();
@@ -298,7 +298,7 @@ class StoreProvider
         }
 
         if (!method_exists($store, 'delete')) {
-            throw new BadMethodCallException(sprintf('Method delete not found on %s', \get_class($store)));
+            throw new BadMethodCallException(sprintf('Method delete not found on %s', get_class($store)));
         }
 
         $store->delete();

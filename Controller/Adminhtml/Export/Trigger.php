@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Controller\Adminhtml\Export;
 
+use Magento\Backend\App\Action\Context;
 use Tweakwise\Magento2TweakwiseExport\Model\Scheduler;
 use Exception;
 use InvalidArgumentException;
@@ -26,10 +27,10 @@ class Trigger extends Action
 
     /**
      * Trigger constructor.
-     * @param Action\Context $context
+     * @param Context $context
      * @param Scheduler $scheduler
      */
-    public function __construct(Action\Context $context, Scheduler $scheduler)
+    public function __construct(Context $context, Scheduler $scheduler)
     {
         parent::__construct($context);
         $this->scheduler = $scheduler;
