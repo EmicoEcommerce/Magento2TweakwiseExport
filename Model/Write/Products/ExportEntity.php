@@ -210,6 +210,9 @@ class ExportEntity
      */
     public function setVisibility(int $visibility): void
     {
+        if ($this->config->isGroupedExport()) {
+            $this->addAttribute('parent_visibility', $visibility);
+        }
         $this->visibility = $visibility;
     }
 
