@@ -13,13 +13,14 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\MutableScopeConfigInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\ObjectManager;
+use Tweakwise\Magento2TweakwiseExport\Test\TestCase as BaseTestCase;
 
 /**
  * Class TestCase
  *
  * @package Tweakwise\Magento2TweakwiseExport\Test\Integration
  */
-abstract class TestCase extends \Tweakwise\Magento2TweakwiseExport\Test\TestCase
+abstract class TestCase extends BaseTestCase
 {
     /**
      * @param string $type

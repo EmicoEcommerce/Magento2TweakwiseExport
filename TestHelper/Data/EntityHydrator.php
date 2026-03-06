@@ -39,7 +39,7 @@ class EntityHydrator
             return $object;
         }
 
-        $class = \get_class($object);
+        $class = get_class($object);
         foreach ($data as $field => $value) {
             $method = $this->getSetMethod($class, $field);
             if (!$method) {

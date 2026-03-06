@@ -203,6 +203,9 @@ class Config
             $this->skipAttributes = array_flip($skipAttributes);
         }
 
+        //add visibility to skip attributes to prevent issues with parent products when parent visibility is not set to "Catalog, Search"
+        $this->skipAttributes['visibility'] = true;
+
         if ($attribute === null) {
             return array_keys($this->skipAttributes);
         }

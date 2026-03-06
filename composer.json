@@ -9,7 +9,7 @@
         "laminas/laminas-http": "^2.15.0"
     },
     "require-dev": {
-        "emico/code-quality": "^10.5",
+        "emico/code-quality": "~10.6.0",
         "fzaninotto/faker": "^1.7",
         "magento/framework": "^103.0"
     },

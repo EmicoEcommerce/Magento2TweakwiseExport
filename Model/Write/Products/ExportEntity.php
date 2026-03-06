@@ -210,6 +210,9 @@ class ExportEntity
      */
     public function setVisibility(int $visibility): void
     {
+        if ($this->config->isGroupedExport()) {
+            $this->addAttribute('parent_visibility', $visibility);
+        }
         $this->visibility = $visibility;
     }
 
@@ -471,7 +474,7 @@ class ExportEntity
         }
 
         $websiteId = (int) $this->store->getWebsiteId();
-        return \in_array($websiteId, $this->linkedWebsiteIds, true);
+        return in_array($websiteId, $this->linkedWebsiteIds, true);
     }
 
     /**
@@ -491,7 +494,7 @@ class ExportEntity
             }
         }
 
-        return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
+        return in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
     }
 
     /**

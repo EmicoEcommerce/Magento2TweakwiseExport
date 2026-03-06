@@ -60,7 +60,7 @@ class ProductData
         $this->test->assertArrayHasKey('sku', $this->attributes);
 
         $actualSku = $this->attributes['sku'];
-        if (\is_array($actualSku)) {
+        if (is_array($actualSku)) {
             $this->test->assertContains($sku, $actualSku);
         } else {
             $this->test->assertEquals($sku, $actualSku);
@@ -99,11 +99,11 @@ class ProductData
 
         foreach ($attributes as $key => $value) {
             $this->test->assertArrayHasKey($key, $this->attributes);
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 asort($value);
             }
 
-            if (\is_array($this->attributes[$key])) {
+            if (is_array($this->attributes[$key])) {
                 asort($this->attributes[$key]);
             }
 
@@ -185,7 +185,7 @@ class ProductData
 
             if (isset($this->attributes[$name])) {
                 // Ensure data is array
-                if (!\is_array($this->attributes[$name])) {
+                if (!is_array($this->attributes[$name])) {
                     $this->attributes[$name] = [$this->attributes[$name]];
                 }
 

@@ -18,6 +18,7 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
 use Traversable;
+use Zend_Db_Statement_Exception;
 
 class Iterator extends EavIterator
 {

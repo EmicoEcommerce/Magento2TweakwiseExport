@@ -156,13 +156,13 @@ class StockData implements DecoratorInterface
         }
 
         $children = $entity->getEnabledChildren();
-        $childrenCount = \count($children);
+        $childrenCount = count($children);
         // Just to be sure we dont divide by 0, we really should not get here
         if ($childrenCount <= 0) {
             return (int) $this->isInStock($entity) * 100;
         }
 
-        $inStockChildrenCount = \count(\array_filter($children, [$this, 'isInStock']));
+        $inStockChildrenCount = count(array_filter($children, [$this, 'isInStock']));
         return round($inStockChildrenCount / $childrenCount * 100, 2);
     }
 

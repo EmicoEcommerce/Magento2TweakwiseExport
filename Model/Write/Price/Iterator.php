@@ -18,6 +18,7 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
+use Traversable;
 
 class Iterator extends EavIterator
 {
@@ -81,7 +82,7 @@ class Iterator extends EavIterator
     /**
      * {@inheritdoc}
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         $batch = $this->collectionFactory->create(['store' => $this->store]);
         foreach (parent::getIterator() as $entityData) {

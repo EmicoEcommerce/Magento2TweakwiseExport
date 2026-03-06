@@ -4,6 +4,7 @@ namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Price;
 
 use ArrayIterator;
 use Countable;
+use Traversable;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use IteratorAggregate;
 use Magento\Store\Model\Store;
@@ -51,7 +52,7 @@ class Collection implements IteratorAggregate, Countable
     /**
      * @return ExportEntity[]|ArrayIterator
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->entities);
     }
