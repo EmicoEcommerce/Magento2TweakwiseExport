@@ -9,10 +9,10 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product;
 
+use Magento\Catalog\Model\Product\Visibility;
 use Magento\Framework\Exception\LocalizedException;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\ProductProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\ConfigurableProduct\Helper\Product\Options\Factory as OptionsFactory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -147,7 +147,7 @@ class ConfigurableProvider
                 );
             }
 
-            if (\is_int($data[$attributeCode])) {
+            if (is_int($data[$attributeCode])) {
                 continue;
             }
 
@@ -155,7 +155,7 @@ class ConfigurableProvider
         }
 
         if (!isset($data['visibility'])) {
-            $data['visibility'] = Product\Visibility::VISIBILITY_NOT_VISIBLE;
+            $data['visibility'] = Visibility::VISIBILITY_NOT_VISIBLE;
         }
 
         return $this->productProvider->create($data);

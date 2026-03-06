@@ -9,6 +9,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Test\Integration\Export\Product\Configurable;
 
+use Magento\Catalog\Model\Product\Visibility;
 use Tweakwise\Magento2TweakwiseExport\Test\Integration\ExportTest;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\AttributeProvider;
 use Tweakwise\Magento2TweakwiseExport\TestHelper\Data\Product\ConfigurableProvider;
@@ -55,12 +56,12 @@ class ChildExportedTest extends ExportTest
             [
                 'color' => 'black',
                 'status' => Status::STATUS_ENABLED,
-                'visibility' => Product\Visibility::VISIBILITY_BOTH
+                'visibility' => Visibility::VISIBILITY_BOTH
             ],
             [
                 'color' => 'blue',
                 'status' => Status::STATUS_ENABLED,
-                'visibility' => Product\Visibility::VISIBILITY_BOTH
+                'visibility' => Visibility::VISIBILITY_BOTH
             ],
             ]
         );

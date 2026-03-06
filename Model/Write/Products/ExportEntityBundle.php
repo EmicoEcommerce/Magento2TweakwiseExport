@@ -55,13 +55,17 @@ class ExportEntityBundle extends CompositeExportEntity
             $optionGroups[$optionId]['is_in_stock'] = 1;
         }
 
-        if (empty($optionGroups)) {
+        if (
+            empty($optionGroups) ||
+            !array_column($optionGroups, 'qty') ||
+            !array_column($optionGroups, 'is_in_stock')
+        ) {
             $this->isStockCombined = true;
             return $this->stockItem;
         }
 
         $qty = min(array_column($optionGroups, 'qty'));
-        $isInStock = min(array_map(fn ($child) => $child['is_in_stock'], $optionGroups));
+        $isInStock = min(array_column($optionGroups, 'is_in_stock'));
         $stockItem = new StockItem();
         $stockItem->setQty($qty);
         $stockItem->setIsInStock($isInStock);

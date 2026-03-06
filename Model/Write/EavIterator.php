@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode.ZendDbSelect
+use ArrayIterator;
 use Magento\Catalog\Model\Product;
 use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -29,6 +30,7 @@ use Magento\Store\Model\Store;
 use Zend_Db_Expr;
 use Zend_Db_Select;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Traversable;
 
 /**
  * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
@@ -86,7 +88,7 @@ class EavIterator implements IteratorAggregate
     protected $dbContext;
 
     /**
-     * @var \ArrayIterator[]
+     * @var ArrayIterator[]
      */
     protected $entitySet;
 
@@ -270,7 +272,7 @@ class EavIterator implements IteratorAggregate
      * @throws \Zend_Db_Statement_Exception
      * phpcs:disable Magento2.Performance.ForeachArrayMerge.ForeachArrayMerge
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         while ($entityIds = $this->getEntityBatch()) {
             try {
@@ -340,7 +342,7 @@ class EavIterator implements IteratorAggregate
             $result = $select->query()->fetchAll();
             $entityIds = array_column($result, 'entity_id');
             // @phpstan-ignore-next-line
-            $this->entitySet[$storeId] = new \ArrayIterator(array_chunk($entityIds, $this->batchSize));
+            $this->entitySet[$storeId] = new ArrayIterator(array_chunk($entityIds, $this->batchSize));
             $this->entityData = array_combine($entityIds, $result);
         }
 
@@ -353,7 +355,7 @@ class EavIterator implements IteratorAggregate
      * Add order fields
      * @param Zend_Db_Select $select
      */
-    protected function addEavSelectOrder(\Zend_Db_Select $select): void
+    protected function addEavSelectOrder(Zend_Db_Select $select): void
     {
         foreach ($this->eavSelectOrder as $order) {
             $select->order($order);
@@ -363,7 +365,7 @@ class EavIterator implements IteratorAggregate
     /**
      * @param Zend_Db_Select $select
      */
-    protected function addEntityBatchOrder(\Zend_Db_Select $select): void
+    protected function addEntityBatchOrder(Zend_Db_Select $select): void
     {
         foreach ($this->entityBatchOrder as $order) {
             $select->order($order);
@@ -585,7 +587,7 @@ class EavIterator implements IteratorAggregate
     }
 
     /**
-     * @param Zend_Db_Select $select
+     * @param Select $select
      * @return void
      */
     protected function addStoreFilter(Select $select): void

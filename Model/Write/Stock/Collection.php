@@ -8,6 +8,7 @@ use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use IteratorAggregate;
 use Magento\Store\Model\Store;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntityInterface;
+use Traversable;
 
 class Collection implements IteratorAggregate, Countable
 {
@@ -51,7 +52,7 @@ class Collection implements IteratorAggregate, Countable
     /**
      * @return ExportEntity[]|ArrayIterator
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->entities);
     }

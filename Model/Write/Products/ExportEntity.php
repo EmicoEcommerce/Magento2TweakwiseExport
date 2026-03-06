@@ -474,7 +474,7 @@ class ExportEntity
         }
 
         $websiteId = (int) $this->store->getWebsiteId();
-        return \in_array($websiteId, $this->linkedWebsiteIds, true);
+        return in_array($websiteId, $this->linkedWebsiteIds, true);
     }
 
     /**
@@ -494,7 +494,7 @@ class ExportEntity
             }
         }
 
-        return \in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
+        return in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
     }
 
     /**
