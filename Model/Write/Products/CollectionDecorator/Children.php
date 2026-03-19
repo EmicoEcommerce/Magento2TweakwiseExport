@@ -300,8 +300,8 @@ class Children implements DecoratorInterface
      * @param int $parentId
      * @param int $childId
      * @param ChildOptions|null $childOptions
-     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
-     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+     *
+     * @return void
      */
     protected function addChild(
         Collection|StockCollection|PriceCollection $collection,
@@ -321,6 +321,8 @@ class Children implements DecoratorInterface
      * @param Collection|StockCollection|PriceCollection $collection
      * @param int $childId
      * @param ChildOptions|null $childOptions
+     *
+     * @return ExportEntityChild
      */
     private function getOrCreateChildEntity(
         Collection|StockCollection|PriceCollection $collection,
@@ -349,6 +351,11 @@ class Children implements DecoratorInterface
 
     /**
      * @param Collection|StockCollection|PriceCollection $collection
+     * @param ExportEntity $parent
+     * @param ExportEntityChild $child
+     * @param int $childId
+     *
+     * @return void
      */
     private function addConfigurableChildToCollection(
         Collection|StockCollection|PriceCollection $collection,
@@ -367,6 +374,12 @@ class Children implements DecoratorInterface
         $collection->add($child);
     }
 
+    /**
+     * @param ExportEntity      $parent
+     * @param ExportEntityChild $child
+     *
+     * @return void
+     */
     private function addChildToParent(ExportEntity $parent, ExportEntityChild $child): void
     {
         if (!$parent instanceof CompositeExportEntityInterface) {
@@ -378,6 +391,11 @@ class Children implements DecoratorInterface
 
     /**
      * @param Collection|StockCollection|PriceCollection $collection
+     * @param ExportEntity $parent
+     * @param int $parentId
+     * @param int $childId
+     *
+     * @return void
      */
     private function enrichGroupedExportChild(
         Collection|StockCollection|PriceCollection $collection,
