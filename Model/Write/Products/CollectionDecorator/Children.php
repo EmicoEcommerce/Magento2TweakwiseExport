@@ -10,6 +10,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntityInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\IteratorInitializer;
 use Magento\Bundle\Model\Product\Type as Bundle;
@@ -326,38 +327,40 @@ class Children implements DecoratorInterface
             $child->setChildOptions($childOptions);
         }
 
-        try {
-            $parent = $collection->get($parentId);
-            if ($parent instanceof CompositeExportEntityInterface) {
-                $parent->addChild($child);
-            }
+        $parent = $collection->get($parentId);
 
-            if ($this->config->isGroupedExport($collection->getStore())) {
-                $childEntity = $collection->get($childId);
-                // @phpstan-ignore-next-line
-                $childEntity->setGroupCode($parentId);
-                $childEntity->addAttribute(
-                    'parent_url_key',
-                    $parent->getAttribute('url_key', false)
-                );
-                $childEntity->addAttribute(
-                    'parent_name',
-                    $parent->getAttribute('name', false)
-                );
-                $childEntity->addAttribute(
-                    'parent_visibility',
-                    $parent->getAttribute('visibility', false)
-                );
+        if (!$collection->has($childId) && $parent instanceof ExportEntityConfigurable && $child->shouldExport()) {
+            $collection->add($child);
+        }
 
-                if ($childEntity->getCategories() === []) {
-                    $categories = $parent->getCategories();
-                    foreach ($categories as $category) {
-                        $childEntity->addCategoryId($category);
-                    }
+        if ($parent instanceof CompositeExportEntityInterface) {
+            $parent->addChild($child);
+        }
+
+        if ($this->config->isGroupedExport($collection->getStore()) && $parent instanceof ExportEntityConfigurable) {
+            $childEntity = $collection->get($childId);
+
+            // @phpstan-ignore-next-line
+            $childEntity->setGroupCode($parentId);
+            $childEntity->addAttribute(
+                'parent_url_key',
+                $parent->getAttribute('url_key', false)
+            );
+            $childEntity->addAttribute(
+                'parent_name',
+                $parent->getAttribute('name', false)
+            );
+            $childEntity->addAttribute(
+                'parent_visibility',
+                $parent->getAttribute('visibility', false)
+            );
+
+            if ($childEntity->getCategories() === []) {
+                $categories = $parent->getCategories();
+                foreach ($categories as $category) {
+                    $childEntity->addCategoryId($category);
                 }
             }
-        } catch (InvalidArgumentException $exception) {
-            // no implementation, parent was not found
         }
     }
 
