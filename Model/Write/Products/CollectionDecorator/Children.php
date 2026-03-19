@@ -367,7 +367,11 @@ class Children implements DecoratorInterface
             return;
         }
 
-        if (!$parent instanceof ExportEntityConfigurable || !$child->shouldExport()) {
+        if (!$parent instanceof ExportEntityConfigurable) {
+            return;
+        }
+
+        if (!$this->config->isGroupedExport($collection->getStore()) && !$child->shouldExport()) {
             return;
         }
 
