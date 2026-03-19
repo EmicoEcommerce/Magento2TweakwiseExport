@@ -9,6 +9,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIteratorFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntityInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityFactory;
@@ -309,7 +310,24 @@ class Children implements DecoratorInterface
         int $childId,
         ?ChildOptions $childOptions = null
     ): void {
+        $child = $this->getOrCreateChildEntity($collection, $childId, $childOptions);
+        $parent = $collection->get($parentId);
 
+        $this->addConfigurableChildToCollection($collection, $parent, $child, $childId);
+        $this->addChildToParent($parent, $child);
+        $this->enrichGroupedExportChild($collection, $parent, $parentId, $childId);
+    }
+
+    /**
+     * @param Collection|StockCollection|PriceCollection $collection
+     * @param int $childId
+     * @param ChildOptions|null $childOptions
+     */
+    private function getOrCreateChildEntity(
+        Collection|StockCollection|PriceCollection $collection,
+        int $childId,
+        ?ChildOptions $childOptions = null
+    ): ExportEntityChild {
         if (!$this->childEntities->has($childId)) {
             $child = $this->entityChildFactory->createChild(
                 [
@@ -327,40 +345,75 @@ class Children implements DecoratorInterface
             $child->setChildOptions($childOptions);
         }
 
-        $parent = $collection->get($parentId);
+        return $child;
+    }
 
-        if (!$collection->has($childId) && $parent instanceof ExportEntityConfigurable && $child->shouldExport()) {
-            $collection->add($child);
+    /**
+     * @param Collection|StockCollection|PriceCollection $collection
+     */
+    private function addConfigurableChildToCollection(
+        Collection|StockCollection|PriceCollection $collection,
+        ExportEntity $parent,
+        ExportEntityChild $child,
+        int $childId
+    ): void {
+        if ($collection->has($childId)) {
+            return;
         }
 
-        if ($parent instanceof CompositeExportEntityInterface) {
-            $parent->addChild($child);
+        if (!$parent instanceof ExportEntityConfigurable || !$child->shouldExport()) {
+            return;
         }
 
-        if ($this->config->isGroupedExport($collection->getStore()) && $parent instanceof ExportEntityConfigurable) {
-            $childEntity = $collection->get($childId);
+        $collection->add($child);
+    }
 
-            // @phpstan-ignore-next-line
-            $childEntity->setGroupCode($parentId);
-            $childEntity->addAttribute(
-                'parent_url_key',
-                $parent->getAttribute('url_key', false)
-            );
-            $childEntity->addAttribute(
-                'parent_name',
-                $parent->getAttribute('name', false)
-            );
-            $childEntity->addAttribute(
-                'parent_visibility',
-                $parent->getAttribute('visibility', false)
-            );
+    private function addChildToParent(ExportEntity $parent, ExportEntityChild $child): void
+    {
+        if (!$parent instanceof CompositeExportEntityInterface) {
+            return;
+        }
 
-            if ($childEntity->getCategories() === []) {
-                $categories = $parent->getCategories();
-                foreach ($categories as $category) {
-                    $childEntity->addCategoryId($category);
-                }
-            }
+        $parent->addChild($child);
+    }
+
+    /**
+     * @param Collection|StockCollection|PriceCollection $collection
+     */
+    private function enrichGroupedExportChild(
+        Collection|StockCollection|PriceCollection $collection,
+        ExportEntity $parent,
+        int $parentId,
+        int $childId
+    ): void {
+        if (!$this->config->isGroupedExport($collection->getStore()) || !$parent instanceof ExportEntityConfigurable) {
+            return;
+        }
+
+        $childEntity = $collection->get($childId);
+
+        // @phpstan-ignore-next-line
+        $childEntity->setGroupCode($parentId);
+        $childEntity->addAttribute(
+            'parent_url_key',
+            $parent->getAttribute('url_key', false)
+        );
+        $childEntity->addAttribute(
+            'parent_name',
+            $parent->getAttribute('name', false)
+        );
+        $childEntity->addAttribute(
+            'parent_visibility',
+            $parent->getAttribute('visibility', false)
+        );
+
+        if ($childEntity->getCategories() !== []) {
+            return;
+        }
+
+        $categories = $parent->getCategories();
+        foreach ($categories as $category) {
+            $childEntity->addCategoryId($category);
         }
     }
 
