@@ -2,14 +2,15 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
-use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\DbResourceHelper;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIteratorFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntityInterface;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityFactory;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\IteratorInitializer;
 use Magento\Bundle\Model\Product\Type as Bundle;
@@ -299,8 +300,8 @@ class Children implements DecoratorInterface
      * @param int $parentId
      * @param int $childId
      * @param ChildOptions|null $childOptions
-     * phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
-     * phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+     *
+     * @return void
      */
     protected function addChild(
         Collection|StockCollection|PriceCollection $collection,
@@ -308,7 +309,26 @@ class Children implements DecoratorInterface
         int $childId,
         ?ChildOptions $childOptions = null
     ): void {
+        $child = $this->getOrCreateChildEntity($collection, $childId, $childOptions);
+        $parent = $collection->get($parentId);
 
+        $this->addConfigurableChildToCollection($collection, $parent, $child, $childId);
+        $this->addChildToParent($parent, $child);
+        $this->enrichGroupedExportChild($collection, $parent, $parentId, $childId);
+    }
+
+    /**
+     * @param Collection|StockCollection|PriceCollection $collection
+     * @param int $childId
+     * @param ChildOptions|null $childOptions
+     *
+     * @return ExportEntityChild
+     */
+    private function getOrCreateChildEntity(
+        Collection|StockCollection|PriceCollection $collection,
+        int $childId,
+        ?ChildOptions $childOptions = null
+    ): ExportEntityChild {
         if (!$this->childEntities->has($childId)) {
             $child = $this->entityChildFactory->createChild(
                 [
@@ -326,38 +346,95 @@ class Children implements DecoratorInterface
             $child->setChildOptions($childOptions);
         }
 
-        try {
-            $parent = $collection->get($parentId);
-            if ($parent instanceof CompositeExportEntityInterface) {
-                $parent->addChild($child);
-            }
+        return $child;
+    }
 
-            if ($this->config->isGroupedExport($collection->getStore())) {
-                $childEntity = $collection->get($childId);
-                // @phpstan-ignore-next-line
-                $childEntity->setGroupCode($parentId);
-                $childEntity->addAttribute(
-                    'parent_url_key',
-                    $parent->getAttribute('url_key', false)
-                );
-                $childEntity->addAttribute(
-                    'parent_name',
-                    $parent->getAttribute('name', false)
-                );
-                $childEntity->addAttribute(
-                    'parent_visibility',
-                    $parent->getAttribute('visibility', false)
-                );
+    /**
+     * @param Collection|StockCollection|PriceCollection $collection
+     * @param ExportEntity $parent
+     * @param ExportEntityChild $child
+     * @param int $childId
+     *
+     * @return void
+     */
+    private function addConfigurableChildToCollection(
+        Collection|StockCollection|PriceCollection $collection,
+        ExportEntity $parent,
+        ExportEntityChild $child,
+        int $childId
+    ): void {
+        if ($collection->has($childId)) {
+            return;
+        }
 
-                if ($childEntity->getCategories() === []) {
-                    $categories = $parent->getCategories();
-                    foreach ($categories as $category) {
-                        $childEntity->addCategoryId($category);
-                    }
-                }
-            }
-        } catch (InvalidArgumentException $exception) {
-            // no implementation, parent was not found
+        if (!$parent instanceof ExportEntityConfigurable) {
+            return;
+        }
+
+        if (!$this->config->isGroupedExport($collection->getStore()) && !$child->shouldExport()) {
+            return;
+        }
+
+        $collection->add($child);
+    }
+
+    /**
+     * @param ExportEntity      $parent
+     * @param ExportEntityChild $child
+     *
+     * @return void
+     */
+    private function addChildToParent(ExportEntity $parent, ExportEntityChild $child): void
+    {
+        if (!$parent instanceof CompositeExportEntityInterface) {
+            return;
+        }
+
+        $parent->addChild($child);
+    }
+
+    /**
+     * @param Collection|StockCollection|PriceCollection $collection
+     * @param ExportEntity $parent
+     * @param int $parentId
+     * @param int $childId
+     *
+     * @return void
+     */
+    private function enrichGroupedExportChild(
+        Collection|StockCollection|PriceCollection $collection,
+        ExportEntity $parent,
+        int $parentId,
+        int $childId
+    ): void {
+        if (!$this->config->isGroupedExport($collection->getStore()) || !$parent instanceof ExportEntityConfigurable) {
+            return;
+        }
+
+        $childEntity = $collection->get($childId);
+
+        // @phpstan-ignore-next-line
+        $childEntity->setGroupCode($parentId);
+        $childEntity->addAttribute(
+            'parent_url_key',
+            $parent->getAttribute('url_key', false)
+        );
+        $childEntity->addAttribute(
+            'parent_name',
+            $parent->getAttribute('name', false)
+        );
+        $childEntity->addAttribute(
+            'parent_visibility',
+            $parent->getAttribute('visibility', false)
+        );
+
+        if ($childEntity->getCategories() !== []) {
+            return;
+        }
+
+        $categories = $parent->getCategories();
+        foreach ($categories as $category) {
+            $childEntity->addCategoryId($category);
         }
     }
 

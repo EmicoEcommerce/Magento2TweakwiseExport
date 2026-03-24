@@ -487,7 +487,7 @@ class ExportEntity
             if ($this->getTypeId() === Type::TYPE_SIMPLE) {
                 try {
                     $this->getAttribute('parent_id');
-                    return true;
+                    return false;
                 } catch (InvalidArgumentException $e) {
                     return in_array($this->getVisibility(), $this->visibilityObject->getVisibleInSiteIds(), true);
                 }
