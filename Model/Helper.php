@@ -83,7 +83,7 @@ class Helper
 
     /**
      * @param string $tweakwiseId
-     * @param string|int $groupCode
+     * @param int|null $groupCode
      * @return string
      */
     private function appendGroupCodeToTweakwiseId(string $tweakwiseId, ?int $groupCode): string
