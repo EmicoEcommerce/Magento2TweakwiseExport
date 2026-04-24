@@ -20,6 +20,8 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 class Helper
 {
+    public const GROUP_CODE_DELIMITER = '-';
+
     /**
      * @var ProductMetadataInterface
      */
@@ -60,20 +62,37 @@ class Helper
         $this->config = $config;
         $this->localDate = $localDate;
     }
-
     /**
      * @param int $storeId
      * @param int $entityId
+     * @param int|null $groupCode
      * @return string
      */
-    public function getTweakwiseId(int $storeId, int $entityId): string
+    public function getTweakwiseId(int $storeId, int $entityId, ?int $groupCode = null): string
     {
+        $tweakwiseId = (string)$entityId;
         if (!$storeId) {
-            return (string)$entityId;
+            return $tweakwiseId;
         }
 
         // Prefix 1 is to make sure it stays the same length when casting to int
-        return '1' . str_pad((string)$storeId, 4, '0', STR_PAD_LEFT) . $entityId;
+        $tweakwiseId = '1' . str_pad((string)$storeId, 4, '0', STR_PAD_LEFT) . $entityId;
+
+        return $this->appendGroupCodeToTweakwiseId($tweakwiseId, $groupCode);
+    }
+
+    /**
+     * @param string $tweakwiseId
+     * @param int|null $groupCode
+     * @return string
+     */
+    private function appendGroupCodeToTweakwiseId(string $tweakwiseId, ?int $groupCode): string
+    {
+        if ($groupCode === null || $groupCode === 0) {
+            return $tweakwiseId;
+        }
+
+        return $tweakwiseId . self::GROUP_CODE_DELIMITER . $groupCode;
     }
 
     /**
