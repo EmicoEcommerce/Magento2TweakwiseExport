@@ -1,13 +1,12 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
  *
  * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+
+declare(strict_types=1);
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Config\Comment;
 
@@ -20,7 +19,7 @@ class Version implements CommentInterface
     {
     }
 
-    public function getCommentText($elementValue): string
+    public function getCommentText($elementValue): string // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
     {
         $installedPackages = $this->composerInformation->getInstalledMagentoPackages();
 
