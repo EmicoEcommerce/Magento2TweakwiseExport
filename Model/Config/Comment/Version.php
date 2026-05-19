@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Tweakwise (https://www.tweakwise.com/) - All Rights Reserved
- *
- * @copyright Copyright (c) 2017-2022 Tweakwise.com B.V. (https://www.tweakwise.com)
- * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
-
 declare(strict_types=1);
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Config\Comment;
@@ -16,11 +9,20 @@ use Magento\Framework\Composer\ComposerInformation;
 
 class Version implements CommentInterface
 {
+    /**
+     * @param ComposerInformation $composerInformation
+     */
     public function __construct(private readonly ComposerInformation $composerInformation)
     {
     }
 
-    public function getCommentText($elementValue): string // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
+    /**
+     * Returns the installed composer version of the export package as a comment string.
+     *
+     * @param mixed $elementValue
+     * @return string
+     */
+    public function getCommentText($elementValue): string
     {
         $installedPackages = $this->composerInformation->getInstalledMagentoPackages();
 
