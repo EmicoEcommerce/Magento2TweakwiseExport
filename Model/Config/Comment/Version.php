@@ -19,6 +19,7 @@ class Version implements CommentInterface
     /**
      * Returns the installed composer version of the export package as a comment string.
      *
+     * phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      * @param mixed $elementValue
      * @return string
      */
