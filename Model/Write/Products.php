@@ -203,11 +203,7 @@ class Products implements WriterInterface
         }
 
         if (!empty($data['brand'])) {
-            $brandValues = $this->normalizeAttributeValue($storeId, $storeContext['brandAttribute'], $data['brand']);
-            $brandValues = array_filter($brandValues, static fn($v) => $v !== null && $v !== '');
-            if (!empty($brandValues)) {
-                $xml->writeElement('brand', $this->scalarValue(reset($brandValues)));
-            }
+            $this->writeBrand($xml, $storeId, $storeContext['brandAttribute'], $data['brand']);
         }
 
         $imageUrl = $this->buildImageUrl($storeContext['mediaBaseUrl'], $data['image'] ?? null);
@@ -247,6 +243,26 @@ class Products implements WriterInterface
         $xml->endElement(); // </item>
 
         $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
+    }
+
+    /**
+     * Resolve and write the <brand> element, translating option IDs to labels when applicable.
+     *
+     * @param XMLWriter $xml
+     * @param int $storeId
+     * @param string $attributeCode
+     * @param mixed $rawValue
+     * @return void
+     */
+    protected function writeBrand(XMLWriter $xml, int $storeId, string $attributeCode, $rawValue): void
+    {
+        $brandValues = $this->normalizeAttributeValue($storeId, $attributeCode, $rawValue);
+        $brandValues = array_filter($brandValues, static fn($v) => $v !== null && $v !== '');
+        if (empty($brandValues)) {
+            return;
+        }
+
+        $xml->writeElement('brand', $this->scalarValue(reset($brandValues)));
     }
 
     /**

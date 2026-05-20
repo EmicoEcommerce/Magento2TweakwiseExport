@@ -107,8 +107,8 @@ class Iterator extends EavIterator
         $newBrand = $this->config->getBrandAttribute($store);
         $newImage = $this->config->getImageAttribute($store);
 
-        $this->syncStoreAttribute('brand', $this->activeStoreAttributes['brand'], $newBrand);
-        $this->syncStoreAttribute('image', $this->activeStoreAttributes['image'], $newImage);
+        $this->syncStoreAttribute($this->activeStoreAttributes['brand'], $newBrand);
+        $this->syncStoreAttribute($this->activeStoreAttributes['image'], $newImage);
 
         $this->activeStoreAttributes = ['brand' => $newBrand, 'image' => $newImage];
     }
@@ -117,12 +117,11 @@ class Iterator extends EavIterator
      * Add the new attribute code to the EAV query and remove the previous one when
      * either the code changed or it was cleared.
      *
-     * @param string $slot
      * @param string $previous
      * @param string $next
      * @return void
      */
-    private function syncStoreAttribute(string $slot, string $previous, string $next): void
+    private function syncStoreAttribute(string $previous, string $next): void
     {
         if ($previous === $next) {
             return;
@@ -136,9 +135,11 @@ class Iterator extends EavIterator
             }
         }
 
-        if ($next !== '') {
-            $this->selectAttribute($next);
+        if ($next === '') {
+            return;
         }
+
+        $this->selectAttribute($next);
     }
 
     /**
