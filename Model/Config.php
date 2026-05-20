@@ -43,6 +43,8 @@ class Config
     public const CALCULATE_COMPOSITE_PRICES = 'tweakwise/export/calculate_composite_prices';
     public const PATH_GROUPED_EXPORT_ENABLED = 'tweakwise/export/grouped_export_enabled';
     public const PATH_DATE_FIELD = 'tweakwise/export/date_field';
+    public const PATH_BRAND_ATTRIBUTE = 'tweakwise/export/brand_attribute';
+    public const PATH_IMAGE_ATTRIBUTE = 'tweakwise/export/image_attribute';
 
     /**
      * Default feed filename
@@ -337,6 +339,24 @@ class Config
     public function getDateField(): string
     {
         return (string) $this->config->getValue(self::PATH_DATE_FIELD);
+    }
+
+    /**
+     * @param Store|int|string|null $store
+     * @return string
+     */
+    public function getBrandAttribute($store = null): string
+    {
+        return (string) $this->config->getValue(self::PATH_BRAND_ATTRIBUTE, ScopeInterface::SCOPE_STORE, $store);
+    }
+
+    /**
+     * @param Store|int|string|null $store
+     * @return string
+     */
+    public function getImageAttribute($store = null): string
+    {
+        return (string) $this->config->getValue(self::PATH_IMAGE_ATTRIBUTE, ScopeInterface::SCOPE_STORE, $store);
     }
 
     /**

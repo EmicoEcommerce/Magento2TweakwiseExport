@@ -10,6 +10,8 @@
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 
 use Magento\Framework\DB\Select;
+use Magento\Store\Model\Store;
+use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIterator;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\DecoratorInterface;
@@ -38,6 +40,14 @@ class Iterator extends EavIterator
      * @var DecoratorInterface[]
      */
     protected $collectionDecorators;
+
+    /**
+     * Attribute codes currently selected for brand and image, tracked so they
+     * can be removed when the store changes and different codes are configured.
+     *
+     * @var array{brand: string, image: string}
+     */
+    private array $activeStoreAttributes = ['brand' => '', 'image' => ''];
 
     /**
      * Iterator constructor.
@@ -79,6 +89,56 @@ class Iterator extends EavIterator
         $this->collectionDecorators = $collectionDecorators;
 
         $iteratorInitializer->initializeAttributes($this);
+    }
+
+    /**
+     * Override setStore to dynamically select the brand and image EAV attributes
+     * configured for the incoming store, removing any attributes selected for a
+     * previous store so disabled or differently-configured store views never load
+     * data they do not need.
+     *
+     * @param Store $store
+     * @return void
+     */
+    public function setStore(Store $store): void
+    {
+        parent::setStore($store);
+
+        $newBrand = $this->config->getBrandAttribute($store);
+        $newImage = $this->config->getImageAttribute($store);
+
+        $this->syncStoreAttribute('brand', $this->activeStoreAttributes['brand'], $newBrand);
+        $this->syncStoreAttribute('image', $this->activeStoreAttributes['image'], $newImage);
+
+        $this->activeStoreAttributes = ['brand' => $newBrand, 'image' => $newImage];
+    }
+
+    /**
+     * Add the new attribute code to the EAV query and remove the previous one when
+     * either the code changed or it was cleared.
+     *
+     * @param string $slot
+     * @param string $previous
+     * @param string $next
+     * @return void
+     */
+    private function syncStoreAttribute(string $slot, string $previous, string $next): void
+    {
+        if ($previous === $next) {
+            return;
+        }
+
+        if ($previous !== '') {
+            try {
+                $this->removeAttribute($previous);
+            } catch (InvalidArgumentException $e) {
+                // Attribute was not registered (e.g. first run), nothing to remove.
+            }
+        }
+
+        if ($next !== '') {
+            $this->selectAttribute($next);
+        }
     }
 
     /**
@@ -132,6 +192,9 @@ class Iterator extends EavIterator
             }
         }
 
+        $brandAttribute = $this->config->getBrandAttribute($this->store);
+        $imageAttribute = $this->config->getImageAttribute($this->store);
+
         foreach ($collection->getExported() as $entity) {
             if ($this->config->isGroupedExport($this->store) && $entity instanceof ExportEntityConfigurable) {
                 continue;
@@ -143,10 +206,35 @@ class Iterator extends EavIterator
                 'price' => $entity->getPrice(),
                 'stock' => (int) round($entity->getStockQty()),
                 'groupcode' => $entity->getGroupCode(),
+                'url_key' => $this->getEntityAttributeScalar($entity, 'url_key'),
+                'brand' => $brandAttribute !== '' ? $this->getEntityAttributeScalar($entity, $brandAttribute) : null,
+                'image' => $imageAttribute !== '' ? $this->getEntityAttributeScalar($entity, $imageAttribute) : null,
                 'categories' => $entity->getCategories(),
                 'attributes' => $entity->getAttributes(),
             ];
         }
+    }
+
+    /**
+     * Safely retrieve the first scalar value of an attribute from an entity, returning null when not set.
+     *
+     * @param ExportEntity $entity
+     * @param string $attributeCode
+     * @return string|null
+     */
+    protected function getEntityAttributeScalar(ExportEntity $entity, string $attributeCode): ?string
+    {
+        try {
+            $value = $entity->getAttribute($attributeCode, false);
+        } catch (InvalidArgumentException $e) {
+            return null;
+        }
+
+        if (is_array($value)) {
+            $value = reset($value);
+        }
+
+        return $value !== false && $value !== null ? (string) $value : null;
     }
 
     /**
