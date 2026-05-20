@@ -19,11 +19,12 @@ class Version implements CommentInterface
     /**
      * Returns the installed composer version of the export package as a comment string.
      *
-     * phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      * @param mixed $elementValue
+     *
      * @return string
      */
-    public function getCommentText($elementValue): string
+    public function getCommentText(mixed $elementValue): string
     {
         $installedPackages = $this->composerInformation->getInstalledMagentoPackages();
 
