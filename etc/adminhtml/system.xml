@@ -41,10 +41,10 @@
                     </depends>
                 </field>
 
-                <field id="image_attribute" translate="label,comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="main_image_attribute" translate="label,comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Image attribute</label>
                     <comment>Attribute whose relative path is resolved to a full media URL and exported as the Tweakwise &lt;image&gt; field. Select "Disabled" to omit the field from the feed.</comment>
-                    <source_model>Tweakwise\Magento2TweakwiseExport\Model\Config\Source\AllProductAttributes</source_model>
+                    <source_model>Tweakwise\Magento2TweakwiseExport\Model\Config\Source\ProductImageAttributes</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

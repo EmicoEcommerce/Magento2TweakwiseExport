@@ -217,20 +217,7 @@ class Products implements WriterInterface
         }
 
         // Write product categories
-        $xml->startElement('categories');
-        foreach ($data['categories'] as $categoryId) {
-            $categoryTweakwiseId = $this->helper->getTweakwiseId($storeId, $categoryId);
-            // @phpstan-ignore-next-line
-            if ($xml->hasCategoryExport($categoryTweakwiseId)) {
-                $xml->writeElement('categoryid', $categoryTweakwiseId);
-            } else {
-                $this->log->debug(
-                    sprintf('Skip product (%s) category (%s) relation', $tweakwiseId, $categoryTweakwiseId)
-                );
-            }
-        }
-
-        $xml->endElement(); // categories
+        $this->writeProductCategories($xml, $storeId, $tweakwiseId, $data['categories']);
 
         // Write product attributes
         $xml->startElement('attributes');
@@ -243,6 +230,34 @@ class Products implements WriterInterface
         $xml->endElement(); // </item>
 
         $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
+    }
+
+    /**
+     * Write the <categories> element for a product, skipping any category IDs not present in the feed.
+     *
+     * @param XMLWriter $xml
+     * @param int $storeId
+     * @param string $tweakwiseId
+     * @param int[] $categoryIds
+     * @return void
+     */
+    protected function writeProductCategories(XMLWriter $xml, int $storeId, string $tweakwiseId, array $categoryIds): void
+    {
+        $xml->startElement('categories');
+        foreach ($categoryIds as $categoryId) {
+            $categoryTweakwiseId = $this->helper->getTweakwiseId($storeId, $categoryId);
+            // @phpstan-ignore-next-line
+            if ($xml->hasCategoryExport($categoryTweakwiseId)) {
+                $xml->writeElement('categoryid', $categoryTweakwiseId);
+                continue;
+            }
+
+            $this->log->debug(
+                sprintf('Skip product (%s) category (%s) relation', $tweakwiseId, $categoryTweakwiseId)
+            );
+        }
+
+        $xml->endElement(); // categories
     }
 
     /**

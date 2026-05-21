@@ -14,7 +14,7 @@
                 <enabled>0</enabled>
                 <grouped_export_enabled>0</grouped_export_enabled>
                 <brand_attribute/>
-                <image_attribute/>
+                <main_image_attribute/>
                 <schedule>0 3 * * *</schedule>
                 <archive/>
                 <validate>0</validate>

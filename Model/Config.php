@@ -44,7 +44,7 @@ class Config
     public const PATH_GROUPED_EXPORT_ENABLED = 'tweakwise/export/grouped_export_enabled';
     public const PATH_DATE_FIELD = 'tweakwise/export/date_field';
     public const PATH_BRAND_ATTRIBUTE = 'tweakwise/export/brand_attribute';
-    public const PATH_IMAGE_ATTRIBUTE = 'tweakwise/export/image_attribute';
+    public const PATH_IMAGE_ATTRIBUTE = 'tweakwise/export/main_image_attribute';
 
     /**
      * Default feed filename
