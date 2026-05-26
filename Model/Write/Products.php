@@ -202,7 +202,7 @@ class Products implements WriterInterface
             $xml->writeElement('groupcode', $this->scalarValue($data['groupcode']));
         }
 
-        if (!empty($data['brand'])) {
+        if ($storeContext['brandAttribute'] !== '' && !empty($data['brand'])) {
             $this->writeBrand($xml, $storeId, $storeContext['brandAttribute'], $data['brand']);
         }
 
