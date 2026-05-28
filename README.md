@@ -114,9 +114,6 @@ All export settings can be found under Stores -> Configuration -> Catalog -> Twe
 - **Batch size categories**: Set the batch size for categories during export. Lower for less memory, higher for more speed.
 - **Batch size products**: Set the batch size for products during export.
 - **Batch size products children**: Set the batch size for product children during export.
-- **Brand attribute**: The product attribute to use as the brand value in the export feed.
-- **Image attribute**: The product attribute to use as the main image URL in the export feed. Leave empty to use the default product image.
-- **Calculate combined prices**: When enabled, combined/composite product prices (e.g. bundle products) are calculated and exported instead of using the base price.
 - **Schedule full export**: Cron schedule for generating the feed. Leave empty to disable export by cron.
 - **State**: Shows the current export state.
 - **Schedule exports**: Start exports on next cron run.
