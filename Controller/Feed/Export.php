@@ -114,6 +114,17 @@ class Export implements ActionInterface
             $store = $this->storeManager->getStore($storeId);
         }
 
+        // Discard any output already buffered by other modules (e.g. Stape GTM setting
+        // cookies) before we start streaming the XML feed. Without this, buffered garbage
+        // can be flushed to the client ahead of the <?xml declaration, producing an invalid
+        // feed. We then set the Content-Type header explicitly since headers may not have
+        // been sent yet, and FeedContent writes directly to php://output bypassing OB.
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: application/xml; charset=UTF-8');
+
         // @phpstan-ignore-next-line
         (new FeedContent($this->export, $this->log, $this->driver, $store, $request->getParam('type')))->__toString();
 
