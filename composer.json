@@ -6,12 +6,15 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.0",
-        "laminas/laminas-http": "^2.15.0"
+        "laminas/laminas-http": "^2.15.0",
+        "magento/module-configurable-product": "*",
+        "magento/module-grouped-product": "*",
+        "magento/module-inventory-catalog-api": "*",
+        "magento/module-inventory-indexer": "*",
+        "magento/module-inventory-sales-api": "*"
     },
     "require-dev": {
-        "emico/code-quality": "~10.6.0",
-        "fzaninotto/faker": "^1.7",
-        "magento/framework": "^103.0"
+        "emico/code-quality": "^10.8"
     },
     "replace": {
         "emico/tweakwise-export": "v4.2.4"
@@ -22,17 +25,22 @@
             "registration.php"
         ],
         "psr-4": {
-            "Tweakwise\\Magento2TweakwiseExport\\": ""
+            "Tweakwise\\Magento2TweakwiseExport\\": "src/"
         }
     },
     "repositories": {
+        "emico": {
+            "type": "composer",
+            "url": "https://git.emico.io/api/v4/group/239/-/packages/composer/",
+            "only": [
+                "emico/code-quality",
+                "emico/codeception-m2",
+                "hipex/magento-2-psr7-bridge"
+            ]
+        },
         "magento": {
             "type": "composer",
             "url": "https://repo.magento.com/"
-        },
-        "emico/code-quality": {
-            "type": "vcs",
-            "url": "https://git.emico.io/composer-packages/generic/codequality.git"
         }
     },
     "config": {
