@@ -14,7 +14,8 @@
         "magento/module-inventory-sales-api": "*"
     },
     "require-dev": {
-        "emico/code-quality": "^10.8"
+        "emico/code-quality": "^10.8",
+        "magento/framework": "^103.0"
     },
     "replace": {
         "emico/tweakwise-export": "v4.2.4"
@@ -46,11 +47,11 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "magento/composer-dependency-version-audit-plugin": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "phpstan/extension-installer": true,
+            "emico/code-quality": true,
+            "magento/composer-dependency-version-audit-plugin": true,
             "phpro/grumphp": true,
-            "emico/code-quality": true
+            "phpstan/extension-installer": true
         }
     }
 }
