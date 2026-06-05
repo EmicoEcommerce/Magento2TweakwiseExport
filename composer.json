@@ -9,9 +9,7 @@
         "laminas/laminas-http": "^2.15.0",
         "magento/module-configurable-product": "*",
         "magento/module-grouped-product": "*",
-        "magento/module-inventory-catalog-api": "*",
-        "magento/module-inventory-indexer": "*",
-        "magento/module-inventory-sales-api": "*"
+        "magento/inventory-metapackage": "*"
     },
     "require-dev": {
         "emico/code-quality": "^10.8"
@@ -22,7 +20,7 @@
     "type": "magento2-module",
     "autoload": {
         "files": [
-            "registration.php"
+            "src/registration.php"
         ],
         "psr-4": {
             "Tweakwise\\Magento2TweakwiseExport\\": "src/"
@@ -49,6 +47,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "emico/code-quality": true,
             "magento/composer-dependency-version-audit-plugin": true,
+            "magento/inventory-composer-installer": true,
             "phpro/grumphp": true,
             "phpstan/extension-installer": true
         }
