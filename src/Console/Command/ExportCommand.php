@@ -112,7 +112,7 @@ class ExportCommand extends Command
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) // @phpstan-ignore-line
     {
         return $this->state->emulateAreaCode(
             Area::AREA_CRONTAB,
