@@ -115,7 +115,7 @@ class ExportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->state->emulateAreaCode(
+        return (int)$this->state->emulateAreaCode(
             Area::AREA_CRONTAB,
             function () use ($input, $output): int {
                 if ($input->getOption('debug')) {
