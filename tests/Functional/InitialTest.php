@@ -19,6 +19,6 @@ class InitialTest extends Unit
      */
     public function testInitial(): void
     {
-        $this->tester->assertTrue(true);
+        $this->tester->assertFalse(false);
     }
 }
