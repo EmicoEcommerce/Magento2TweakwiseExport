@@ -8,7 +8,6 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Console\Command;
 
-use Magento\Framework\Console\Cli;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
 use Tweakwise\Magento2TweakwiseExport\Model\Logger;
@@ -107,19 +106,17 @@ class ExportCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
+     * {@inheritdoc}
      * @throws Exception
      * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return (int)$this->state->emulateAreaCode(
+        return $this->state->emulateAreaCode(
             Area::AREA_CRONTAB,
-            function () use ($input, $output): int {
+            function () use ($input, $output) {
                 if ($input->getOption('debug')) {
                     Profiler::enable();
                     Profiler::add(new ConsoleDriver($output));
@@ -138,7 +135,7 @@ class ExportCommand extends Command
                 if ($type !== 'stock' && $type !== '' && $type !== 'price') {
                     $output->writeln('Type option should be stock, price or not set');
 
-                    return Cli::RETURN_FAILURE;
+                    return -1;
                 }
 
                 if (empty($type)) {
@@ -149,7 +146,7 @@ class ExportCommand extends Command
                 if ($validate !== 'y' && $validate !== 'n' && $validate !== '') {
                     $output->writeln('Validate option can only contain y or n');
 
-                    return Cli::RETURN_FAILURE;
+                    return -1;
                 }
 
                 $validate = $validate === '' ? $this->config->isValidate() : $validate === 'y';
@@ -162,7 +159,7 @@ class ExportCommand extends Command
                             '<error>Store level export enabled please provide --store <store-code></error>'
                         );
 
-                        return Cli::RETURN_FAILURE;
+                        return -1;
                     }
 
                     try {
@@ -170,13 +167,13 @@ class ExportCommand extends Command
                     } catch (NoSuchEntityException $exception) {
                         $output->writeln('<error>Store does not exist</error>');
 
-                        return Cli::RETURN_FAILURE;
+                        return -1;
                     }
                     // @phpstan-ignore-next-line
                     if (!$this->config->isEnabled($store)) {
                         $output->writeln('<error>Tweakwise export does not enabled in this store</error>');
 
-                        return Cli::RETURN_FAILURE;
+                        return -1;
                     }
 
                     if (!$feedFile) {
@@ -189,7 +186,7 @@ class ExportCommand extends Command
                 } else {
                     if ($storeCode) {
                         $output->writeln('<error>Store level export disabled, remove --store parameter</error>');
-                        return Cli::RETURN_FAILURE;
+                        return -1;
                     }
 
                     if (!$feedFile) {
@@ -215,7 +212,7 @@ class ExportCommand extends Command
                     )
                 );
 
-                return Cli::RETURN_SUCCESS;
+                return 0;
             }
         );
     }
