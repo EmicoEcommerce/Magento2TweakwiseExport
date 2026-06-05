@@ -14,8 +14,7 @@
         "magento/module-inventory-sales-api": "*"
     },
     "require-dev": {
-        "emico/code-quality": "^10.8",
-        "magento/framework": "^103.0"
+        "emico/code-quality": "^10.8"
     },
     "replace": {
         "emico/tweakwise-export": "v4.2.4"
