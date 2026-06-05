@@ -107,7 +107,9 @@ class ExportCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
      * @throws Exception
      * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
