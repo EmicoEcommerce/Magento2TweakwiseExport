@@ -63,5 +63,5 @@ class VersionTest extends Unit
         $result = $this->subject->getCommentText(null);
 
         $this->assertSame('', $result);
-}
+    }
 }
