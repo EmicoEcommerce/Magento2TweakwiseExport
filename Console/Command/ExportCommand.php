@@ -112,7 +112,7 @@ class ExportCommand extends Command
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
      * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         return $this->state->emulateAreaCode(
             Area::AREA_CRONTAB,
@@ -223,7 +223,7 @@ class ExportCommand extends Command
      * @return void
      * @throws Exception
      */
-    public function executeStock(InputInterface $input, OutputInterface $output)
+    public function executeStock(InputInterface $input, OutputInterface $output): void
     {
         $this->type = 'stock';
 
