@@ -2,6 +2,7 @@
 
 namespace Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator;
 
+use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\DbResourceHelper;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\EavIteratorFactory;
@@ -427,6 +428,14 @@ class Children implements DecoratorInterface
             'parent_visibility',
             $parent->getAttribute('visibility', false)
         );
+
+        try {
+            $parentMainImage = $parent->getAttribute('image', false);
+        } catch (InvalidArgumentException $exception) {
+            $parentMainImage = '';
+        }
+
+        $childEntity->addAttribute('parent_main_image', $parentMainImage);
 
         if ($childEntity->getCategories() !== []) {
             return;
