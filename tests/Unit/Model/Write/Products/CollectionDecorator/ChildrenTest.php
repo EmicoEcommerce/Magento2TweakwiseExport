@@ -8,6 +8,7 @@ use Emico\CodeCept\Test\Unit;
 use Mockery;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Store\Model\Store;
+use ReflectionMethod;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\DbResourceHelper;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
@@ -23,6 +24,8 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionFactory;
 
 class ChildrenTest extends Unit
 {
+    private array $addAttributeCalls = [];
+
     public function _after(): void
     {
         Mockery::close();
@@ -30,6 +33,8 @@ class ChildrenTest extends Unit
 
     public function testGroupedExportAddsParentMainImageAttributeToVariant(): void
     {
+        $this->addAttributeCalls = [];
+
         $store = Mockery::mock(Store::class);
 
         $config = Mockery::mock(Config::class);
@@ -59,12 +64,11 @@ class ChildrenTest extends Unit
 
         $child = Mockery::mock(ExportEntityChild::class);
         $child->shouldReceive('setGroupCode')->with(123)->once();
-        $addAttributeCalls = [];
         $child->shouldReceive('addAttribute')
             ->zeroOrMoreTimes()
             ->andReturnUsing(
-                static function (string $attribute, $value) use (&$addAttributeCalls): void {
-                    $addAttributeCalls[] = [$attribute, $value];
+                function (string $attribute, $value): void {
+                    $this->addAttributeCalls[] = [$attribute, $value];
                 }
             );
         $child->shouldReceive('getCategories')->andReturn([10]);
@@ -73,7 +77,7 @@ class ChildrenTest extends Unit
         $collection->shouldReceive('getStore')->andReturn($store);
         $collection->shouldReceive('get')->with(456)->andReturn($child);
 
-        $method = new \ReflectionMethod(Children::class, 'enrichGroupedExportChild');
+        $method = new ReflectionMethod(Children::class, 'enrichGroupedExportChild');
         $method->setAccessible(true);
         $method->invoke($childrenDecorator, $collection, $parent, 123, 456);
 
@@ -84,7 +88,7 @@ class ChildrenTest extends Unit
                 ['parent_visibility', 4],
                 ['parent_main_image', '/p/a/parent-image.jpg'],
             ],
-            $addAttributeCalls
+            $this->addAttributeCalls
         );
     }
 }
