@@ -6,6 +6,7 @@ namespace Tweakwise\Test\Unit\Model\Config\Comment;
 
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\Composer\ComposerInformation;
+use Mockery;
 use Tweakwise\Magento2TweakwiseExport\Model\Config\Comment\Version;
 use Tweakwise\Test\Support\UnitTester;
 
@@ -24,14 +25,19 @@ class VersionTest extends Unit
      */
     public function testVersionText(array $installedMagentoPackages, string $expected): void
     {
-        $composerInformation = $this->createMock(ComposerInformation::class);
+        $composerInformation = Mockery::mock(ComposerInformation::class);
         $composerInformation
-            ->method('getInstalledMagentoPackages')
+            ->shouldReceive('getInstalledMagentoPackages')
             ->willReturn($installedMagentoPackages);
         $this->tester->mockService(ComposerInformation::class, $composerInformation);
 
-        $version = $this->tester->getObjectManager()->get(Version::class);
+        $version = $this->tester->getObjectManager()->create(Version::class);
         $this->assertEquals($expected, $version->getCommentText(null));
+    }
+
+    public function _after(): void
+    {
+        Mockery::close();
     }
 
     /**
