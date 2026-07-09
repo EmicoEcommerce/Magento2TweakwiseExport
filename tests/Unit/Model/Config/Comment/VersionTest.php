@@ -6,62 +6,62 @@ namespace Tweakwise\Test\Unit\Model\Config\Comment;
 
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\Composer\ComposerInformation;
-use PHPUnit\Framework\MockObject\MockObject;
 use Tweakwise\Magento2TweakwiseExport\Model\Config\Comment\Version;
+use Tweakwise\Test\Support\UnitTester;
 
 class VersionTest extends Unit
 {
-    private ComposerInformation|MockObject $composerInformation;
-    private Version $subject;
+    /**
+     * @var UnitTester
+     */
+    protected UnitTester $tester;
 
-    protected function setUp(): void
+    /**
+     * @param array<string, array<string, string>> $installedMagentoPackages
+     * @param string $expected
+     * @return void
+     * @dataProvider commentTextDataProvider
+     */
+    public function testVersionText(array $installedMagentoPackages, string $expected): void
     {
-        parent::setUp();
+        $composerInformation = $this->createMock(ComposerInformation::class);
+        $composerInformation
+            ->method('getInstalledMagentoPackages')
+            ->willReturn($installedMagentoPackages);
+        $this->tester->mockService(ComposerInformation::class, $composerInformation);
 
-        $this->composerInformation = $this->createMock(ComposerInformation::class);
-        $this->subject = new Version($this->composerInformation);
+        $version = $this->tester->getObjectManager()->get(Version::class);
+        $this->assertEquals($expected, $version->getCommentText(null));
     }
 
-    public function testGetCommentTextReturnsVersionForInstalledPackage(): void
+    /**
+     * @return array<string, array{0: array<string, array<string, string>>, 1: string}>
+     */
+    public function commentTextDataProvider(): array
     {
-        $this->composerInformation
-            ->method('getInstalledMagentoPackages')
-            ->willReturn([
-                'tweakwise/magento2-tweakwise-export' => [
-                    'version' => 'v7.8.3',
+        return [
+            'correct-installed' => [
+                [
+                    'tweakwise/magento2-tweakwise-export' => [
+                        'version' => 'v7.8.3',
+                    ],
                 ],
-            ]);
-
-        $result = $this->subject->getCommentText(null);
-
-        $this->assertSame('Tweakwise Export version v7.8.3', $result);
-    }
-
-    public function testGetCommentTextReturnsEmptyStringWhenVersionIsMissing(): void
-    {
-        $this->composerInformation
-            ->method('getInstalledMagentoPackages')
-            ->willReturn([
-                'tweakwise/magento2-tweakwise-export' => [],
-            ]);
-
-        $result = $this->subject->getCommentText(null);
-
-        $this->assertSame('', $result);
-    }
-
-    public function testGetCommentTextReturnsEmptyStringWhenPackageIsMissing(): void
-    {
-        $this->composerInformation
-            ->method('getInstalledMagentoPackages')
-            ->willReturn([
-                'magento/product-community-edition' => [
-                    'version' => '2.4.8',
+                'Tweakwise Export version v7.8.3',
+            ],
+            'version-missing' => [
+                [
+                    'tweakwise/magento2-tweakwise-export' => [],
                 ],
-            ]);
-
-        $result = $this->subject->getCommentText(null);
-
-        $this->assertSame('', $result);
+                '',
+            ],
+            'package-missing' => [
+                [
+                    'magento/product-community-edition' => [
+                        'version' => '2.4.8',
+                    ],
+                ],
+                '',
+            ],
+        ];
     }
 }

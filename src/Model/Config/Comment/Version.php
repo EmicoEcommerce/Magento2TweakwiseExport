@@ -17,12 +17,9 @@ class Version implements CommentInterface
     }
 
     /**
-     * Returns the installed composer version of the export package as a comment string.
-     *
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      * @param mixed $elementValue
-     *
      * @return string
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterface
      */
     public function getCommentText(mixed $elementValue): string
     {
