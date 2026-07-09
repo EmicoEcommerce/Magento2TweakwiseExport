@@ -28,7 +28,7 @@ class VersionTest extends Unit
         $composerInformation = Mockery::mock(ComposerInformation::class);
         $composerInformation
             ->shouldReceive('getInstalledMagentoPackages')
-            ->willReturn($installedMagentoPackages);
+            ->andReturn($installedMagentoPackages);
         $this->tester->mockService(ComposerInformation::class, $composerInformation);
 
         $version = $this->tester->getObjectManager()->create(Version::class);
