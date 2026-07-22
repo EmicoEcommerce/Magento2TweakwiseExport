@@ -12,6 +12,7 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
 use Magento\Store\Model\Store;
 use Mockery;
+use ReflectionClass;
 use Tweakwise\Magento2TweakwiseExport\Model\Config as TweakwiseConfig;
 use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionFactory;
@@ -41,16 +42,22 @@ class IteratorTest extends Unit
         $mainImage = Mockery::mock(AbstractAttribute::class);
         $mainImage->shouldReceive('getId')->andReturn(40);
 
-        $attributes = [
-            'manufacturer' => $manufacturer,
-            'image' => $image,
-            'brand_attr' => $brandAttr,
-            'main_image' => $mainImage,
-        ];
         $eavConfig->shouldReceive('getAttribute')
-            ->with(Product::ENTITY, Mockery::type('string'))
+            ->with(Product::ENTITY, 'manufacturer')
             ->zeroOrMoreTimes()
-            ->andReturnUsing(static fn(string $entityType, string $attributeCode): AbstractAttribute => $attributes[$attributeCode]);
+            ->andReturn($manufacturer);
+        $eavConfig->shouldReceive('getAttribute')
+            ->with(Product::ENTITY, 'image')
+            ->zeroOrMoreTimes()
+            ->andReturn($image);
+        $eavConfig->shouldReceive('getAttribute')
+            ->with(Product::ENTITY, 'brand_attr')
+            ->zeroOrMoreTimes()
+            ->andReturn($brandAttr);
+        $eavConfig->shouldReceive('getAttribute')
+            ->with(Product::ENTITY, 'main_image')
+            ->zeroOrMoreTimes()
+            ->andReturn($mainImage);
 
         $config = Mockery::mock(TweakwiseConfig::class);
         $config->shouldReceive('getBatchSizeProducts')->andReturn(100);
@@ -100,7 +107,7 @@ class IteratorTest extends Unit
      */
     private function getActiveStoreAttributes(Iterator $iterator): array
     {
-        $reflection = new \ReflectionClass($iterator);
+        $reflection = new ReflectionClass($iterator);
         $property = $reflection->getProperty('activeStoreAttributes');
         $property->setAccessible(true);
         return $property->getValue($iterator);
@@ -112,7 +119,7 @@ class IteratorTest extends Unit
      */
     private function getAttributesByCode(Iterator $iterator): array
     {
-        $reflection = new \ReflectionClass($iterator);
+        $reflection = new ReflectionClass($iterator);
         $property = $reflection->getParentClass()->getProperty('attributesByCode');
         $property->setAccessible(true);
         return $property->getValue($iterator);
