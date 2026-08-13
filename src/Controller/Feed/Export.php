@@ -97,7 +97,7 @@ class Export implements ActionInterface
      * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
      * @SuppressWarnings("PHPMD.ExitExpression")
      */
-    public function execute(): Response
+    public function execute()
     {
         $request = $this->context->getRequest();
 
