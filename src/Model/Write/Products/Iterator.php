@@ -42,12 +42,25 @@ class Iterator extends EavIterator
     protected $collectionDecorators;
 
     /**
-     * Attribute codes currently selected for brand and image, tracked so they
-     * can be removed when the store changes and different codes are configured.
+     * Attribute codes currently selected for brand and image.
      *
      * @var array{brand: string, image: string}
      */
     private array $activeStoreAttributes = ['brand' => '', 'image' => ''];
+
+    /**
+     * Attributes selected by IteratorInitializer and always required for export.
+     *
+     * @var array<string, true>
+     */
+    private array $defaultAttributeCodes = [];
+
+    /**
+     * Reference counter for dynamically-selected attributes (brand/image).
+     *
+     * @var array<string, int>
+     */
+    private array $dynamicAttributeRefCounts = [];
 
     /**
      * Iterator constructor.
@@ -89,13 +102,13 @@ class Iterator extends EavIterator
         $this->collectionDecorators = $collectionDecorators;
 
         $iteratorInitializer->initializeAttributes($this);
+        $this->defaultAttributeCodes = array_fill_keys(array_keys($this->attributesByCode), true);
     }
 
     /**
-     * Override setStore to dynamically select the brand and image EAV attributes
-     * configured for the incoming store, removing any attributes selected for a
-     * previous store so disabled or differently-configured store views never load
-     * data they do not need.
+     * Override setStore to dynamically select the brand and image EAV attributes.
+     * Dynamic attributes are reference-counted to avoid removing attributes still
+     * needed by default export set or by the other dynamic field.
      *
      * @param Store $store
      * @return void
@@ -107,39 +120,77 @@ class Iterator extends EavIterator
         $newBrand = $this->config->getBrandAttribute($store);
         $newImage = $this->config->getImageAttribute($store);
 
-        $this->syncStoreAttribute($this->activeStoreAttributes['brand'], $newBrand);
-        $this->syncStoreAttribute($this->activeStoreAttributes['image'], $newImage);
-
-        $this->activeStoreAttributes = ['brand' => $newBrand, 'image' => $newImage];
+        $this->syncStoreAttribute('brand', $newBrand);
+        $this->syncStoreAttribute('image', $newImage);
     }
 
     /**
-     * Add the new attribute code to the EAV query and remove the previous one when
+     * Add the new attribute code to the EAV query and release the previous one when
      * either the code changed or it was cleared.
      *
-     * @param string $previous
+     * @param string $type
      * @param string $next
      * @return void
      */
-    private function syncStoreAttribute(string $previous, string $next): void
+    private function syncStoreAttribute(string $type, string $next): void
     {
+        $previous = $this->activeStoreAttributes[$type];
+
         if ($previous === $next) {
             return;
         }
 
         if ($previous !== '') {
-            try {
-                $this->removeAttribute($previous);
-            } catch (InvalidArgumentException $e) {
-                // Attribute was not registered (e.g. first run), nothing to remove.
+            $this->releaseDynamicAttribute($previous);
+        }
+
+        if ($next !== '') {
+            $this->acquireDynamicAttribute($next);
+        }
+
+        $this->activeStoreAttributes[$type] = $next;
+    }
+
+    /**
+     * @param string $attributeCode
+     * @return void
+     */
+    private function acquireDynamicAttribute(string $attributeCode): void
+    {
+        if (!isset($this->dynamicAttributeRefCounts[$attributeCode])) {
+            $this->dynamicAttributeRefCounts[$attributeCode] = 0;
+            if (!isset($this->attributesByCode[$attributeCode])) {
+                $this->selectAttribute($attributeCode);
             }
         }
 
-        if ($next === '') {
+        $this->dynamicAttributeRefCounts[$attributeCode]++;
+    }
+
+    /**
+     * @param string $attributeCode
+     * @return void
+     */
+    private function releaseDynamicAttribute(string $attributeCode): void
+    {
+        if (!isset($this->dynamicAttributeRefCounts[$attributeCode])) {
             return;
         }
 
-        $this->selectAttribute($next);
+        $this->dynamicAttributeRefCounts[$attributeCode]--;
+        if ($this->dynamicAttributeRefCounts[$attributeCode] > 0) {
+            return;
+        }
+
+        unset($this->dynamicAttributeRefCounts[$attributeCode]);
+
+        if (isset($this->defaultAttributeCodes[$attributeCode])) {
+            return;
+        }
+
+        if (isset($this->attributesByCode[$attributeCode])) {
+            $this->removeAttribute($attributeCode);
+        }
     }
 
     /**

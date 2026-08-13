@@ -101,6 +101,91 @@ class IteratorTest extends Unit
         self::assertArrayNotHasKey('main_image', $this->getAttributesByCode($iterator));
     }
 
+    public function testSetStoreDoesNotRemoveDefaultAttributeWhenDynamicBrandIsDisabled(): void
+    {
+        $eavConfig = Mockery::mock(EavConfig::class);
+        $manufacturer = Mockery::mock(AbstractAttribute::class);
+        $manufacturer->shouldReceive('getId')->andReturn(10);
+
+        $eavConfig->shouldReceive('getAttribute')
+            ->with(Product::ENTITY, 'manufacturer')
+            ->zeroOrMoreTimes()
+            ->andReturn($manufacturer);
+
+        $config = Mockery::mock(TweakwiseConfig::class);
+        $config->shouldReceive('getBatchSizeProducts')->andReturn(100);
+        $config->shouldReceive('getBrandAttribute')->andReturn('manufacturer', '');
+        $config->shouldReceive('getImageAttribute')->andReturn('', '');
+
+        $iteratorInitializer = Mockery::mock(IteratorInitializer::class);
+        $iteratorInitializer->shouldReceive('initializeAttributes')
+            ->once()
+            ->andReturnUsing(static function (Iterator $iterator): void {
+                $iterator->selectAttribute('manufacturer');
+            });
+
+        $iterator = new Iterator(
+            Mockery::mock(Helper::class),
+            $eavConfig,
+            Mockery::mock(DbContext::class),
+            Mockery::mock(Manager::class),
+            Mockery::mock(ExportEntityFactory::class),
+            Mockery::mock(CollectionFactory::class),
+            $iteratorInitializer,
+            [],
+            $config
+        );
+
+        $storeOne = Mockery::mock(Store::class);
+        $storeTwo = Mockery::mock(Store::class);
+
+        $iterator->setStore($storeOne);
+        $iterator->setStore($storeTwo);
+
+        self::assertArrayHasKey('manufacturer', $this->getAttributesByCode($iterator));
+    }
+
+    public function testSetStoreKeepsAttributeWhenBrandAndImageUseSameCode(): void
+    {
+        $eavConfig = Mockery::mock(EavConfig::class);
+        $manufacturer = Mockery::mock(AbstractAttribute::class);
+        $manufacturer->shouldReceive('getId')->andReturn(10);
+
+        $eavConfig->shouldReceive('getAttribute')
+            ->with(Product::ENTITY, 'manufacturer')
+            ->zeroOrMoreTimes()
+            ->andReturn($manufacturer);
+
+        $config = Mockery::mock(TweakwiseConfig::class);
+        $config->shouldReceive('getBatchSizeProducts')->andReturn(100);
+        $config->shouldReceive('getBrandAttribute')->andReturn('manufacturer', '');
+        $config->shouldReceive('getImageAttribute')->andReturn('manufacturer', 'manufacturer');
+
+        $iteratorInitializer = Mockery::mock(IteratorInitializer::class);
+        $iteratorInitializer->shouldReceive('initializeAttributes')->once();
+
+        $iterator = new Iterator(
+            Mockery::mock(Helper::class),
+            $eavConfig,
+            Mockery::mock(DbContext::class),
+            Mockery::mock(Manager::class),
+            Mockery::mock(ExportEntityFactory::class),
+            Mockery::mock(CollectionFactory::class),
+            $iteratorInitializer,
+            [],
+            $config
+        );
+
+        $storeOne = Mockery::mock(Store::class);
+        $storeTwo = Mockery::mock(Store::class);
+
+        $iterator->setStore($storeOne);
+        $iterator->setStore($storeTwo);
+
+        self::assertSame(['brand' => '', 'image' => 'manufacturer'], $this->getActiveStoreAttributes($iterator));
+        self::assertArrayHasKey('manufacturer', $this->getAttributesByCode($iterator));
+    }
+
     /**
      * @param Iterator $iterator
      * @return array{brand: string, image: string}
