@@ -96,18 +96,6 @@ class ExportTest extends Unit
             $storeManager,
             $driver
         ) extends Export {
-            public function __construct(
-                Context $context,
-                ExportModel $export,
-                Logger $log,
-                RequestValidator $requestValidator,
-                ResponseFactory $responseFactory,
-                StoreManagerInterface $storeManager,
-                File $driver
-            ) {
-                parent::__construct($context, $export, $log, $requestValidator, $responseFactory, $storeManager, $driver);
-            }
-
             public function clearOutputBuffersProxy(): void
             {
                 $this->clearOutputBuffers();
@@ -132,7 +120,7 @@ class ExportTest extends Unit
 
             protected function renderFeedContent($store, $type)
             {
-                return;
+                unset($store, $type);
             }
 
             protected function terminate()
