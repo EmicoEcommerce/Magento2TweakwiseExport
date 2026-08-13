@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Controller\Feed;
 
 use Magento\Framework\Filesystem\Driver\File;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\App\Response\FeedContent;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportModel;
@@ -119,15 +120,49 @@ class Export implements ActionInterface
         // can be flushed to the client ahead of the <?xml declaration, producing an invalid
         // feed. We then set the Content-Type header explicitly since headers may not have
         // been sent yet, and FeedContent writes directly to php://output bypassing OB.
+        $this->clearOutputBuffers();
+        $this->sendXmlContentTypeHeader();
+
+        $this->renderFeedContent($store, $request->getParam('type'));
+        $this->terminate();
+    }
+
+    /**
+     * @param StoreInterface|null $store
+     * @param string|null $type
+     * @return void
+     */
+    protected function renderFeedContent($store, $type)
+    {
+        // @phpstan-ignore-next-line
+        (new FeedContent($this->export, $this->log, $this->driver, $store, $type))->__toString();
+    }
+
+    /**
+     * @return void
+     * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
+     * @SuppressWarnings("PHPMD.ExitExpression")
+     */
+    protected function terminate()
+    {
+        exit();
+    }
+
+    /**
+     * @return void
+     */
+    protected function clearOutputBuffers()
+    {
         while (ob_get_level()) {
             ob_end_clean();
         }
+    }
 
+    /**
+     * @return void
+     */
+    protected function sendXmlContentTypeHeader()
+    {
         header('Content-Type: application/xml; charset=UTF-8');
-
-        // @phpstan-ignore-next-line
-        (new FeedContent($this->export, $this->log, $this->driver, $store, $request->getParam('type')))->__toString();
-
-        exit();
     }
 }
