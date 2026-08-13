@@ -24,6 +24,11 @@ use Magento\MediaStorage\Model\File\Storage\ResponseFactory;
 class Export implements ActionInterface
 {
     /**
+     * @var int
+     */
+    protected $initialOutputBufferLevel;
+
+    /**
      * @var Export
      */
     protected $export;
@@ -80,6 +85,7 @@ class Export implements ActionInterface
         $this->requestValidator = $requestValidator;
         $this->responseFactory = $responseFactory;
         $this->storeManager = $storeManager;
+        $this->initialOutputBufferLevel = ob_get_level();
     }
 
     /**
@@ -153,7 +159,7 @@ class Export implements ActionInterface
      */
     protected function clearOutputBuffers()
     {
-        while (ob_get_level()) {
+        while (ob_get_level() > $this->initialOutputBufferLevel) {
             ob_end_clean();
         }
     }

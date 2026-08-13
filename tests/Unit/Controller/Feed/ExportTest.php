@@ -33,14 +33,17 @@ class ExportTest extends Unit
      */
     public function testClearOutputBuffersRemovesAllActiveBuffers(): void
     {
+        $subject = $this->createSubject();
+        $initialLevel = ob_get_level();
+
         ob_start();
         ob_start();
 
-        $this->assertGreaterThanOrEqual(2, ob_get_level());
+        $this->assertGreaterThanOrEqual($initialLevel + 2, ob_get_level());
 
-        $this->createSubject()->clearOutputBuffersProxy();
+        $subject->clearOutputBuffersProxy();
 
-        $this->assertSame(0, ob_get_level());
+        $this->assertSame($initialLevel, ob_get_level());
     }
 
     /**
@@ -49,12 +52,14 @@ class ExportTest extends Unit
      */
     public function testExecuteCallsXmlHeaderAndClearsOutputBuffers(): void
     {
-        ob_start();
-        ob_start();
-
-        $this->assertGreaterThanOrEqual(2, ob_get_level());
-
         $subject = $this->createSubject();
+        $initialLevel = ob_get_level();
+
+        ob_start();
+        ob_start();
+
+        $this->assertGreaterThanOrEqual($initialLevel + 2, ob_get_level());
+
         try {
             $subject->executeProxy();
             $this->fail('Controller did not terminate execution.');
@@ -62,7 +67,7 @@ class ExportTest extends Unit
             $this->assertSame('stop-controller', $e->getMessage());
         }
 
-        $this->assertSame(0, ob_get_level());
+        $this->assertSame($initialLevel, ob_get_level());
         $this->assertSame('Content-Type: application/xml; charset=UTF-8', $subject->getSentHeader());
     }
 
