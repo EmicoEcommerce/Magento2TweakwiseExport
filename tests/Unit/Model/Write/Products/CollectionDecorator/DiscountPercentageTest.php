@@ -76,6 +76,20 @@ class DiscountPercentageTest extends Unit
         (new DiscountPercentage())->decorate($collection);
     }
 
+    public function testSkipsProductWhenRegularPriceIsZero(): void
+    {
+        $entity = Mockery::mock(ExportEntity::class);
+        $entity->shouldReceive('getId')->andReturn(5);
+        $entity->shouldReceive('getTypeId')->andReturn('simple');
+        $entity->shouldReceive('getAttribute')->with('regular_price', false)->andReturn(0.0);
+        $entity->shouldReceive('getAttribute')->with('final_price', false)->andReturn(10.0);
+        $entity->shouldNotReceive('addAttribute');
+
+        $collection = $this->createCollection([$entity]);
+
+        (new DiscountPercentage())->decorate($collection);
+    }
+
     /**
      * @param ExportEntity[] $entities
      */
