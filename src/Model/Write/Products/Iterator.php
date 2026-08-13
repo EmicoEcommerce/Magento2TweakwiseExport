@@ -134,7 +134,11 @@ class Iterator extends EavIterator
      */
     private function syncStoreAttribute(string $type, string $next): void
     {
-        $previous = $this->activeStoreAttributes[$type];
+        if ($type === 'brand') {
+            $previous = $this->activeStoreAttributes['brand'];
+        } else {
+            $previous = $this->activeStoreAttributes['image'];
+        }
 
         if ($previous === $next) {
             return;
@@ -148,7 +152,12 @@ class Iterator extends EavIterator
             $this->acquireDynamicAttribute($next);
         }
 
-        $this->activeStoreAttributes[$type] = $next;
+        if ($type === 'brand') {
+            $this->activeStoreAttributes['brand'] = $next;
+            return;
+        }
+
+        $this->activeStoreAttributes['image'] = $next;
     }
 
     /**
@@ -188,9 +197,11 @@ class Iterator extends EavIterator
             return;
         }
 
-        if (isset($this->attributesByCode[$attributeCode])) {
-            $this->removeAttribute($attributeCode);
+        if (!isset($this->attributesByCode[$attributeCode])) {
+            return;
         }
+
+        $this->removeAttribute($attributeCode);
     }
 
     /**
