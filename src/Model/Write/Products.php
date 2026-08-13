@@ -17,9 +17,12 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Source\SourceInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Profiler;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 
@@ -69,6 +72,7 @@ class Products implements WriterInterface
      * @param Helper $helper
      * @param Logger $log
      * @param EavConfig $eavConfig
+     * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         Config $config,
@@ -76,7 +80,8 @@ class Products implements WriterInterface
         StoreManager $storeManager,
         Helper $helper,
         Logger $log,
-        EavConfig $eavConfig
+        EavConfig $eavConfig,
+        private readonly ScopeConfigInterface $scopeConfig
     ) {
         $this->config = $config;
         $this->iterator = $iterator;
@@ -135,8 +140,11 @@ class Products implements WriterInterface
         // Purge iterator entity ids for each store
         $this->iterator->setEntityIds($entityIds);
 
+        // Resolve all per-store config values once to avoid repeated lookups per product.
+        $storeContext = $this->buildStoreContext($store);
+
         foreach ($this->iterator as $index => $data) {
-            $this->writeProduct($xml, $store->getId(), $data);
+            $this->writeProduct($xml, $storeContext, $data);
             // Flush every so often
             if ($index % 100 !== 0) {
                 continue;
@@ -150,40 +158,66 @@ class Products implements WriterInterface
     }
 
     /**
+     * Resolve all store-scoped configuration values used during product writing into a single array.
+     * This avoids redundant config, scope-config, and store-manager lookups on every product.
+     *
+     * @param Store $store
+     * @return array{storeId: int, isGroupedExport: bool, brandAttribute: string, mediaBaseUrl: string, baseUrl: string, urlSuffix: string}
+     */
+    protected function buildStoreContext(Store $store): array
+    {
+        $storeId = (int) $store->getId();
+        return [
+            'storeId'         => $storeId,
+            'isGroupedExport' => $this->config->isGroupedExport($store),
+            'brandAttribute'  => $this->config->getBrandAttribute($store),
+            'mediaBaseUrl'    => rtrim($store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA), '/') . '/catalog/product',
+            'baseUrl'         => rtrim($store->getBaseUrl(UrlInterface::URL_TYPE_WEB), '/'),
+            'urlSuffix'       => (string) $this->scopeConfig->getValue(
+                'catalog/seo/product_url_suffix',
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            ),
+        ];
+    }
+
+    /**
      * @param XMLWriter $xml
-     * @param int $storeId
+     * @param array $storeContext
      * @param array $data
      */
-    protected function writeProduct(XMLWriter $xml, $storeId, array $data): void
+    protected function writeProduct(XMLWriter $xml, array $storeContext, array $data): void
     {
+        $storeId = $storeContext['storeId'];
         $xml->startElement('item');
 
         // Write product base data
-        $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id'], $this->config->isGroupedExport($this->storeManager->getStore($storeId)) ? $data['groupcode'] : null);
+        $tweakwiseId = $this->helper->getTweakwiseId($storeId, $data['entity_id'], $storeContext['isGroupedExport'] ? $data['groupcode'] : null);
         $xml->writeElement('id', $tweakwiseId);
         $xml->writeElement('name', $this->scalarValue($data['name']));
         $xml->writeElement('price', $this->scalarValue((float)$data['price']));
         $xml->writeElement('stock', $this->scalarValue($data['stock']));
 
-        if ($this->config->isGroupedExport($this->storeManager->getStore($storeId))) {
+        if ($storeContext['isGroupedExport']) {
             $xml->writeElement('groupcode', $this->scalarValue($data['groupcode']));
         }
 
-        // Write product categories
-        $xml->startElement('categories');
-        foreach ($data['categories'] as $categoryId) {
-            $categoryTweakwiseId = $this->helper->getTweakwiseId($storeId, $categoryId);
-            // @phpstan-ignore-next-line
-            if ($xml->hasCategoryExport($categoryTweakwiseId)) {
-                $xml->writeElement('categoryid', $categoryTweakwiseId);
-            } else {
-                $this->log->debug(
-                    sprintf('Skip product (%s) category (%s) relation', $tweakwiseId, $categoryTweakwiseId)
-                );
-            }
+        if ($storeContext['brandAttribute'] !== '' && !empty($data['brand'])) {
+            $this->writeBrand($xml, $storeId, $storeContext['brandAttribute'], $data['brand']);
         }
 
-        $xml->endElement(); // categories
+        $imageUrl = $this->buildImageUrl($storeContext['mediaBaseUrl'], $data['image'] ?? null);
+        if ($imageUrl !== null) {
+            $xml->writeElement('image', $imageUrl);
+        }
+
+        $productUrl = $this->buildProductUrl($storeContext['baseUrl'], $storeContext['urlSuffix'], $data['url_key'] ?? null);
+        if ($productUrl !== null) {
+            $xml->writeElement('url', $productUrl);
+        }
+
+        // Write product categories
+        $this->writeProductCategories($xml, $storeId, $tweakwiseId, $data['categories']);
 
         // Write product attributes
         $xml->startElement('attributes');
@@ -196,6 +230,87 @@ class Products implements WriterInterface
         $xml->endElement(); // </item>
 
         $this->log->debug(sprintf('Export product [%s] %s', $tweakwiseId, $data['name']));
+    }
+
+    /**
+     * Write the <categories> element for a product, skipping any category IDs not present in the feed.
+     *
+     * @param XMLWriter $xml
+     * @param int $storeId
+     * @param string $tweakwiseId
+     * @param int[] $categoryIds
+     * @return void
+     */
+    protected function writeProductCategories(XMLWriter $xml, int $storeId, string $tweakwiseId, array $categoryIds): void
+    {
+        $xml->startElement('categories');
+        foreach ($categoryIds as $categoryId) {
+            $categoryTweakwiseId = $this->helper->getTweakwiseId($storeId, $categoryId);
+            // @phpstan-ignore-next-line
+            if ($xml->hasCategoryExport($categoryTweakwiseId)) {
+                $xml->writeElement('categoryid', $categoryTweakwiseId);
+                continue;
+            }
+
+            $this->log->debug(
+                sprintf('Skip product (%s) category (%s) relation', $tweakwiseId, $categoryTweakwiseId)
+            );
+        }
+
+        $xml->endElement(); // categories
+    }
+
+    /**
+     * Resolve and write the <brand> element, translating option IDs to labels when applicable.
+     *
+     * @param XMLWriter $xml
+     * @param int $storeId
+     * @param string $attributeCode
+     * @param mixed $rawValue
+     * @return void
+     */
+    protected function writeBrand(XMLWriter $xml, int $storeId, string $attributeCode, $rawValue): void
+    {
+        $brandValues = $this->normalizeAttributeValue($storeId, $attributeCode, $rawValue);
+        $brandValues = array_filter($brandValues, static fn($v) => $v !== null && $v !== '');
+        if (empty($brandValues)) {
+            return;
+        }
+
+        $xml->writeElement('brand', $this->scalarValue(reset($brandValues)));
+    }
+
+    /**
+     * Build the full product URL from pre-resolved base URL and URL suffix.
+     *
+     * @param string $baseUrl
+     * @param string $urlSuffix
+     * @param string|null $urlKey
+     * @return string|null
+     */
+    protected function buildProductUrl(string $baseUrl, string $urlSuffix, ?string $urlKey): ?string
+    {
+        if (empty($urlKey)) {
+            return null;
+        }
+
+        return $baseUrl . '/' . $urlKey . $urlSuffix;
+    }
+
+    /**
+     * Build the full image URL from a pre-resolved media base URL and relative image path.
+     *
+     * @param string $mediaBaseUrl
+     * @param string|null $imagePath
+     * @return string|null
+     */
+    protected function buildImageUrl(string $mediaBaseUrl, ?string $imagePath): ?string
+    {
+        if (empty($imagePath) || $imagePath === 'no_selection') {
+            return null;
+        }
+
+        return $mediaBaseUrl . $imagePath;
     }
 
     /**
