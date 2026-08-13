@@ -19,7 +19,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\RequestValidator;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\MediaStorage\Model\File\Storage\Response;
 use Magento\MediaStorage\Model\File\Storage\ResponseFactory;
 
 class Export implements ActionInterface
@@ -93,10 +92,11 @@ class Export implements ActionInterface
      * @see    \Magento\MediaStorage\Model\File\Storage\Response
      * @throws NotFoundException
      * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
-     * @return Response
+     * @return void
      * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
      * @SuppressWarnings("PHPMD.ExitExpression")
      */
+    // @phpstan-ignore-next-line
     public function execute()
     {
         $request = $this->context->getRequest();
