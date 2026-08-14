@@ -21,6 +21,8 @@ use Magento\Framework\Data\Collection as DataCollection;
 
 class Price implements DecoratorInterface
 {
+    private const REGULAR_PRICE_ATTRIBUTE = '_regular_price';
+
     /**
      * @var CollectionFactory
      */
@@ -89,10 +91,9 @@ class Price implements DecoratorInterface
             $regularPrice = $this->calculatePrice((float)$row['price']);
             $row = $this->applyPriceFields($row, $priceFields);
             $row['price'] = $this->getPriceValue($row, $priceFields);
+            $row[self::REGULAR_PRICE_ATTRIBUTE] = $regularPrice;
 
-            $entity = $collection->get($entityId);
-            $entity->setRegularPrice($regularPrice);
-            $entity->setFromArray($row);
+            $collection->get($entityId)->setFromArray($row);
         }
     }
 

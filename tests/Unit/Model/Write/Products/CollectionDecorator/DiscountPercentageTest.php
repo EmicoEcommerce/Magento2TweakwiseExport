@@ -28,7 +28,7 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(ExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(1);
         $entity->shouldReceive('getTypeId')->andReturn('simple');
-        $entity->shouldReceive('getRegularPrice')->andReturn(99.0);
+        $entity->shouldReceive('getAttribute')->with('_regular_price', false)->andReturn(99.0);
         $entity->shouldReceive('getAttribute')->with('final_price', false)->andReturn(65.0);
         $entity->shouldReceive('addAttribute')->with('discount_percentage', 34)->once();
 
@@ -42,7 +42,6 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(ExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(2);
         $entity->shouldReceive('getTypeId')->andReturn(BundleType::TYPE_CODE);
-        $entity->shouldNotReceive('getRegularPrice');
         $entity->shouldNotReceive('getAttribute');
         $entity->shouldNotReceive('addAttribute');
 
@@ -56,7 +55,6 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(ExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(6);
         $entity->shouldReceive('getTypeId')->andReturn(Grouped::TYPE_CODE);
-        $entity->shouldNotReceive('getRegularPrice');
         $entity->shouldNotReceive('getAttribute');
         $entity->shouldNotReceive('addAttribute');
 
@@ -70,7 +68,7 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(ExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(3);
         $entity->shouldReceive('getTypeId')->andReturn('simple');
-        $entity->shouldReceive('getRegularPrice')->andReturn(50.0);
+        $entity->shouldReceive('getAttribute')->with('_regular_price', false)->andReturn(50.0);
         $entity->shouldReceive('getAttribute')->with('final_price', false)->andReturn(50.0);
         $entity->shouldNotReceive('addAttribute');
 
@@ -84,7 +82,9 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(ExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(4);
         $entity->shouldReceive('getTypeId')->andReturn('simple');
-        $entity->shouldReceive('getRegularPrice')->andReturn(99.0);
+        $entity->shouldReceive('getAttribute')
+            ->with('_regular_price', false)
+            ->andReturn(99.0);
         $entity->shouldReceive('getAttribute')
             ->with('final_price', false)
             ->andThrow(new InvalidArgumentException('Could not find attribute final_price'));
@@ -100,7 +100,7 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(ExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(5);
         $entity->shouldReceive('getTypeId')->andReturn('simple');
-        $entity->shouldReceive('getRegularPrice')->andReturn(0.0);
+        $entity->shouldReceive('getAttribute')->with('_regular_price', false)->andReturn(0.0);
         $entity->shouldReceive('getAttribute')->with('final_price', false)->andReturn(10.0);
         $entity->shouldNotReceive('addAttribute');
 
@@ -114,7 +114,7 @@ class DiscountPercentageTest extends Unit
         $entity = Mockery::mock(PriceExportEntity::class);
         $entity->shouldReceive('getId')->andReturn(7);
         $entity->shouldReceive('getTypeId')->andReturn('simple');
-        $entity->shouldReceive('getRegularPrice')->andReturn(100.0);
+        $entity->shouldReceive('getAttribute')->with('_regular_price', false)->andReturn(100.0);
         $entity->shouldReceive('getAttribute')->with('final_price', false)->andReturn(75.0);
         $entity->shouldReceive('addAttribute')->with('discount_percentage', 25)->once();
 
