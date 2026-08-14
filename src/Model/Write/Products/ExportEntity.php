@@ -64,6 +64,11 @@ class ExportEntity
     protected $price = 0.0;
 
     /**
+     * @var float|null
+     */
+    protected $regularPrice;
+
+    /**
      * @var int
      */
     protected $groupCode = 0;
@@ -246,6 +251,22 @@ class ExportEntity
     public function setPrice(float $price): void
     {
         $this->price = $price;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getRegularPrice(): ?float
+    {
+        return $this->regularPrice;
+    }
+
+    /**
+     * @param float $regularPrice
+     */
+    public function setRegularPrice(float $regularPrice): void
+    {
+        $this->regularPrice = $regularPrice;
     }
 
     /**
