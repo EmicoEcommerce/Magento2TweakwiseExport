@@ -84,6 +84,7 @@ class SourceItemMapProvider implements StockMapProviderInterface
      * @param StockResolverFactory $stockResolverFactory
      * @param DefaultStockProviderInterfaceFactory $defaultStockProviderFactory
      * @param DbResourceHelper $resourceHelper
+     * @param StockIndexTableNameResolver $stockIndexTableNameResolver
      */
     public function __construct(
         DbResourceHelper $dbResource,
@@ -124,12 +125,14 @@ class SourceItemMapProvider implements StockMapProviderInterface
 
         $store = $collection->getStore();
         $stockId = $this->getStockIdForStoreId($store);
+        $websiteId = (int) $store->getWebsiteId();
 
         $dbConnection = $this->dbResource->getConnection();
 
         $stockIndexTableName = $this->stockIndexTableNameResolver->execute($stockId);
         $reservationTableName = $this->dbResource->getTableName('inventory_reservation');
         $productTableName = $this->dbResource->getTableName('catalog_product_entity');
+        $stockItemTableName = $this->dbResource->getTableName('cataloginventory_stock_item');
 
         $reservationSelect = $dbConnection
             ->select()
@@ -173,15 +176,36 @@ class SourceItemMapProvider implements StockMapProviderInterface
             ['r' => $reservationSelect],
             "r.sku = $productTableName.sku AND r.stock_id = $stockId",
             []
-        )
-        ->where("$productTableName.entity_id IN (?)", $entityIds)
-        ->columns(
-            [
-                'product_entity_id' => "$productTableName.entity_id",
-                'qty' => new Zend_Db_Expr('COALESCE(s.s_quantity,0) + COALESCE(r.r_quantity,0)'),
-                'is_in_stock' => 'COALESCE(s.s_is_salable,0)'
-            ]
         );
+
+        $select->joinLeft(
+            ['csi' => $stockItemTableName],
+            "csi.product_id = $productTableName.entity_id AND csi.website_id = $websiteId",
+            []
+        );
+
+        $select->joinLeft(
+            ['csi_default' => $stockItemTableName],
+            "csi_default.product_id = $productTableName.entity_id AND csi_default.website_id = 0",
+            []
+        );
+
+        $select
+            ->where("$productTableName.entity_id IN (?)", $entityIds)
+            ->columns(
+                [
+                    'product_entity_id' => "$productTableName.entity_id",
+                    'qty' => new Zend_Db_Expr('COALESCE(s.s_quantity,0) + COALESCE(r.r_quantity,0)'),
+                    'is_in_stock' => 'COALESCE(s.s_is_salable,0)',
+                    'order_qty' => new Zend_Db_Expr('COALESCE(csi.min_sale_qty, csi_default.min_sale_qty)'),
+                    'enable_qty_increments' => new Zend_Db_Expr(
+                        'COALESCE(csi.enable_qty_increments, csi_default.enable_qty_increments)'
+                    ),
+                    'qty_increments' => new Zend_Db_Expr(
+                        'COALESCE(csi.qty_increments, csi_default.qty_increments)'
+                    ),
+                ]
+            );
 
         $result = $select->query();
         $map = [];
@@ -264,6 +288,9 @@ class SourceItemMapProvider implements StockMapProviderInterface
 
         $tweakwiseStockItem->setQty($qty);
         $tweakwiseStockItem->setIsInStock($isInStock);
+        $tweakwiseStockItem->setOrderQty((float)($item['order_qty'] ?? 1));
+        $tweakwiseStockItem->setEnableQtyIncrements((bool)($item['enable_qty_increments'] ?? false));
+        $tweakwiseStockItem->setQtyIncrements((float)($item['qty_increments'] ?? 1));
 
         return $tweakwiseStockItem;
     }

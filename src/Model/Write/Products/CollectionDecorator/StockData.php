@@ -80,6 +80,9 @@ class StockData implements DecoratorInterface
         foreach ($toBeCombinedEntities as $item) {
             $this->addStockPercentage($item);
             $this->addIsSalable($item);
+            $this->addOrderQuantity($item);
+            $this->addOrderIncrementsEnabled($item);
+            $this->addOrderIncrement($item);
         }
     }
 
@@ -143,6 +146,36 @@ class StockData implements DecoratorInterface
     protected function addIsSalable(ExportEntity|StockExportEntity $entity): void
     {
         $entity->addAttribute('is_salable', $this->isInStock($entity));
+    }
+
+    /**
+     * @param ExportEntity|StockExportEntity $entity
+     */
+    protected function addOrderQuantity(ExportEntity|StockExportEntity $entity): void
+    {
+        $stockItem = $entity->getStockItem();
+        $entity->addAttribute('order_quantity', $stockItem ? $stockItem->getOrderQty() : 1);
+    }
+
+    /**
+     * @param ExportEntity|StockExportEntity $entity
+     */
+    protected function addOrderIncrementsEnabled(ExportEntity|StockExportEntity $entity): void
+    {
+        $stockItem = $entity->getStockItem();
+        $entity->addAttribute(
+            'order_increments_enabled',
+            (int) ($stockItem && $stockItem->isEnableQtyIncrements())
+        );
+    }
+
+    /**
+     * @param ExportEntity|StockExportEntity $entity
+     */
+    protected function addOrderIncrement(ExportEntity|StockExportEntity $entity): void
+    {
+        $stockItem = $entity->getStockItem();
+        $entity->addAttribute('order_increment', $stockItem ? $stockItem->getQtyIncrements() : 1);
     }
 
     /**

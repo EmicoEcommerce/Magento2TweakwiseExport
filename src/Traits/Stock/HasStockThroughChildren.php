@@ -47,6 +47,9 @@ trait HasStockThroughChildren
         $stockItem = new StockItem();
         $stockItem->setQty($qty);
         $stockItem->setIsInStock($isInStock);
+        $stockItem->setOrderQty($this->stockItem->getOrderQty());
+        $stockItem->setEnableQtyIncrements($this->stockItem->isEnableQtyIncrements());
+        $stockItem->setQtyIncrements($this->stockItem->getQtyIncrements());
 
         $this->stockItem = $stockItem;
         $this->isStockCombined = true;
