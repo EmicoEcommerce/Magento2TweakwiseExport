@@ -344,6 +344,10 @@ class ExportEntity
     {
         $result = [];
         $result['item_typeproduct'] = ['attribute' => 'item_type', 'value' => 'product'];
+        $result['magento_store_id' . $this->getStore()->getId()] = [
+            'attribute' => 'magento_store_id',
+            'value' => $this->getStore()->getId(),
+        ];
         foreach ($this->attributes as $attribute => $values) {
             foreach ($values as $value) {
                 $result[$attribute . $value] = ['attribute' => $attribute, 'value' => $value];
