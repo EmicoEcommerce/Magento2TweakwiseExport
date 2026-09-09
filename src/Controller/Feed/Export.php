@@ -151,9 +151,25 @@ class Export implements ActionInterface
      */
     protected function clearOutputBuffers()
     {
-        while (ob_get_level() > 0) {
-            ob_end_clean();
+        while ($this->getOutputBufferLevel() > 0) {
+            $this->endOutputBuffer();
         }
+    }
+
+    /**
+     * @return int
+     */
+    protected function getOutputBufferLevel(): int
+    {
+        return ob_get_level();
+    }
+
+    /**
+     * @return void
+     */
+    protected function endOutputBuffer(): void
+    {
+        ob_end_clean();
     }
 
     /**

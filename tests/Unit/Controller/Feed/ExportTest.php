@@ -22,39 +22,43 @@ class ExportTest extends Unit
 {
     protected UnitTester $tester;
 
+    private int $simulatedOutputBufferLevel = 0;
+
+    private int $endedBufferCount = 0;
+
+    public function getSimulatedOutputBufferLevel(): int
+    {
+        return $this->simulatedOutputBufferLevel;
+    }
+
+    public function endSimulatedOutputBuffer(): void
+    {
+        if ($this->simulatedOutputBufferLevel > 0) {
+            $this->simulatedOutputBufferLevel--;
+            $this->endedBufferCount++;
+        }
+    }
+
     public function _after(): void
     {
         Mockery::close();
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testClearOutputBuffersRemovesAllActiveBuffers(): void
     {
-        ob_start();
+        $this->simulatedOutputBufferLevel = 2;
         $subject = $this->createSubject();
-        ob_start();
-
-        $this->assertGreaterThan(0, ob_get_level());
 
         $subject->clearOutputBuffersProxy();
 
-        $this->assertSame(0, ob_get_level());
+        $this->assertSame(0, $this->simulatedOutputBufferLevel);
+        $this->assertSame(2, $this->endedBufferCount);
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testExecuteCallsXmlHeaderAndClearsOutputBuffers(): void
     {
-        ob_start();
+        $this->simulatedOutputBufferLevel = 3;
         $subject = $this->createSubject();
-        ob_start();
-
-        $this->assertGreaterThan(0, ob_get_level());
 
         try {
             $subject->executeProxy();
@@ -63,7 +67,8 @@ class ExportTest extends Unit
             $this->assertSame('stop-controller', $e->getMessage());
         }
 
-        $this->assertSame(0, ob_get_level());
+        $this->assertSame(0, $this->simulatedOutputBufferLevel);
+        $this->assertSame(3, $this->endedBufferCount);
         $this->assertSame('Content-Type: application/xml; charset=UTF-8', $subject->getSentHeader());
     }
 
@@ -95,7 +100,8 @@ class ExportTest extends Unit
             $requestValidator,
             $responseFactory,
             $storeManager,
-            $driver
+            $driver,
+            $this
         ) extends Export {
             public function clearOutputBuffersProxy(): void
             {
@@ -119,6 +125,16 @@ class ExportTest extends Unit
                 $this->sentHeader = 'Content-Type: application/xml; charset=UTF-8';
             }
 
+            protected function getOutputBufferLevel(): int
+            {
+                return $this->testCase->getSimulatedOutputBufferLevel();
+            }
+
+            protected function endOutputBuffer(): void
+            {
+                $this->testCase->endSimulatedOutputBuffer();
+            }
+
             protected function renderFeedContent($store, $type)
             {
                 unset($store, $type);
@@ -127,6 +143,28 @@ class ExportTest extends Unit
             protected function terminate()
             {
                 throw new RuntimeException('stop-controller');
+            }
+
+            /**
+             * @var ExportTest
+             */
+            private $testCase;
+
+            /**
+             * @param ExportTest $testCase
+             */
+            public function __construct(
+                Context $context,
+                ExportModel $export,
+                Logger $log,
+                RequestValidator $requestValidator,
+                ResponseFactory $responseFactory,
+                StoreManagerInterface $storeManager,
+                File $driver,
+                ExportTest $testCase
+            ) {
+                parent::__construct($context, $export, $log, $requestValidator, $responseFactory, $storeManager, $driver);
+                $this->testCase = $testCase;
             }
         };
     }
