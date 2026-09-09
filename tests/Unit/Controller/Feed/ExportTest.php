@@ -33,10 +33,12 @@ class ExportTest extends Unit
 
     public function endSimulatedOutputBuffer(): void
     {
-        if ($this->simulatedOutputBufferLevel > 0) {
-            $this->simulatedOutputBufferLevel--;
-            $this->endedBufferCount++;
+        if ($this->simulatedOutputBufferLevel <= 0) {
+            return;
         }
+
+        $this->simulatedOutputBufferLevel--;
+        $this->endedBufferCount++;
     }
 
     public function _after(): void
@@ -150,9 +152,6 @@ class ExportTest extends Unit
              */
             private $testCase;
 
-            /**
-             * @param ExportTest $testCase
-             */
             public function __construct(
                 Context $context,
                 ExportModel $export,
