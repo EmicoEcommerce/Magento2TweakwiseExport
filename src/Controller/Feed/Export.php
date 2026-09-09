@@ -10,6 +10,7 @@
 namespace Tweakwise\Magento2TweakwiseExport\Controller\Feed;
 
 use Magento\Framework\Filesystem\Driver\File;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Tweakwise\Magento2TweakwiseExport\App\Response\FeedContent;
 use Tweakwise\Magento2TweakwiseExport\Model\Export as ExportModel;
@@ -18,7 +19,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\RequestValidator;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\MediaStorage\Model\File\Storage\Response;
 use Magento\MediaStorage\Model\File\Storage\ResponseFactory;
 
 class Export implements ActionInterface
@@ -92,11 +92,12 @@ class Export implements ActionInterface
      * @see    \Magento\MediaStorage\Model\File\Storage\Response
      * @throws NotFoundException
      * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
-     * @return Response
+     * @return void
      * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
      * @SuppressWarnings("PHPMD.ExitExpression")
      */
-    public function execute(): Response
+    // @phpstan-ignore-next-line
+    public function execute()
     {
         $request = $this->context->getRequest();
 
@@ -114,9 +115,68 @@ class Export implements ActionInterface
             $store = $this->storeManager->getStore($storeId);
         }
 
-        // @phpstan-ignore-next-line
-        (new FeedContent($this->export, $this->log, $this->driver, $store, $request->getParam('type')))->__toString();
+        // Discard any output already buffered by other modules (e.g. Stape GTM setting
+        // cookies) before we start streaming XML feed. This only removes data still in
+        // active buffers; content already flushed cannot be undone at this point.
+        $this->clearOutputBuffers();
+        $this->sendXmlContentTypeHeader();
 
+        $this->renderFeedContent($store, $request->getParam('type'));
+        $this->terminate();
+    }
+
+    /**
+     * @param StoreInterface|null $store
+     * @param string|null $type
+     * @return void
+     */
+    protected function renderFeedContent($store, $type)
+    {
+        // @phpstan-ignore-next-line
+        (new FeedContent($this->export, $this->log, $this->driver, $store, $type))->__toString();
+    }
+
+    /**
+     * @return void
+     * phpcs:disable Magento2.Security.LanguageConstruct.ExitUsage
+     * @SuppressWarnings("PHPMD.ExitExpression")
+     */
+    protected function terminate()
+    {
         exit();
+    }
+
+    /**
+     * @return void
+     */
+    protected function clearOutputBuffers()
+    {
+        while ($this->getOutputBufferLevel() > 0) {
+            $this->endOutputBuffer();
+        }
+    }
+
+    /**
+     * @return int
+     */
+    protected function getOutputBufferLevel(): int
+    {
+        return ob_get_level();
+    }
+
+    /**
+     * @return void
+     */
+    protected function endOutputBuffer(): void
+    {
+        ob_end_clean();
+    }
+
+    /**
+     * @return void
+     */
+    protected function sendXmlContentTypeHeader()
+    {
+        header('Content-Type: application/xml; charset=UTF-8');
     }
 }
