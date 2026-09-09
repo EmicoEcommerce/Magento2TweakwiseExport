@@ -138,7 +138,6 @@ class Export
      */
     public function generateFeed($targetHandle, $store = null, $type = null): void
     {
-        header('Content-type: text/xml');
         $this->executeLocked(
             function () use ($targetHandle, $store, $type) {
                 $this->writer->write($targetHandle, $store, $type);
@@ -176,7 +175,6 @@ class Export
                 );
             }
 
-            header('Content-type: text/xml');
             header('Cache-Control: no-cache');
 
             // @phpstan-ignore-next-line

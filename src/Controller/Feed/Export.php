@@ -24,11 +24,6 @@ use Magento\MediaStorage\Model\File\Storage\ResponseFactory;
 class Export implements ActionInterface
 {
     /**
-     * @var int
-     */
-    protected $initialOutputBufferLevel;
-
-    /**
      * @var Export
      */
     protected $export;
@@ -85,7 +80,6 @@ class Export implements ActionInterface
         $this->requestValidator = $requestValidator;
         $this->responseFactory = $responseFactory;
         $this->storeManager = $storeManager;
-        $this->initialOutputBufferLevel = ob_get_level();
     }
 
     /**
@@ -122,10 +116,8 @@ class Export implements ActionInterface
         }
 
         // Discard any output already buffered by other modules (e.g. Stape GTM setting
-        // cookies) before we start streaming the XML feed. Without this, buffered garbage
-        // can be flushed to the client ahead of the <?xml declaration, producing an invalid
-        // feed. We then set the Content-Type header explicitly since headers may not have
-        // been sent yet, and FeedContent writes directly to php://output bypassing OB.
+        // cookies) before we start streaming XML feed. This only removes data still in
+        // active buffers; content already flushed cannot be undone at this point.
         $this->clearOutputBuffers();
         $this->sendXmlContentTypeHeader();
 
@@ -159,7 +151,7 @@ class Export implements ActionInterface
      */
     protected function clearOutputBuffers()
     {
-        while (ob_get_level() > $this->initialOutputBufferLevel) {
+        while (ob_get_level() > 0) {
             ob_end_clean();
         }
     }
