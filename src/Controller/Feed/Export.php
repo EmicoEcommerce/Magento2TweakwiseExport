@@ -171,6 +171,7 @@ class Export implements ActionInterface
      */
     protected function endOutputBuffer(): bool
     {
+        // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- suppress warning when buffer is not removable
         return @ob_end_clean();
     }
 
