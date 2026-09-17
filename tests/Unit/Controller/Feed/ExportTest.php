@@ -26,6 +26,8 @@ class ExportTest extends Unit
 
     private int $endedBufferCount = 0;
 
+    private bool $allowEndingOutputBuffers = true;
+
     public function getSimulatedOutputBufferLevel(): int
     {
         return $this->simulatedOutputBufferLevel;
@@ -33,6 +35,10 @@ class ExportTest extends Unit
 
     public function endSimulatedOutputBuffer(): void
     {
+        if (!$this->allowEndingOutputBuffers) {
+            return;
+        }
+
         if ($this->simulatedOutputBufferLevel <= 0) {
             return;
         }
@@ -72,6 +78,18 @@ class ExportTest extends Unit
         $this->assertSame(0, $this->simulatedOutputBufferLevel);
         $this->assertSame(3, $this->endedBufferCount);
         $this->assertSame('Content-Type: application/xml; charset=UTF-8', $subject->getSentHeader());
+    }
+
+    public function testClearOutputBuffersStopsWhenBufferCannotBeEnded(): void
+    {
+        $this->simulatedOutputBufferLevel = 1;
+        $this->allowEndingOutputBuffers = false;
+        $subject = $this->createSubject();
+
+        $subject->clearOutputBuffersProxy();
+
+        $this->assertSame(1, $this->simulatedOutputBufferLevel);
+        $this->assertSame(0, $this->endedBufferCount);
     }
 
     private function createSubject()
@@ -132,9 +150,12 @@ class ExportTest extends Unit
                 return $this->testCase->getSimulatedOutputBufferLevel();
             }
 
-            protected function endOutputBuffer(): void
+            protected function endOutputBuffer(): bool
             {
+                $before = $this->testCase->getSimulatedOutputBufferLevel();
                 $this->testCase->endSimulatedOutputBuffer();
+
+                return $this->testCase->getSimulatedOutputBufferLevel() < $before;
             }
 
             protected function renderFeedContent($store, $type)

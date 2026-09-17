@@ -152,7 +152,9 @@ class Export implements ActionInterface
     protected function clearOutputBuffers()
     {
         while ($this->getOutputBufferLevel() > 0) {
-            $this->endOutputBuffer();
+            if (!$this->endOutputBuffer()) {
+                break;
+            }
         }
     }
 
@@ -165,11 +167,11 @@ class Export implements ActionInterface
     }
 
     /**
-     * @return void
+     * @return bool
      */
-    protected function endOutputBuffer(): void
+    protected function endOutputBuffer(): bool
     {
-        ob_end_clean();
+        return @ob_end_clean();
     }
 
     /**
