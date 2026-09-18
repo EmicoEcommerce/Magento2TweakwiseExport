@@ -128,7 +128,7 @@ class Iterator extends EavIterator
      * Add the new attribute code to the EAV query and release the previous one when
      * either the code changed or it was cleared.
      *
-     * @param string $type
+     * @param 'brand'|'image' $type
      * @param string $next
      * @return void
      */
