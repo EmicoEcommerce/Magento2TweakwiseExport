@@ -42,7 +42,7 @@ class ExportEntityBundle extends CompositeExportEntity
                     ? $optionGroups[$optionId]['qty'] + $childQty
                     : $childQty;
 
-            if (isset($optionGroups[$optionId]['is_in_stock']) && $optionGroups[$optionId]['is_in_stock']) { // @phpstan-ignore-line
+            if (isset($optionGroups[$optionId]['is_in_stock']) && $optionGroups[$optionId]['is_in_stock']) {
                 continue;
             }
 
@@ -57,8 +57,8 @@ class ExportEntityBundle extends CompositeExportEntity
 
         if (
             empty($optionGroups) ||
-            !array_column($optionGroups, 'qty') || // @phpstan-ignore-line
-            !array_column($optionGroups, 'is_in_stock') // @phpstan-ignore-line
+            !array_column($optionGroups, 'qty') ||
+            !array_column($optionGroups, 'is_in_stock')
         ) {
             $this->isStockCombined = true;
             return $this->stockItem;
