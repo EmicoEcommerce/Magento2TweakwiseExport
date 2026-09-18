@@ -10,7 +10,6 @@ use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceCollection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\ExportEntity as PriceExportEntity;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
-use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 
@@ -47,7 +46,6 @@ class DiscountPercentage implements DecoratorInterface
 
     /**
      * @param ExportEntity|PriceExportEntity $entity
-     * @return int
      */
     private function calculateSimpleDiscount(ExportEntity|PriceExportEntity $entity): int
     {
@@ -67,26 +65,26 @@ class DiscountPercentage implements DecoratorInterface
 
     /**
      * @param ExportEntityConfigurable $entity
-     * @return int
      */
     private function calculateConfigurableDiscount(ExportEntityConfigurable $entity): int
     {
         $maxDiscount = 0;
         foreach ($entity->getExportChildren() as $child) {
             $discount = $this->calculateChildDiscount($child);
-            if ($discount > $maxDiscount) {
-                $maxDiscount = $discount;
+            if ($discount <= $maxDiscount) {
+                continue;
             }
+
+            $maxDiscount = $discount;
         }
 
         return $maxDiscount;
     }
 
     /**
-     * @param ExportEntityChild $child
-     * @return int
+     * @param ExportEntity $child
      */
-    private function calculateChildDiscount(ExportEntityChild $child): int
+    private function calculateChildDiscount(ExportEntity $child): int
     {
         $regularPrice = $child->getRegularPrice();
         if ($regularPrice === null) {
@@ -105,7 +103,6 @@ class DiscountPercentage implements DecoratorInterface
     /**
      * @param float $regularPrice
      * @param float $finalPrice
-     * @return int
      */
     private function calculateDiscountValue(float $regularPrice, float $finalPrice): int
     {
