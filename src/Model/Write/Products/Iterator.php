@@ -134,11 +134,7 @@ class Iterator extends EavIterator
      */
     private function syncStoreAttribute(string $type, string $next): void
     {
-        if ($type === 'brand') {
-            $previous = $this->activeStoreAttributes['brand'];
-        } else {
-            $previous = $this->activeStoreAttributes['image'];
-        }
+        $previous = $this->activeStoreAttributes[$type];
 
         if ($previous === $next) {
             return;
@@ -152,12 +148,7 @@ class Iterator extends EavIterator
             $this->acquireDynamicAttribute($next);
         }
 
-        if ($type === 'brand') {
-            $this->activeStoreAttributes['brand'] = $next;
-            return;
-        }
-
-        $this->activeStoreAttributes['image'] = $next;
+        $this->activeStoreAttributes[$type] = $next;
     }
 
     /**
