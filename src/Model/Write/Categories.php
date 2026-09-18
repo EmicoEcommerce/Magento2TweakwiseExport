@@ -136,6 +136,8 @@ class Categories implements WriterInterface
                 continue;
             }
 
+            // The path determines where a category really lives in the tree, parent_id may be stale
+            $data['parent_id'] = $this->resolveParentId($data);
             $parentId = (int) $data['parent_id'];
             // Store root category extend name so it is clear in tweakwise
             // Always export store root category whether it is enabled or not
@@ -176,6 +178,27 @@ class Categories implements WriterInterface
 
         // Flush any remaining categories
         $writer->flush();
+    }
+
+    /**
+     * Resolve the parent of a category from its path.
+     *
+     * The path is the authoritative tree position of a category, parent_id is a denormalisation
+     * of it that can go stale when a category move is only partially applied. Categories are
+     * exported in path order, so a stale parent_id makes the parent look like it has not been
+     * exported yet, which silently drops the category and its subtree from the feed.
+     *
+     * @param array $data
+     * @return int
+     */
+    private function resolveParentId(array $data): int
+    {
+        $segments = explode('/', (string) ($data['path'] ?? ''));
+        // The last segment is the category itself, the one before it is its parent
+        array_pop($segments);
+        $parentId = (int) array_pop($segments);
+
+        return $parentId ?: (int) ($data['parent_id'] ?? 0);
     }
 
     /**
