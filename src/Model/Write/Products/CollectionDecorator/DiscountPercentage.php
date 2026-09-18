@@ -10,6 +10,8 @@ use Tweakwise\Magento2TweakwiseExport\Exception\InvalidArgumentException;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceCollection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\ExportEntity as PriceExportEntity;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 
 class DiscountPercentage implements DecoratorInterface
@@ -29,7 +31,12 @@ class DiscountPercentage implements DecoratorInterface
                 continue;
             }
 
-            $discount = $this->calculateDiscount($entity);
+            if ($entity instanceof ExportEntityConfigurable) {
+                $discount = $this->calculateConfigurableDiscount($entity);
+            } else {
+                $discount = $this->calculateSimpleDiscount($entity);
+            }
+
             if ($discount <= 0) {
                 continue;
             }
@@ -42,7 +49,7 @@ class DiscountPercentage implements DecoratorInterface
      * @param ExportEntity|PriceExportEntity $entity
      * @return int
      */
-    private function calculateDiscount(ExportEntity|PriceExportEntity $entity): int
+    private function calculateSimpleDiscount(ExportEntity|PriceExportEntity $entity): int
     {
         $regularPrice = $entity->getRegularPrice();
         if ($regularPrice === null) {
@@ -55,6 +62,53 @@ class DiscountPercentage implements DecoratorInterface
             return 0;
         }
 
+        return $this->calculateDiscountValue((float)$regularPrice, $finalPrice);
+    }
+
+    /**
+     * @param ExportEntityConfigurable $entity
+     * @return int
+     */
+    private function calculateConfigurableDiscount(ExportEntityConfigurable $entity): int
+    {
+        $maxDiscount = 0;
+        foreach ($entity->getExportChildren() as $child) {
+            $discount = $this->calculateChildDiscount($child);
+            if ($discount > $maxDiscount) {
+                $maxDiscount = $discount;
+            }
+        }
+
+        return $maxDiscount;
+    }
+
+    /**
+     * @param ExportEntityChild $child
+     * @return int
+     */
+    private function calculateChildDiscount(ExportEntityChild $child): int
+    {
+        $regularPrice = $child->getRegularPrice();
+        if ($regularPrice === null) {
+            return 0;
+        }
+
+        try {
+            $finalPrice = (float)$child->getAttribute('final_price', false);
+        } catch (InvalidArgumentException $e) {
+            return 0;
+        }
+
+        return $this->calculateDiscountValue((float)$regularPrice, $finalPrice);
+    }
+
+    /**
+     * @param float $regularPrice
+     * @param float $finalPrice
+     * @return int
+     */
+    private function calculateDiscountValue(float $regularPrice, float $finalPrice): int
+    {
         if ($regularPrice <= 0.00001 || $finalPrice >= $regularPrice) {
             return 0;
         }

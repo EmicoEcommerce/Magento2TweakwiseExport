@@ -14,6 +14,8 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\Collection as PriceColle
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Price\ExportEntity as PriceExportEntity;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\DiscountPercentage;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 
 class DiscountPercentageTest extends Unit
@@ -136,8 +138,46 @@ class DiscountPercentageTest extends Unit
         (new DiscountPercentage())->decorate($collection);
     }
 
+    public function testUsesChildPairsForConfigurableDiscount(): void
+    {
+        $childOne = Mockery::mock(ExportEntityChild::class);
+        $childOne->shouldReceive('getRegularPrice')->andReturn(50.0);
+        $childOne->shouldReceive('getAttribute')->with('final_price', false)->andReturn(50.0);
+
+        $childTwo = Mockery::mock(ExportEntityChild::class);
+        $childTwo->shouldReceive('getRegularPrice')->andReturn(100.0);
+        $childTwo->shouldReceive('getAttribute')->with('final_price', false)->andReturn(40.0);
+
+        $entity = Mockery::mock(ExportEntityConfigurable::class);
+        $entity->shouldReceive('getId')->andReturn(9);
+        $entity->shouldReceive('getTypeId')->andReturn('configurable');
+        $entity->shouldReceive('getExportChildren')->andReturn([$childOne, $childTwo]);
+        $entity->shouldReceive('addAttribute')->with('discount_percentage', 60)->once();
+
+        $collection = $this->createCollection([$entity]);
+
+        (new DiscountPercentage())->decorate($collection);
+    }
+
+    public function testSkipsConfigurableWhenNoValidChildDiscount(): void
+    {
+        $child = Mockery::mock(ExportEntityChild::class);
+        $child->shouldReceive('getRegularPrice')->andReturn(80.0);
+        $child->shouldReceive('getAttribute')->with('final_price', false)->andReturn(80.0);
+
+        $entity = Mockery::mock(ExportEntityConfigurable::class);
+        $entity->shouldReceive('getId')->andReturn(10);
+        $entity->shouldReceive('getTypeId')->andReturn('configurable');
+        $entity->shouldReceive('getExportChildren')->andReturn([$child]);
+        $entity->shouldNotReceive('addAttribute');
+
+        $collection = $this->createCollection([$entity]);
+
+        (new DiscountPercentage())->decorate($collection);
+    }
+
     /**
-     * @param ExportEntity[] $entities
+     * @param ExportEntity[]|ExportEntityConfigurable[] $entities
      */
     private function createCollection(array $entities): Collection
     {
