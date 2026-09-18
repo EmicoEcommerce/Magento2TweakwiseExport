@@ -15,7 +15,6 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
 class DiscountPercentage implements DecoratorInterface
 {
     private const ATTRIBUTE_NAME = 'discount_percentage';
-    private const REGULAR_PRICE_ATTRIBUTE = '_regular_price';
 
     /**
      * Decorate items with a computed discount_percentage attribute.
@@ -45,8 +44,12 @@ class DiscountPercentage implements DecoratorInterface
      */
     private function calculateDiscount(ExportEntity|PriceExportEntity $entity): int
     {
+        $regularPrice = $entity->getRegularPrice();
+        if ($regularPrice === null) {
+            return 0;
+        }
+
         try {
-            $regularPrice = (float)$entity->getAttribute(self::REGULAR_PRICE_ATTRIBUTE, false);
             $finalPrice = (float)$entity->getAttribute('final_price', false);
         } catch (InvalidArgumentException $e) {
             return 0;
