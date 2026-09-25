@@ -86,10 +86,12 @@ class Price implements DecoratorInterface
             $product = $productCollection->getItemById($entityId);
 
             $row = $this->applyCombinedPrices($row, $product, $store);
+            $regularPrice = $this->calculatePrice((float)$row['price']);
             $row = $this->applyPriceFields($row, $priceFields);
             $row['price'] = $this->getPriceValue($row, $priceFields);
-
-            $collection->get($entityId)->setFromArray($row);
+            $entity = $collection->get($entityId);
+            $entity->setFromArray($row);
+            $entity->setRegularPrice($regularPrice);
         }
     }
 
