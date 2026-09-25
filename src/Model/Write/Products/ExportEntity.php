@@ -15,6 +15,7 @@ use Magento\Catalog\Model\Product\Type;
 
 /**
  * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
+ * @SuppressWarnings("PHPMD.TooManyFields")
  */
 class ExportEntity
 {
@@ -62,6 +63,11 @@ class ExportEntity
      * @var float
      */
     protected $price = 0.0;
+
+    /**
+     * @var float|null
+     */
+    protected $regularPrice;
 
     /**
      * @var int
@@ -249,6 +255,22 @@ class ExportEntity
     }
 
     /**
+     * @return float|null
+     */
+    public function getRegularPrice(): ?float
+    {
+        return $this->regularPrice;
+    }
+
+    /**
+     * @param float $regularPrice
+     */
+    public function setRegularPrice(float $regularPrice): void
+    {
+        $this->regularPrice = $regularPrice;
+    }
+
+    /**
      * @return float
      */
     public function getStockQty(): float
@@ -344,6 +366,10 @@ class ExportEntity
     {
         $result = [];
         $result['item_typeproduct'] = ['attribute' => 'item_type', 'value' => 'product'];
+        $result['magento_store_id' . $this->getStore()->getId()] = [
+            'attribute' => 'magento_store_id',
+            'value' => $this->getStore()->getId(),
+        ];
         foreach ($this->attributes as $attribute => $values) {
             foreach ($values as $value) {
                 $result[$attribute . $value] = ['attribute' => $attribute, 'value' => $value];
