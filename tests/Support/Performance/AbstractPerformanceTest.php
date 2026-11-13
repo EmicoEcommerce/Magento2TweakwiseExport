@@ -129,7 +129,7 @@ abstract class AbstractPerformanceTest extends Unit
         file_put_contents(
             codecept_output_dir('performance.jsonl'),
             json_encode([
-                'test' => static::class . '::' . $this->name(),
+                'test' => static::class,
                 'label' => $label,
                 'date' => date('c'),
                 'items' => $result->itemCount,
