@@ -35,9 +35,12 @@ magento-module/test/functional:
   variables:
     MIN_PHP_VERSION: '8.2'
     DISABLE_DEPENDENCY_AUDIT: "true"
+  cache:
+    key: magento-module-test-functional-$MAGENTO_VERSION-$PHP_VERSION-shard-$CODECEPT_SHARD-of-$CODECEPT_SHARDS$PERFORMANCE_CACHE
   rules:
     - if: '$PERFORMANCE_TESTS == "true"'
       variables:
+        PERFORMANCE_CACHE: "-performance-$CI_PIPELINE_ID"
         EXTRA_COMPOSER_PACKAGE: >-
           magento/module-bundle-sample-data:100.4.*
           magento/module-catalog-rule-sample-data:100.4.*
@@ -59,7 +62,7 @@ magento-module/test/functional:
           magento/module-widget-sample-data:100.4.*
           magento/module-wishlist-sample-data:100.4.*
           magento/sample-data-media:100.4.*
-    - when: on_success
+    - if: '$CI_COMMIT_BRANCH || $CI_COMMIT_TAG'
 
 release:
   rules:
