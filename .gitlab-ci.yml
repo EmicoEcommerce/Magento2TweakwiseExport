@@ -21,11 +21,45 @@ include:
 
 variables:
   MAGENTO_PHP_VERSION: '8.2'
+  PERFORMANCE_TESTS:
+    value: "false"
+    description: "Run the performance tests of the export (slow, installs the sample data)"
+    options:
+      - "false"
+      - "true"
+  PERFORMANCE_ALLOWED_SLOWDOWN:
+    value: "30"
+    description: "Performance tests: how many percent slower than the baseline the export may be"
 
 magento-module/test/functional:
   variables:
     MIN_PHP_VERSION: '8.2'
     DISABLE_DEPENDENCY_AUDIT: "true"
+  rules:
+    - if: '$PERFORMANCE_TESTS == "true"'
+      variables:
+        EXTRA_COMPOSER_PACKAGE: >-
+          magento/module-bundle-sample-data:100.4.*
+          magento/module-catalog-rule-sample-data:100.4.*
+          magento/module-catalog-sample-data:100.4.*
+          magento/module-cms-sample-data:100.4.*
+          magento/module-configurable-sample-data:100.4.*
+          magento/module-customer-sample-data:100.4.*
+          magento/module-downloadable-sample-data:100.4.*
+          magento/module-grouped-product-sample-data:100.4.*
+          magento/module-msrp-sample-data:100.4.*
+          magento/module-offline-shipping-sample-data:100.4.*
+          magento/module-product-links-sample-data:100.4.*
+          magento/module-review-sample-data:100.4.*
+          magento/module-sales-rule-sample-data:100.4.*
+          magento/module-sales-sample-data:100.4.*
+          magento/module-swatches-sample-data:100.4.*
+          magento/module-tax-sample-data:100.4.*
+          magento/module-theme-sample-data:100.4.*
+          magento/module-widget-sample-data:100.4.*
+          magento/module-wishlist-sample-data:100.4.*
+          magento/sample-data-media:100.4.*
+    - when: on_success
 
 release:
   rules:

@@ -18,11 +18,15 @@ class ExportScalabilityTest extends AbstractPerformanceTest
     // The baseline has the seconds per environment, for example {"2.4.8-8.3": 36.0} (Magento version, PHP version).
     // Environments without a baseline (and local runs) are not checked.
     private const BASELINE_MULTIPLIER = 25;
-    private const ALLOWED_SLOWDOWN = 0.30;
+
+    // How many percent slower than the baseline is allowed. Can be changed with an environment variable.
+    private const DEFAULT_ALLOWED_SLOWDOWN_PERCENT = 30;
+    private const ALLOWED_SLOWDOWN_ENV = 'PERFORMANCE_ALLOWED_SLOWDOWN';
 
     public function testExportScalesWithCatalogSize(): void
     {
         $base = $this->export('1x');
+        $this->assertGreaterThan(0, $base->itemCount, 'There are no products to export, is the sample data installed?');
 
         $copies = 1;
         $results = [];
@@ -93,8 +97,12 @@ class ExportScalabilityTest extends AbstractPerformanceTest
         }
 
         $baseline = (float)$baselines[$environment];
+        $allowedPercent = getenv(self::ALLOWED_SLOWDOWN_ENV) !== false
+            ? (float)getenv(self::ALLOWED_SLOWDOWN_ENV)
+            : self::DEFAULT_ALLOWED_SLOWDOWN_PERCENT;
+
         $this->assertLessThanOrEqual(
-            $baseline * (1 + self::ALLOWED_SLOWDOWN),
+            $baseline * (1 + $allowedPercent / 100),
             $result->seconds,
             sprintf(
                 'The export at %dx took %.1fs, the baseline for %s is %.1fs (at most %d%% slower is allowed)',
@@ -102,7 +110,7 @@ class ExportScalabilityTest extends AbstractPerformanceTest
                 $result->seconds,
                 $environment,
                 $baseline,
-                self::ALLOWED_SLOWDOWN * 100
+                $allowedPercent
             )
         );
     }

@@ -12,6 +12,9 @@ use Tweakwise\Test\Support\FunctionalTester;
 
 abstract class AbstractPerformanceTest extends Unit
 {
+    // The performance tests are slow, so they are skipped unless this environment variable is "true".
+    private const ENABLE_ENV = 'PERFORMANCE_TESTS';
+
     protected FunctionalTester $tester;
 
     protected ProductCloner $cloner;
@@ -30,6 +33,10 @@ abstract class AbstractPerformanceTest extends Unit
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _before(): void
     {
+        if (getenv(self::ENABLE_ENV) !== 'true') {
+            $this->markTestSkipped('Performance tests only run when ' . self::ENABLE_ENV . ' is "true"');
+        }
+
         $objectManager = $this->tester->getObjectManager();
 
         $resource = $objectManager->get(ResourceConnection::class);
@@ -48,6 +55,10 @@ abstract class AbstractPerformanceTest extends Unit
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _after(): void
     {
+        if (!isset($this->cloner)) {
+            return;
+        }
+
         $this->cloner->removeAll();
         $this->restoreConfig();
 
