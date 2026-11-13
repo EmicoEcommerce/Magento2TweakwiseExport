@@ -64,7 +64,7 @@ class ExportRunner
     public function cleanConfigCache(): void
     {
         $process = new Process(
-            [PHP_BINARY, $this->magentoRoot . '/bin/magento', 'cache:clean', 'config'],
+            [PHP_BINARY, $this->magentoRoot . '/bin/magento', 'cache:clean', 'config', 'eav'],
             $this->magentoRoot,
             null,
             null,
