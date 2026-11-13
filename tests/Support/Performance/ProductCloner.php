@@ -13,14 +13,12 @@ class ProductCloner
 
     private const ENTITY_TABLE = 'catalog_product_entity';
 
-    // No foreign key to the product table: not found automatically and not removed by a cascading delete.
     private const INDEX_TABLES = [
         'cataloginventory_stock_status' => 'product_id',
         'catalog_product_index_price' => 'entity_id',
         'catalog_category_product_index_store1' => 'product_id',
     ];
 
-    // Cloning these would add the cloned products to the original bundle product.
     private const SKIPPED_TABLES = [
         'catalog_product_bundle_option',
         'catalog_product_bundle_selection',
@@ -72,7 +70,6 @@ class ProductCloner
             );
         }
 
-        // Source items are linked by sku and have no foreign key to the product table.
         $this->connection->delete(
             $this->table('inventory_source_item'),
             ['sku LIKE ?' => self::SKU_PREFIX . '%']
@@ -103,7 +100,7 @@ class ProductCloner
         );
     }
 
-    /** @param string[] $productColumns columns that hold a product id and must point to the cloned product */
+    /** @param string[] $productColumns */
     private function cloneRows(string $prefix, int $baseMax, string $table, array $productColumns): void
     {
         $entity = $this->table(self::ENTITY_TABLE);
@@ -162,11 +159,7 @@ class ProductCloner
         );
     }
 
-    /**
-     * Every table with a foreign key to the product table, plus the index tables.
-     *
-     * @return array<string, string[]> table => columns that hold a product id
-     */
+    /** @return array<string, string[]> */
     private function getProductTables(): array
     {
         if ($this->productTables !== null) {
@@ -191,19 +184,40 @@ class ProductCloner
             $tables[$row['TABLE_NAME']][] = $row['COLUMN_NAME'];
         }
 
+        $tables = array_filter(
+            array_map(static fn(array $columns): array => array_values(array_unique($columns)), $tables),
+            fn(array $columns, string $table): bool => $this->canBeCloned($table, $columns),
+            ARRAY_FILTER_USE_BOTH
+        );
+
         foreach (self::INDEX_TABLES as $table => $column) {
             $tables[$this->table($table)] = [$column];
         }
 
-        $this->productTables = array_map(
-            static fn(array $columns): array => array_values(array_unique($columns)),
-            $tables
-        );
+        $this->productTables = $tables;
 
         return $this->productTables;
     }
 
-    // Cloned products always get a higher id than the original ones, so this separates the two.
+    /** @param string[] $productColumns */
+    private function canBeCloned(string $table, array $productColumns): bool
+    {
+        $primaryColumns = [];
+        foreach ($this->connection->describeTable($table) as $name => $definition) {
+            if (!empty($definition['IDENTITY'])) {
+                return true;
+            }
+
+            if (empty($definition['PRIMARY'])) {
+                continue;
+            }
+
+            $primaryColumns[] = $name;
+        }
+
+        return array_intersect($primaryColumns, $productColumns) !== [];
+    }
+
     private function highestOriginalProductId(): int
     {
         return (int)$this->connection->fetchOne(
@@ -213,7 +227,7 @@ class ProductCloner
         );
     }
 
-    /** @return string[] column names without the auto increment column */
+    /** @return string[] */
     private function columns(string $table): array
     {
         $columns = [];

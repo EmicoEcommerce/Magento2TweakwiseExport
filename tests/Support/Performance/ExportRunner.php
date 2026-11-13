@@ -16,7 +16,7 @@ class ExportRunner
     {
     }
 
-    /** @param string[] $arguments extra command line arguments, for example ['--type=stock'] */
+    /** @param string[] $arguments */
     public function run(string $feedFile, array $arguments = []): ExportResult
     {
         $command = array_merge(

@@ -9,17 +9,11 @@ use Tweakwise\Test\Support\Performance\ExportResult;
 
 class ExportScalabilityTest extends AbstractPerformanceTest
 {
-    // Times the catalog is multiplied after the 1x run. 75x is about 150.000 catalog products.
-    // Can be overridden for a quick run, for example "2,3".
     private const DEFAULT_MULTIPLIERS = [5, 25, 75];
     private const MULTIPLIERS_ENV = 'TWEAKWISE_PERF_MULTIPLIERS';
 
-    // The export time at this multiplier is compared with tests/_data/performance-baseline.json.
-    // The baseline has the seconds per environment, for example {"2.4.8-8.3": 36.0} (Magento version, PHP version).
-    // Environments without a baseline (and local runs) are not checked.
     private const BASELINE_MULTIPLIER = 25;
 
-    // How many percent slower than the baseline is allowed. Can be changed with an environment variable.
     private const DEFAULT_ALLOWED_SLOWDOWN_PERCENT = 30;
     private const ALLOWED_SLOWDOWN_ENV = 'PERFORMANCE_ALLOWED_SLOWDOWN';
 

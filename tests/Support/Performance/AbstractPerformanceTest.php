@@ -12,7 +12,6 @@ use Tweakwise\Test\Support\FunctionalTester;
 
 abstract class AbstractPerformanceTest extends Unit
 {
-    // The performance tests are slow, so they are skipped unless this environment variable is "true".
     private const ENABLE_ENV = 'PERFORMANCE_TESTS';
 
     protected FunctionalTester $tester;
@@ -45,7 +44,6 @@ abstract class AbstractPerformanceTest extends Unit
 
         $this->cloner = new ProductCloner($resource);
         $this->cloner->removeAll();
-        // The export subprocess reads its config from the database, so it has to be enabled there.
         $this->setConfig('tweakwise/export/enabled', '1');
 
         $this->runner = new ExportRunner($objectManager->get(DirectoryList::class)->getRoot());
@@ -67,7 +65,7 @@ abstract class AbstractPerformanceTest extends Unit
         }
     }
 
-    /** @param string[] $arguments extra arguments for the command */
+    /** @param string[] $arguments */
     protected function export(string $label, array $arguments = []): ExportResult
     {
         $this->runner->cleanConfigCache();
@@ -122,7 +120,6 @@ abstract class AbstractPerformanceTest extends Unit
 
     private function record(string $label, ExportResult $result): void
     {
-        // Printed so the measurements are visible in the CI log, which is where the baseline comes from.
         // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         fwrite(STDERR, sprintf("\n[performance] %s: %s\n", $label, $result->summary()));
 
