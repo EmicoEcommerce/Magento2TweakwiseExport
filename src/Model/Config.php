@@ -196,20 +196,21 @@ class Config
      */
     public function getSkipChildAttribute($attribute = null, $store = null)
     {
-        if (!$this->skipAttributes) {
+        $storeKey = $store instanceof StoreInterface ? (string) $store->getId() : (string) $store;
+
+        if (!isset($this->skipAttributes[$storeKey])) {
             $value = $this->config->getValue(self::PATH_EXCLUDE_CHILD_ATTRIBUTES, ScopeInterface::SCOPE_STORE, $store);
-            $skipAttributes = explode(',', (string) $value);
-            $this->skipAttributes = array_flip($skipAttributes);
+            $this->skipAttributes[$storeKey] = array_flip(explode(',', (string) $value));
         }
 
         //add visibility to skip attributes to prevent issues with parent products when parent visibility is not set to "Catalog, Search"
-        $this->skipAttributes['visibility'] = true;
+        $this->skipAttributes[$storeKey]['visibility'] = true;
 
         if ($attribute === null) {
-            return array_keys($this->skipAttributes);
+            return array_keys($this->skipAttributes[$storeKey]);
         }
 
-        return isset($this->skipAttributes[$attribute]);
+        return isset($this->skipAttributes[$storeKey][$attribute]);
     }
 
     /**
