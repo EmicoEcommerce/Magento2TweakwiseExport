@@ -428,6 +428,10 @@ class Children implements DecoratorInterface
             'parent_visibility',
             $parent->getAttribute('visibility', false)
         );
+        $childEntity->addAttribute(
+            'parent_sku',
+            $parent->getAttribute('sku', false)
+        );
 
         try {
             $parentMainImage = $parent->getAttribute('image', false);

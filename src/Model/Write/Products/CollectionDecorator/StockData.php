@@ -7,6 +7,7 @@ use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData\StockMapProviderInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CompositeExportEntityInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Magento\Framework\App\ProductMetadataInterface;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItemFactory as TweakwiseStockItemFactory;
 use Magento\Framework\Module\Manager;
@@ -84,6 +85,14 @@ class StockData implements DecoratorInterface
             $this->addOrderIncrementsEnabled($item);
             $this->addOrderIncrement($item);
         }
+
+        if (!$this->config->isGroupedExport($collection->getStore())) {
+            return;
+        }
+
+        foreach ($toBeCombinedEntities as $item) {
+            $this->addParentStockPercentage($item);
+        }
     }
 
     /**
@@ -138,6 +147,21 @@ class StockData implements DecoratorInterface
     protected function addStockPercentage(ExportEntity|StockExportEntity $entity): void
     {
         $entity->addAttribute('stock_percentage', $this->calculateStockPercentage($entity));
+    }
+
+    /**
+     * @param ExportEntity|StockExportEntity $parent
+     */
+    protected function addParentStockPercentage(ExportEntity|StockExportEntity $parent): void
+    {
+        if (!$parent instanceof ExportEntityConfigurable) {
+            return;
+        }
+
+        $parentStockPercentage = $parent->getAttribute('stock_percentage', false);
+        foreach ($parent->getAllChildren() as $child) {
+            $child->addAttribute('parent_stock_percentage', $parentStockPercentage);
+        }
     }
 
     /**
