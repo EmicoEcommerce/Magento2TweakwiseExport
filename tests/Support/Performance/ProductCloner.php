@@ -29,7 +29,7 @@ class ProductCloner
 
     private int $copies = 0;
 
-    /** @var array<string, string[]>|null */
+    /** @var string[][]|null */
     private ?array $productTables = null;
 
     public function __construct(private readonly ResourceConnection $resource)
@@ -159,7 +159,7 @@ class ProductCloner
         );
     }
 
-    /** @return array<string, string[]> */
+    /** @return string[][] */
     private function getProductTables(): array
     {
         if ($this->productTables !== null) {

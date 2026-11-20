@@ -38,15 +38,15 @@ abstract class AbstractPerformanceTest extends Unit
 
     private ?ExportResult $base = null;
 
-    /** @var array<string, string>|null */
+    /** @var string[]|null */
     private ?array $envFile = null;
 
     private string $configTable;
 
-    /** @var array<string, string|null> */
+    /** @var (string|null)[] */
     private array $originalConfig = [];
 
-    /** @var array<string, float> */
+    /** @var float[] */
     private array $measurements = [];
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
@@ -174,7 +174,7 @@ abstract class AbstractPerformanceTest extends Unit
         );
     }
 
-    /** @return array<string, string> */
+    /** @return string[] */
     private function envFile(): array
     {
         if ($this->envFile !== null) {
@@ -275,7 +275,7 @@ abstract class AbstractPerformanceTest extends Unit
         $this->runner->cleanConfigCache();
     }
 
-    /** @param array<string, int> $catalog */
+    /** @param int[] $catalog */
     private function record(string $label, ExportResult $result, array $catalog): void
     {
         $perWebsite = $catalog['websites'] > 1
@@ -320,7 +320,7 @@ abstract class AbstractPerformanceTest extends Unit
         );
     }
 
-    /** @return array<string, int> */
+    /** @return int[] */
     private function catalogStats(): array
     {
         $table = fn(string $name): string => $this->resource->getTableName($name);

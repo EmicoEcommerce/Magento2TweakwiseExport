@@ -119,7 +119,7 @@ class WebsiteGenerator
         $this->cloneCategoryIndex($storeId);
     }
 
-    /** @param array<string, int> $replacements */
+    /** @param int[] $replacements */
     private function copyWebsiteRows(string $table, array $replacements): void
     {
         $table = $this->table($table);
