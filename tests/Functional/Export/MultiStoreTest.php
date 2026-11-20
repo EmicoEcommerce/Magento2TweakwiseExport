@@ -6,6 +6,7 @@ namespace Tweakwise\Test\Functional\Export;
 
 use Emico\CodeCept\Models\Fixtures\ConfigurableProductFixture;
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
+use Hipex\Magento2Psr7Bridge\Http\Connector;
 use Magento\Catalog\Model\Product\Action;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Framework\App\ResourceConnection;
@@ -35,6 +36,7 @@ class MultiStoreTest extends AbstractExportTest
     public function _after(): void
     {
         if (isset($this->websites)) {
+            $this->refreshStores();
             $this->tester->cleanUp();
             $this->websites->removeAll();
             $this->refreshStores();
@@ -133,7 +135,11 @@ class MultiStoreTest extends AbstractExportTest
     private function refreshStores(): void
     {
         $this->tester->clearCache();
-        $this->tester->getObjectManager()->get(StoreManagerInterface::class)->reinitStores();
+        $this->tester->forEachConnector(
+            static function (Connector $connector): void {
+                $connector->getObjectManager()->get(StoreManagerInterface::class)->reinitStores();
+            }
+        );
     }
 
     private function disableForStore(ProductFixture $product, string $storeCode): void
