@@ -111,17 +111,6 @@ abstract class AbstractPerformanceTest extends Unit
             static fn(float $seconds): bool => $seconds >= self::MIN_SECONDS_TO_COMPARE
         );
 
-        $lines = [];
-        foreach ($comparable as $label => $seconds) {
-            $lines[] = $this->baselineKey($label) . '=' . round($seconds, 1);
-        }
-
-        $this->log(sprintf(
-            "\nBaseline for tests/.env (total export time in seconds, only measurements of at least %d s):\n%s",
-            self::MIN_SECONDS_TO_COMPARE,
-            implode("\n", $lines)
-        ));
-
         $allowedPercent = $this->allowedPercent();
         $problems = [];
         foreach ($comparable as $label => $seconds) {
