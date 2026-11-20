@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tweakwise\Test\Functional\Export;
 
+use Emico\CodeCept\Models\Fixtures\ConfigurableProductFixture;
 use Emico\CodeCept\Test\Unit;
+use Magento\Store\Model\StoreManagerInterface;
 use ReflectionMethod;
 use ReflectionProperty;
 use SimpleXMLElement;
-use Tweakwise\Magento2TweakwiseExport\Cron\Export;
-use Tweakwise\Magento2TweakwiseExport\Model\Config;
+use Tweakwise\Magento2TweakwiseExport\Model\Export;
+use Tweakwise\Magento2TweakwiseExport\Model\Helper;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 use Tweakwise\Test\Support\FunctionalTester;
 
@@ -19,9 +21,19 @@ class GroupedExportBatchSizeTest extends Unit
 
     private const SMALL_BATCH_SIZE = 1;
 
+    private const CONFIGURABLES = 3;
+
+    private const OPTION_ATTRIBUTE = 'tw_batch_size_test';
+
+    private const OPTIONS = ['one', 'two', 'three'];
+
     protected FunctionalTester $tester;
 
-    private string $backupDirectory;
+    /** @var ConfigurableProductFixture[] */
+    private array $parents = [];
+
+    /** @var string[] */
+    private array $feedFiles = [];
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _before(): void
@@ -29,30 +41,27 @@ class GroupedExportBatchSizeTest extends Unit
         $this->tester->mockConfig('tweakwise/export/enabled', '1');
         $this->tester->mockConfig('tweakwise/export/grouped_export_enabled', '1');
 
-        $this->backupDirectory = codecept_output_dir('feed-backup-' . uniqid('', true));
-        mkdir($this->backupDirectory);
-        foreach ($this->feedFiles() as $file) {
-            rename($file, $this->backupDirectory . '/' . basename($file));
+        for ($number = 1; $number <= self::CONFIGURABLES; $number++) {
+            $parent = new ConfigurableProductFixture('batch-size-test-' . $number);
+            foreach (self::OPTIONS as $option) {
+                $parent->addChildByAttributes([self::OPTION_ATTRIBUTE => $option]);
+            }
+
+            $this->tester->createFixture($parent);
+            $this->parents[] = $parent;
         }
     }
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _after(): void
     {
-        if (!isset($this->backupDirectory)) {
-            return;
-        }
+        foreach ($this->feedFiles as $file) {
+            if (!is_file($file)) {
+                continue;
+            }
 
-        foreach ($this->feedFiles() as $file) {
             unlink($file);
         }
-
-        $feedDirectory = dirname($this->feedFile());
-        foreach ((array)glob($this->backupDirectory . '/*') as $file) {
-            rename($file, $feedDirectory . '/' . basename($file));
-        }
-
-        rmdir($this->backupDirectory);
     }
 
     public function testGroupedExportDoesNotDependOnTheBatchSize(): void
@@ -81,36 +90,24 @@ class GroupedExportBatchSizeTest extends Unit
 
         $objectManager = $this->tester->getObjectManager();
         $objectManager->reset();
-        $cron = $objectManager->get(Export::class);
-        $this->assertSame($batchSize, $this->productBatchSize($cron), 'The batch size was not applied');
+        $export = $objectManager->get(Export::class);
+        $this->assertSame($batchSize, $this->productBatchSize($export), 'The batch size was not applied');
 
-        $cron->execute();
+        $feedFile = codecept_output_dir('grouped-batch-' . $batchSize . '-' . uniqid('', true) . '.xml');
+        $this->feedFiles[] = $feedFile;
 
-        $feedFile = $this->feedFile();
-        $this->assertFileExists($feedFile);
+        $export->generateToFile($feedFile, false);
 
         return $this->readItems($feedFile);
     }
 
-    private function productBatchSize(Export $cron): int
+    private function productBatchSize(Export $export): int
     {
-        $export = $this->propertyValue($cron, 'export');
         $writer = $this->propertyValue($export, 'writer');
         $products = $this->propertyValue($writer, 'writers')['products'];
         $this->assertInstanceOf(Products::class, $products);
 
         return $this->propertyValue($this->propertyValue($products, 'iterator'), 'batchSize');
-    }
-
-    private function feedFile(): string
-    {
-        return $this->tester->getObjectManager()->get(Config::class)->getDefaultFeedFile();
-    }
-
-    /** @return string[] */
-    private function feedFiles(): array
-    {
-        return (array)glob($this->feedFile() . '*');
     }
 
     private function propertyValue(object $object, string $name): mixed
@@ -164,21 +161,21 @@ class GroupedExportBatchSizeTest extends Unit
     /** @param string[][][] $items */
     private function assertGroupedFeed(array $items): void
     {
-        $this->assertNotEmpty($items, 'There are no products to export, is the sample data installed?');
+        $objectManager = $this->tester->getObjectManager();
+        $storeId = (int)$objectManager->get(StoreManagerInterface::class)->getStore('default')->getId();
+        $helper = $objectManager->get(Helper::class);
 
-        $groupCodes = [];
-        $children = 0;
-        foreach ($items as $item) {
-            $groupCodes[$item['groupcode'][0]] = true;
-            $names = array_map(static fn(string $a): string => explode('=', $a)[0], $item['attributes']);
-            if (!in_array('parent_name', $names, true)) {
-                continue;
-            }
+        $itemsPerGroup = array_count_values(
+            array_map(static fn(array $item): string => $item['groupcode'][0], $items)
+        );
+        foreach ($this->parents as $parent) {
+            $groupCode = $helper->getTweakwiseId($storeId, (int)$parent->getId());
 
-            $children++;
+            $this->assertSame(
+                count(self::OPTIONS),
+                $itemsPerGroup[$groupCode] ?? 0,
+                sprintf('The children of "%s" are not exported as one group', $parent->getSku())
+            );
         }
-
-        $this->assertGreaterThan(0, $children, 'The grouped feed has no children of configurable products');
-        $this->assertLessThan(count($items), count($groupCodes), 'The grouped feed has no group with several items');
     }
 }
