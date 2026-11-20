@@ -11,14 +11,11 @@ class ExportPerformanceTest extends AbstractPerformanceTest
 {
     private const CATALOG_MULTIPLIER = 5;
 
-    private const DEFAULT_ATTRIBUTE_TIERS = [50, 150];
-    private const ATTRIBUTE_TIERS_ENV = 'TWEAKWISE_PERF_ATTRIBUTES';
+    private const ATTRIBUTE_TIERS = [50, 150];
 
-    private const DEFAULT_WEBSITE_TIERS = [4, 9];
-    private const WEBSITE_TIERS_ENV = 'TWEAKWISE_PERF_WEBSITES';
+    private const WEBSITE_TIERS = [4, 9];
 
-    private const DEFAULT_MULTIPLIERS = [5, 25, 75];
-    private const MULTIPLIERS_ENV = 'TWEAKWISE_PERF_MULTIPLIERS';
+    private const MULTIPLIERS = [25, 75];
 
     public function testExportPerformance(): void
     {
@@ -49,7 +46,7 @@ class ExportPerformanceTest extends AbstractPerformanceTest
         $problems = [];
 
         $added = 0;
-        foreach ($this->tiers(self::ATTRIBUTE_TIERS_ENV, self::DEFAULT_ATTRIBUTE_TIERS, 1) as $tier) {
+        foreach (self::ATTRIBUTE_TIERS as $tier) {
             $this->attributes->add($tier - $added);
             $added = $tier;
 
@@ -77,7 +74,7 @@ class ExportPerformanceTest extends AbstractPerformanceTest
         $problems = [];
 
         $added = 0;
-        foreach ($this->tiers(self::WEBSITE_TIERS_ENV, self::DEFAULT_WEBSITE_TIERS, 1) as $tier) {
+        foreach (self::WEBSITE_TIERS as $tier) {
             $this->websites->add($tier - $added);
             $added = $tier;
 
@@ -105,22 +102,16 @@ class ExportPerformanceTest extends AbstractPerformanceTest
     {
         $problems = [];
 
-        $multipliers = $this->tiers(self::MULTIPLIERS_ENV, self::DEFAULT_MULTIPLIERS, self::CATALOG_MULTIPLIER);
-        $this->assertGreaterThanOrEqual(2, count($multipliers), 'At least two multipliers are needed to compare');
-
+        $results = [self::CATALOG_MULTIPLIER => $base];
         $copies = self::CATALOG_MULTIPLIER;
-        $results = [];
-        foreach ($multipliers as $multiplier) {
-            if ($multiplier === self::CATALOG_MULTIPLIER) {
-                $results[$multiplier] = $base;
-                continue;
-            }
-
+        foreach (self::MULTIPLIERS as $multiplier) {
             $this->cloner->addCatalogCopies($multiplier - $copies);
             $copies = $multiplier;
 
             $results[$multiplier] = $this->export('products-' . $multiplier . 'x');
         }
+
+        $multipliers = array_keys($results);
 
         $first = $multipliers[0];
         $second = $multipliers[1];
@@ -169,27 +160,5 @@ class ExportPerformanceTest extends AbstractPerformanceTest
         }
 
         return $problems;
-    }
-
-    /**
-     * @param int[] $default
-     * @return int[]
-     */
-    private function tiers(string $environmentVariable, array $default, int $minimum): array
-    {
-        $tiers = $default;
-        if (getenv($environmentVariable)) {
-            $tiers = array_map('intval', explode(',', (string)getenv($environmentVariable)));
-        }
-
-        sort($tiers);
-
-        $this->assertGreaterThanOrEqual(
-            $minimum,
-            $tiers[0],
-            sprintf('The values of %s must be at least %d', $environmentVariable, $minimum)
-        );
-
-        return $tiers;
     }
 }

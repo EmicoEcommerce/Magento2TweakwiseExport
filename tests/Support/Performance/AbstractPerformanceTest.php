@@ -13,8 +13,8 @@ use Tweakwise\Test\Support\FunctionalTester;
 abstract class AbstractPerformanceTest extends Unit
 {
     private const ENABLE_ENV = 'PERFORMANCE_TESTS';
-    private const BASELINE_ENV = 'PERFORMANCE_BASELINE_ENV';
-    private const DEFAULT_ALLOWED_SLOWDOWN_PERCENT = 30;
+    private const BASELINE_PREFIX = 'PERFORMANCE_BASELINE_';
+    private const DEFAULT_ALLOWED_SLOWDOWN_PERCENT = 10;
     private const ALLOWED_SLOWDOWN_ENV = 'PERFORMANCE_ALLOWED_SLOWDOWN';
     private const MIN_SECONDS_TO_COMPARE = 5;
 
@@ -38,8 +38,8 @@ abstract class AbstractPerformanceTest extends Unit
 
     private ?ExportResult $base = null;
 
-    /** @var array<string, mixed>|null */
-    private ?array $baselines = null;
+    /** @var array<string, string>|null */
+    private ?array $envFile = null;
 
     private string $configTable;
 
@@ -52,7 +52,7 @@ abstract class AbstractPerformanceTest extends Unit
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _before(): void
     {
-        if (getenv(self::ENABLE_ENV) !== 'true') {
+        if ($this->setting(self::ENABLE_ENV) !== 'true') {
             $this->markTestSkipped('Performance tests only run when ' . self::ENABLE_ENV . ' is "true"');
         }
 
@@ -83,9 +83,7 @@ abstract class AbstractPerformanceTest extends Unit
         $this->websites->removeAll();
         $this->restoreConfig();
 
-        if (!$this->isCi()) {
-            $this->cloner->removeAll();
-        }
+        $this->cloner->removeAll();
 
         foreach ((array)glob($this->feedFile . '*') as $file) {
             unlink($file);
@@ -108,21 +106,20 @@ abstract class AbstractPerformanceTest extends Unit
     /** @return string[] */
     protected function baselineProblems(): array
     {
-        $environment = $this->baselineEnvironment();
         $comparable = array_filter(
             $this->measurements,
             static fn(float $seconds): bool => $seconds >= self::MIN_SECONDS_TO_COMPARE
         );
 
+        $lines = [];
+        foreach ($comparable as $label => $seconds) {
+            $lines[] = $this->baselineKey($label) . '=' . round($seconds, 1);
+        }
+
         $this->log(sprintf(
-            "\nBaseline for \"%s\", for tests/_data/performance-baseline.json "
-            . "(total export time in seconds, only measurements of at least %d s):\n%s",
-            $environment,
+            "\nBaseline for tests/.env (total export time in seconds, only measurements of at least %d s):\n%s",
             self::MIN_SECONDS_TO_COMPARE,
-            json_encode(
-                [$environment => array_map(static fn(float $seconds): float => round($seconds, 1), $comparable)],
-                JSON_PRETTY_PRINT
-            )
+            implode("\n", $lines)
         ));
 
         $allowedPercent = $this->allowedPercent();
@@ -134,16 +131,27 @@ abstract class AbstractPerformanceTest extends Unit
             }
 
             $problems[] = sprintf(
-                'The export "%s" took %.1fs, the baseline for %s is %.1fs (at most %d%% slower is allowed)',
+                'The export "%s" took %.1fs, the baseline is %.1fs (at most %d%% slower is allowed)',
                 $label,
                 $seconds,
-                $environment,
                 $baseline,
                 $allowedPercent
             );
         }
 
         return $problems;
+    }
+
+    protected function setting(string $name): ?string
+    {
+        $fromEnvironment = getenv($name);
+        if ($fromEnvironment !== false && $fromEnvironment !== '') {
+            return $fromEnvironment;
+        }
+
+        $fromFile = $this->envFile()[$name] ?? '';
+
+        return $fromFile === '' ? null : $fromFile;
     }
 
     protected function setConfig(string $path, string $value): void
@@ -166,29 +174,49 @@ abstract class AbstractPerformanceTest extends Unit
         );
     }
 
-    /** @return array<string, mixed> */
-    private function baselines(): array
+    /** @return array<string, string> */
+    private function envFile(): array
     {
-        if ($this->baselines === null) {
-            $decoded = json_decode((string)file_get_contents(codecept_data_dir('performance-baseline.json')), true);
-            $this->baselines = is_array($decoded) ? $decoded : [];
+        if ($this->envFile !== null) {
+            return $this->envFile;
         }
 
-        return $this->baselines;
+        $this->envFile = [];
+        $path = codecept_root_dir('tests/.env');
+        if (!is_file($path)) {
+            return $this->envFile;
+        }
+
+        foreach ((array)file($path, FILE_IGNORE_NEW_LINES) as $line) {
+            $line = trim($line);
+            if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) {
+                continue;
+            }
+
+            [$name, $value] = explode('=', $line, 2);
+            $this->envFile[trim($name)] = trim($value, " \t\"'");
+        }
+
+        return $this->envFile;
+    }
+
+    private function baselineKey(string $label): string
+    {
+        return self::BASELINE_PREFIX . strtoupper((string)preg_replace('/[^a-z0-9]+/i', '_', $label));
     }
 
     private function baselineSeconds(string $label): ?float
     {
-        $seconds = $this->baselines()[$this->baselineEnvironment()][$label] ?? null;
+        $seconds = $this->setting($this->baselineKey($label));
 
         return $seconds === null ? null : (float)$seconds;
     }
 
     private function allowedPercent(): float
     {
-        return getenv(self::ALLOWED_SLOWDOWN_ENV) !== false
-            ? (float)getenv(self::ALLOWED_SLOWDOWN_ENV)
-            : self::DEFAULT_ALLOWED_SLOWDOWN_PERCENT;
+        $percent = $this->setting(self::ALLOWED_SLOWDOWN_ENV);
+
+        return $percent === null ? self::DEFAULT_ALLOWED_SLOWDOWN_PERCENT : (float)$percent;
     }
 
     private function describeIncrease(ExportResult $result): string
@@ -223,21 +251,6 @@ abstract class AbstractPerformanceTest extends Unit
         }
 
         return $description;
-    }
-
-    private function isCi(): bool
-    {
-        return getenv('CI') === 'true';
-    }
-
-    private function baselineEnvironment(): string
-    {
-        $override = getenv(self::BASELINE_ENV);
-        if ($override !== false) {
-            return $override;
-        }
-
-        return getenv('MAGENTO_VERSION') . '-' . getenv('PHP_VERSION');
     }
 
     private function restoreConfig(): void
