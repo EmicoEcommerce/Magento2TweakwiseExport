@@ -8,7 +8,8 @@ use Emico\CodeCept\Test\Unit;
 use ReflectionMethod;
 use ReflectionProperty;
 use SimpleXMLElement;
-use Tweakwise\Magento2TweakwiseExport\Model\Export;
+use Tweakwise\Magento2TweakwiseExport\Cron\Export;
+use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products;
 use Tweakwise\Test\Support\FunctionalTester;
 
@@ -20,26 +21,38 @@ class GroupedExportBatchSizeTest extends Unit
 
     protected FunctionalTester $tester;
 
-    /** @var string[] */
-    private array $feedFiles = [];
+    private string $backupDirectory;
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _before(): void
     {
         $this->tester->mockConfig('tweakwise/export/enabled', '1');
         $this->tester->mockConfig('tweakwise/export/grouped_export_enabled', '1');
+
+        $this->backupDirectory = codecept_output_dir('feed-backup-' . uniqid('', true));
+        mkdir($this->backupDirectory);
+        foreach ($this->feedFiles() as $file) {
+            rename($file, $this->backupDirectory . '/' . basename($file));
+        }
     }
 
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     public function _after(): void
     {
-        foreach ($this->feedFiles as $file) {
-            if (!is_file($file)) {
-                continue;
-            }
+        if (!isset($this->backupDirectory)) {
+            return;
+        }
 
+        foreach ($this->feedFiles() as $file) {
             unlink($file);
         }
+
+        $feedDirectory = dirname($this->feedFile());
+        foreach ((array)glob($this->backupDirectory . '/*') as $file) {
+            rename($file, $feedDirectory . '/' . basename($file));
+        }
+
+        rmdir($this->backupDirectory);
     }
 
     public function testGroupedExportDoesNotDependOnTheBatchSize(): void
@@ -66,24 +79,38 @@ class GroupedExportBatchSizeTest extends Unit
         $this->tester->mockConfig('tweakwise/export/batch_size_products', (string)$batchSize);
         $this->tester->mockConfig('tweakwise/export/batch_size_products_children', (string)$batchSize);
 
-        $export = $this->tester->getObjectManager()->create(Export::class);
-        $this->assertSame($batchSize, $this->productBatchSize($export), 'The batch size was not applied');
+        $objectManager = $this->tester->getObjectManager();
+        $objectManager->reset();
+        $cron = $objectManager->get(Export::class);
+        $this->assertSame($batchSize, $this->productBatchSize($cron), 'The batch size was not applied');
 
-        $feedFile = codecept_output_dir('grouped-batch-' . $batchSize . '-' . uniqid('', true) . '.xml');
-        $this->feedFiles[] = $feedFile;
+        $cron->execute();
 
-        $export->generateToFile($feedFile, false);
+        $feedFile = $this->feedFile();
+        $this->assertFileExists($feedFile);
 
         return $this->readItems($feedFile);
     }
 
-    private function productBatchSize(Export $export): int
+    private function productBatchSize(Export $cron): int
     {
+        $export = $this->propertyValue($cron, 'export');
         $writer = $this->propertyValue($export, 'writer');
         $products = $this->propertyValue($writer, 'writers')['products'];
         $this->assertInstanceOf(Products::class, $products);
 
         return $this->propertyValue($this->propertyValue($products, 'iterator'), 'batchSize');
+    }
+
+    private function feedFile(): string
+    {
+        return $this->tester->getObjectManager()->get(Config::class)->getDefaultFeedFile();
+    }
+
+    /** @return string[] */
+    private function feedFiles(): array
+    {
+        return (array)glob($this->feedFile() . '*');
     }
 
     private function propertyValue(object $object, string $name): mixed
