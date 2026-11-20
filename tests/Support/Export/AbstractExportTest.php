@@ -61,20 +61,20 @@ abstract class AbstractExportTest extends Unit
     }
 
     /** @param SimpleXMLElement[] $items */
-    protected function assertInFeed(array $items, ProductFixture $product): void
+    protected function assertInFeed(array $items, ProductFixture $product, string $storeCode = 'default'): void
     {
         $this->assertArrayHasKey(
-            $this->feedId($product),
+            $this->feedId($product, $storeCode),
             $items,
             sprintf('Product "%s" is not in the feed', $product->getSku())
         );
     }
 
     /** @param SimpleXMLElement[] $items */
-    protected function assertNotInFeed(array $items, ProductFixture $product): void
+    protected function assertNotInFeed(array $items, ProductFixture $product, string $storeCode = 'default'): void
     {
         $this->assertArrayNotHasKey(
-            $this->feedId($product),
+            $this->feedId($product, $storeCode),
             $items,
             sprintf('Product "%s" should not be in the feed', $product->getSku())
         );
@@ -111,10 +111,10 @@ abstract class AbstractExportTest extends Unit
         }
     }
 
-    private function feedId(ProductFixture $product): string
+    private function feedId(ProductFixture $product, string $storeCode = 'default'): string
     {
         $objectManager = $this->tester->getObjectManager();
-        $storeId = (int)$objectManager->get(StoreManagerInterface::class)->getStore('default')->getId();
+        $storeId = (int)$objectManager->get(StoreManagerInterface::class)->getStore($storeCode)->getId();
 
         return $objectManager->get(Helper::class)->getTweakwiseId($storeId, (int)$product->getId());
     }

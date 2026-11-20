@@ -51,6 +51,7 @@ class WebsiteGenerator
 
             foreach ($storeIds as $storeId) {
                 $this->connection->dropTable($this->table(self::CATEGORY_INDEX_TABLE . $storeId));
+                $this->connection->dropTable($this->table(self::CATEGORY_INDEX_TABLE . $storeId . '_replica'));
             }
 
             $this->connection->delete(
@@ -150,6 +151,9 @@ class WebsiteGenerator
         $target = $this->table(self::CATEGORY_INDEX_TABLE . $storeId);
 
         $this->connection->query(sprintf('CREATE TABLE `%s` LIKE `%s`', $target, $source));
+        $this->connection->query(
+            sprintf('CREATE TABLE `%s` LIKE `%s`', $target . '_replica', $source . '_replica')
+        );
 
         $columns = array_keys($this->connection->describeTable($source));
         $select = array_map(
