@@ -6,7 +6,6 @@ namespace Tweakwise\Test\Functional\Export;
 
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
-use Magento\Framework\Indexer\IndexerRegistry;
 use Tweakwise\Test\Support\Export\AbstractExportTest;
 
 class StockTest extends AbstractExportTest
@@ -40,17 +39,8 @@ class StockTest extends AbstractExportTest
     {
         $inStock = $this->tester->createFixture(new ProductFixture('stock-test-in-stock'));
         $outOfStock = $this->tester->createFixture(new ProductFixture('stock-test-out-of-stock'));
-        $this->tester->setStock($outOfStock->getSku(), 0, 0);
-        $this->reindex((int)$outOfStock->getId());
+        $this->setOutOfStock($outOfStock);
 
         return [$inStock, $outOfStock];
-    }
-
-    private function reindex(int $productId): void
-    {
-        $indexerRegistry = $this->tester->getObjectManager()->get(IndexerRegistry::class);
-        foreach (['cataloginventory_stock', 'catalog_product_price'] as $indexerId) {
-            $indexerRegistry->get($indexerId)->reindexRow($productId);
-        }
     }
 }

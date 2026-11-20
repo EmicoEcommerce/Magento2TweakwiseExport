@@ -6,6 +6,7 @@ namespace Tweakwise\Test\Support\Export;
 
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Emico\CodeCept\Test\Unit;
+use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Store\Model\StoreManagerInterface;
 use SimpleXMLElement;
 use Tweakwise\Magento2TweakwiseExport\Model\Export;
@@ -77,6 +78,37 @@ abstract class AbstractExportTest extends Unit
             $items,
             sprintf('Product "%s" should not be in the feed', $product->getSku())
         );
+    }
+
+    /**
+     * @param SimpleXMLElement[] $items
+     * @return string[]
+     */
+    protected function attributeValues(array $items, ProductFixture $product, string $attribute): array
+    {
+        $this->assertInFeed($items, $product);
+
+        $values = [];
+        foreach ($items[$this->feedId($product)]->attributes->attribute as $item) {
+            if ((string)$item->name !== $attribute) {
+                continue;
+            }
+
+            $values[] = (string)$item->value;
+        }
+        sort($values);
+
+        return $values;
+    }
+
+    protected function setOutOfStock(ProductFixture $product): void
+    {
+        $this->tester->setStock($product->getSku(), 0, 0);
+
+        $indexerRegistry = $this->tester->getObjectManager()->get(IndexerRegistry::class);
+        foreach (['cataloginventory_stock', 'catalog_product_price'] as $indexerId) {
+            $indexerRegistry->get($indexerId)->reindexRow((int)$product->getId());
+        }
     }
 
     private function feedId(ProductFixture $product): string
