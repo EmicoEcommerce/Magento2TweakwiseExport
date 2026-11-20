@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tweakwise\Test\Support\Export;
 
+use Emico\CodeCept\Models\Fixtures\AbstractFixture;
 use Emico\CodeCept\Models\Fixtures\ProductFixture;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\Indexer\IndexerRegistry;
@@ -54,7 +55,7 @@ abstract class AbstractExportTest extends Unit
 
         $items = [];
         foreach ($feed->items->item as $item) {
-            $items[(string)$item->id] = $item;
+            $items[(string)strtok((string)$item->id, '-')] = $item;
         }
 
         return $items;
@@ -84,12 +85,16 @@ abstract class AbstractExportTest extends Unit
      * @param SimpleXMLElement[] $items
      * @return string[]
      */
-    protected function attributeValues(array $items, ProductFixture $product, string $attribute): array
-    {
-        $this->assertInFeed($items, $product);
+    protected function attributeValues(
+        array $items,
+        ProductFixture $product,
+        string $attribute,
+        string $storeCode = 'default'
+    ): array {
+        $this->assertInFeed($items, $product, $storeCode);
 
         $values = [];
-        foreach ($items[$this->feedId($product)]->attributes->attribute as $item) {
+        foreach ($items[$this->feedId($product, $storeCode)]->attributes->attribute as $item) {
             if ((string)$item->name !== $attribute) {
                 continue;
             }
@@ -99,6 +104,39 @@ abstract class AbstractExportTest extends Unit
         sort($values);
 
         return $values;
+    }
+
+    /** @param SimpleXMLElement[] $items */
+    protected function groupCode(array $items, ProductFixture $product, string $storeCode = 'default'): string
+    {
+        $this->assertInFeed($items, $product, $storeCode);
+
+        return (string)$items[$this->feedId($product, $storeCode)]->groupcode;
+    }
+
+    /**
+     * @param SimpleXMLElement[] $items
+     * @return string[]
+     */
+    protected function categoryIds(array $items, ProductFixture $product): array
+    {
+        $this->assertInFeed($items, $product);
+
+        $categoryIds = [];
+        foreach ($items[$this->feedId($product)]->categories->categoryid as $categoryId) {
+            $categoryIds[] = (string)$categoryId;
+        }
+        sort($categoryIds);
+
+        return $categoryIds;
+    }
+
+    protected function feedIdOfCategory(AbstractFixture $category): string
+    {
+        $objectManager = $this->tester->getObjectManager();
+        $storeId = (int)$objectManager->get(StoreManagerInterface::class)->getStore('default')->getId();
+
+        return $objectManager->get(Helper::class)->getTweakwiseId($storeId, (int)$category->getId());
     }
 
     protected function setOutOfStock(ProductFixture $product): void
@@ -111,7 +149,7 @@ abstract class AbstractExportTest extends Unit
         }
     }
 
-    private function feedId(ProductFixture $product, string $storeCode = 'default'): string
+    protected function feedId(ProductFixture $product, string $storeCode = 'default'): string
     {
         $objectManager = $this->tester->getObjectManager();
         $storeId = (int)$objectManager->get(StoreManagerInterface::class)->getStore($storeCode)->getId();

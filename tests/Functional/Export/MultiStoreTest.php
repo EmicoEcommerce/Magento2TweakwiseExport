@@ -107,6 +107,29 @@ class MultiStoreTest extends AbstractExportTest
         $this->assertNotInFeed($items, $parent, self::OTHER_STORE);
     }
 
+    public function testGroupedExportTakesTheDataOfTheParentFromEachStore(): void
+    {
+        $this->tester->mockConfig(Config::PATH_GROUPED_EXPORT_ENABLED, '1');
+
+        $parent = new ConfigurableProductFixture('multi-store-test-grouped', 'Parent name');
+        $child = $parent->addChildByAttributes(['tw_export_test_option' => 'one']);
+        $this->tester->createFixture($parent);
+        $this->renameForStore($parent, 'Other store name', self::OTHER_STORE);
+
+        $items = $this->exportFeed();
+
+        $this->assertSame(['Parent name'], $this->attributeValues($items, $child, 'parent_name'));
+        $this->assertSame(
+            ['Other store name'],
+            $this->attributeValues($items, $child, 'parent_name', self::OTHER_STORE)
+        );
+        $this->assertSame($this->feedId($parent), $this->groupCode($items, $child));
+        $this->assertSame(
+            $this->feedId($parent, self::OTHER_STORE),
+            $this->groupCode($items, $child, self::OTHER_STORE)
+        );
+    }
+
     private function refreshStores(): void
     {
         $this->tester->clearCache();
@@ -115,13 +138,20 @@ class MultiStoreTest extends AbstractExportTest
 
     private function disableForStore(ProductFixture $product, string $storeCode): void
     {
+        $this->updateForStore($product, ['status' => Status::STATUS_DISABLED], $storeCode);
+    }
+
+    private function renameForStore(ProductFixture $product, string $name, string $storeCode): void
+    {
+        $this->updateForStore($product, ['name' => $name], $storeCode);
+    }
+
+    /** @param string[]|int[] $data */
+    private function updateForStore(ProductFixture $product, array $data, string $storeCode): void
+    {
         $objectManager = $this->tester->getObjectManager();
         $storeId = (int)$objectManager->get(StoreManagerInterface::class)->getStore($storeCode)->getId();
 
-        $objectManager->get(Action::class)->updateAttributes(
-            [(int)$product->getId()],
-            ['status' => Status::STATUS_DISABLED],
-            $storeId
-        );
+        $objectManager->get(Action::class)->updateAttributes([(int)$product->getId()], $data, $storeId);
     }
 }
