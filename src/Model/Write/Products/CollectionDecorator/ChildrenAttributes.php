@@ -48,7 +48,7 @@ class ChildrenAttributes implements DecoratorInterface
 
             foreach ($exportEntity->getExportChildren() as $child) {
                 foreach ($child->getAttributes() as $attributeData) {
-                    if ($this->config->getSkipChildAttribute($attributeData['attribute'])) {
+                    if ($this->config->getSkipChildAttribute($attributeData['attribute'], $exportEntity->getStore())) {
                         continue;
                     }
 
