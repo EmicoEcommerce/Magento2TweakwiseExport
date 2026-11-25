@@ -15,3 +15,4 @@ grumphp.yml
 app/etc/env.test.php
 app/etc/vendor_path.php
 setup
+tests/.env
