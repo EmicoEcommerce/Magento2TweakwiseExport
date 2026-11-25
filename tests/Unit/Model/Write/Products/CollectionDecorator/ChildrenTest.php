@@ -60,6 +60,7 @@ class ChildrenTest extends Unit
         $parent->shouldReceive('getAttribute')->with('url_key', false)->andReturn('parent-url-key');
         $parent->shouldReceive('getAttribute')->with('name', false)->andReturn('Parent Name');
         $parent->shouldReceive('getAttribute')->with('visibility', false)->andReturn(4);
+        $parent->shouldReceive('getAttribute')->with('sku', false)->andReturn('parent-sku');
         $parent->shouldReceive('getAttribute')->with('image', false)->andReturn('/p/a/parent-image.jpg');
 
         $child = Mockery::mock(ExportEntityChild::class);
@@ -86,6 +87,7 @@ class ChildrenTest extends Unit
                 ['parent_url_key', 'parent-url-key'],
                 ['parent_name', 'Parent Name'],
                 ['parent_visibility', 4],
+                ['parent_sku', 'parent-sku'],
                 ['parent_main_image', '/p/a/parent-image.jpg'],
             ],
             $this->addAttributeCalls

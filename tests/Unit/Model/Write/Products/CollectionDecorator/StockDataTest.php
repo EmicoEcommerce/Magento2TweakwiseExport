@@ -7,13 +7,19 @@ namespace Tweakwise\Test\Unit\Model\Write\Products\CollectionDecorator;
 use Emico\CodeCept\Test\Unit;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Module\Manager;
+use Magento\Store\Model\Store;
 use Mockery;
 use ReflectionMethod;
+use stdClass;
 use Tweakwise\Magento2TweakwiseExport\Model\Config;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItem;
 use Tweakwise\Magento2TweakwiseExport\Model\StockItemFactory as TweakwiseStockItemFactory;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\Collection;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\CollectionDecorator\StockData;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityChild;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntityConfigurable;
 use Tweakwise\Magento2TweakwiseExport\Model\Write\Products\ExportEntity;
+use Tweakwise\Magento2TweakwiseExport\Model\Write\Stock\Collection as StockCollection;
 
 class StockDataTest extends Unit
 {
@@ -111,5 +117,77 @@ class StockDataTest extends Unit
         $method->invoke($this->createStockData(), $entity);
 
         self::assertSame(3.0, $this->addAttributeCalls['order_increment']);
+    }
+
+    public function testGroupedExportCopiesParentStockPercentageToChildren(): void
+    {
+        $store = Mockery::mock(Store::class);
+        $store->shouldReceive('getId')->andReturn(1);
+
+        $config = Mockery::mock(Config::class);
+        $config->shouldReceive('isGroupedExport')->with($store)->once()->andReturnTrue();
+
+        $parentStockItem = new StockItem();
+        $parentStockItem->setIsInStock(1);
+        $childStockItem = new StockItem();
+        $childStockItem->setIsInStock(1);
+        $outOfStockChildStockItem = new StockItem();
+
+        $outOfStockChild = Mockery::mock(ExportEntityChild::class);
+        $outOfStockChild->shouldReceive('getStockItem')->andReturn($outOfStockChildStockItem);
+        $outOfStockChildAttributes = new stdClass();
+        $outOfStockChild->shouldReceive('addAttribute')
+            ->zeroOrMoreTimes()
+            ->andReturnUsing(function (string $attribute, $value) use ($outOfStockChildAttributes): void {
+                $outOfStockChildAttributes->$attribute = $value;
+            });
+
+        $child = Mockery::mock(ExportEntityChild::class);
+        $child->shouldReceive('getId')->andReturn(2);
+        $child->shouldReceive('getStockItem')->andReturn($childStockItem);
+        $childAttributes = new stdClass();
+        $child->shouldReceive('addAttribute')
+            ->zeroOrMoreTimes()
+            ->andReturnUsing(function (string $attribute, $value) use ($childAttributes): void {
+                $childAttributes->$attribute = $value;
+            });
+
+        $parent = Mockery::mock(ExportEntityConfigurable::class);
+        $parent->shouldReceive('getId')->andReturn(1);
+        $parent->shouldReceive('getStockItem')->andReturn($parentStockItem);
+        $parent->shouldReceive('getEnabledChildren')->andReturn([$child, $outOfStockChild]);
+        $parent->shouldReceive('getAllChildren')->andReturn([$child, $outOfStockChild]);
+        $parentAttributes = new stdClass();
+        $parent->shouldReceive('getAttribute')
+            ->with('stock_percentage', false)
+            ->andReturnUsing(function () use ($parentAttributes) {
+                return $parentAttributes->stock_percentage;
+            });
+        $parent->shouldReceive('addAttribute')
+            ->zeroOrMoreTimes()
+            ->andReturnUsing(function (string $attribute, $value) use ($parentAttributes): void {
+                $parentAttributes->$attribute = $value;
+            });
+
+        $collection = new Collection($store);
+        $collection->add($parent);
+        $collection->add($child);
+
+        $stockData = new class (
+            Mockery::mock(ProductMetadataInterface::class),
+            Mockery::mock(TweakwiseStockItemFactory::class),
+            $config,
+            Mockery::mock(Manager::class),
+            []
+        ) extends StockData {
+            protected function addStockItems(int $storeId, Collection|StockCollection $collection): void
+            {
+            }
+        };
+        $stockData->decorate($collection);
+
+        self::assertSame(50.0, $parentAttributes->stock_percentage);
+        self::assertSame(50.0, $childAttributes->parent_stock_percentage);
+        self::assertSame(50.0, $outOfStockChildAttributes->parent_stock_percentage);
     }
 }
