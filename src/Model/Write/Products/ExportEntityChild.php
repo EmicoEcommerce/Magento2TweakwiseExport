@@ -85,6 +85,10 @@ class ExportEntityChild extends ExportEntity
      */
     public function shouldExportByStock(): bool
     {
+        if ($this->config->isGroupedExport($this->store)) {
+            return parent::shouldExportByStock();
+        }
+
         if ($this->config->isOutOfStockChildren()) {
             return true;
         }

@@ -104,9 +104,10 @@
                     </depends>
                 </field>
 
-                <field id="out_of_stock_children" translate="label,comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="out_of_stock_children" translate="label,comment,tooltip" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export out of stock combined product children</label>
-                    <comment>Would you like to export out of stock children attributes in parent products?</comment>
+                    <comment>Export out of stock children attributes in parent products when groupcode export is disabled.</comment>
+                    <tooltip>With groupcode export disabled, include out-of-stock child attributes in parent products. With groupcode export enabled, Magento's Display Out of Stock Products setting determines whether out-of-stock configurable children are exported.</tooltip>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>

@@ -106,7 +106,7 @@ All export settings can be found under Stores -> Configuration -> Catalog -> Twe
 - **Archive**: Number of feeds to keep in archive.
 - **Export in Real Time**: Always export the feed in real time when requested. Not recommended for production.
 - **Tweakwise Import API Url**: API trigger URL to start import in Tweakwise after feed generation.
-- **Export out of stock combined product children**: Export out-of-stock child attributes in parent products.
+- **Export out of stock combined product children**: With groupcode export disabled, include out-of-stock child attributes in parent products. With groupcode export enabled, Magento's Display Out of Stock Products setting determines whether out-of-stock configurable children are exported.
 - **Exclude child attributes**: Attributes that should not be combined in parent products.
 - **Skip children for composite type(s)**: Composite product types for which child attributes should be excluded.
 - **Date field**: Select how the created and updated date is exported.
